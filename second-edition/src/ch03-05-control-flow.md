@@ -69,7 +69,7 @@ $ cargo run
 condition was false
 ```
 
-También vale la pena notar que la condición en este código *debe* debe ser un `bool`. Para
+También vale la pena notar que la condición en este código *debe* ser un `bool`. Para
 ver qué sucede si la condición no es un `bool`, intenta ejecutar el siguiente
 código:
 
