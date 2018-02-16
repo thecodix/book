@@ -1,16 +1,16 @@
-## Defining and Instantiating Structs
+## Definición e Instanciación de Estructuras
 
-Structs are similar to tuples, which were discussed in Chapter 3. Like tuples,
-the pieces of a struct can be different types. Unlike tuples, we name each
-piece of data so it’s clear what the values mean. As a result of these names,
-structs are more flexible than tuples: we don’t have to rely on the order of
-the data to specify or access the values of an instance.
+Las estructuras son similares a las tuplas, que fueron discutidas en el Capítulo 3. Al igual que las tuplas,
+las piezas de una estructura pueden ser de diferentes tipos. A diferencia de las tuplas, nombramos cada
+dato para que quede claro el significado de los valores. Como resultado de estos nombres, 
+las estructuras son más flexibles que las tuplas: no tenemos que depender del orden de
+los datos para especificar o acceder a los valores de una instancia.
 
-To define a struct, we enter the keyword `struct` and name the entire struct. A
-struct’s name should describe the significance of the pieces of data being
-grouped together. Then, inside curly braces, we define the names and types of
-the pieces of data, which we call *fields*. For example, Listing 5-1 shows a
-struct to store information about a user account:
+Para definir una estructura, introducimos la palabra clave `struct` y nombramos toda la estructura. El
+nombre de una estructura debe describir el significado de las piezas de datos que se están 
+agrupando. Luego, dentro de las llaves, definimos los nombres y tipos de las piezas de
+datos, que llamamos *campos*. Por ejemplo, el Listado 5-1 muestra una
+estructura para almacenar información sobre una cuenta de usuario:
 
 ```rust
 struct User {
@@ -21,17 +21,17 @@ struct User {
 }
 ```
 
-<span class="caption">Listing 5-1: A `User` struct definition</span>
+<span class="caption">Listado 5-1: Una definición de estructura de `User`</span>
 
-To use a struct after we’ve defined it, we create an *instance* of that struct
-by specifying concrete values for each of the fields. We create an instance by
-stating the name of the struct, and then add curly braces containing `key:
-value` pairs where the keys are the names of the fields and the values are the
-data we want to store in those fields. We don’t have to specify the fields in
-the same order in which we declared them in the struct. In other words, the
-struct definition is like a general template for the type, and instances fill
-in that template with particular data to create values of the type. For
-example, we can declare a particular user as shown in Listing 5-2:
+Para utilizar una estructura después de haberla definido, creamos una *instancia* de esa estructura 
+especificando valores concretos para cada uno de los campos. Creamos una instancia 
+indicando el nombre de la estructura, y luego añadimos llaves que contienen pares 
+`key: value` donde las teclas son los nombres de los campos y los valores son los
+datos que queremos almacenar en esos campos. No es necesario especificar los campos en 
+el mismo orden en el que los declaramos en la estructura. En otras palabras, la definición 
+de estructura es como una plantilla general para el tipo, y las instancias completan 
+esa plantilla con datos particulares para crear valores del tipo. Por
+ejemplo, podemos declarar un usuario particular como se muestra en la lista 5-2:
 
 ```rust
 # struct User {
@@ -47,16 +47,16 @@ let user1 = User {
     active: true,
     sign_in_count: 1,
 };
-```
+``` 
 
-<span class="caption">Listing 5-2: Creating an instance of the `User`
-struct</span>
+<span class="caption">Listado 5-2: Creación de una instancia de la estructura
+`User`</span>
 
-To get a specific value from a struct, we can use dot notation. If we wanted
-just this user’s email address, we can use `user1.email` wherever we want to
-use this value. To change a value in a struct, if the instance is mutable, we
-can use the dot notation and assign into a particular field. Listing 5-3 shows
-how to change the value in the `email` field of a mutable `User` instance:
+Para obtener un valor específico de una estructura, podemos usar la notación de puntos. Si sólo queríamos
+la dirección de correo electrónico de este usuario, podemos usar `user1. email` donde queramos
+usar este valor. Para cambiar un valor en una estructura, si la instancia es mutable, podemos
+usar la notación de puntos y asignarla a un campo en particular. El listado 5-3 muestra
+cómo cambiar el valor en el campo `email` de una instancia de `User` mutable:
 
 ```rust
 # struct User {
@@ -74,18 +74,18 @@ let mut user1 = User {
 };
 
 user1.email = String::from("anotheremail@example.com");
-```
+``` 
 
-<span class="caption">Listing 5-3: Changing the value in the `email` field of a
-`User` instance</span>
+<span class="caption">Listado 5-3: Cambiar el valor del campo `email` de una instancia
+de `User`</span>
 
-### Field Init Shorthand when Variables Have the Same Name as Fields
+### Abreviatura de Campo Inicial cuando las Variables Tienen el Mismo Nombre que los Campos
 
-If you have variables with the same names as struct fields, you can use *field
-init shorthand*. This can make functions that create new instances of structs
-more concise. The function named `build_user` shown here in Listing 5-4 has
-parameters named `email` and `username`. The function creates and returns a
-`User` instance:
+Si tienes variables con los mismos nombres que los campos de estructura, puedes utilizar el *campo en 
+forma abreviatura*. Esto puede hacer que las funciones que crean nuevas instancias de estructuras
+sean más concisas. La función llamada `build_user` mostrada aquí en la lista 5-4 tiene 
+parámetros llamados `email` y `username`. La función crea y devuelve una instancia
+de `User`:
 
 ```rust
 # struct User {
@@ -105,15 +105,15 @@ fn build_user(email: String, username: String) -> User {
 }
 ```
 
-<span class="caption">Listing 5-4: A `build_user` function that takes an email
-and username and returns a `User` instance</span>
+ <span class="caption">Listado 5-4:  Una función `build_user` que toma un correo electrónico
+ y un nombre de usuario y devuelve una instancia de `User`.</span>
 
-Because the parameter names `email` and `username` are the same as the `User`
-struct's field names `email` and `username`, we can write `build_user` without
-the repetition of `email` and `username` as shown in Listing 5-5. This version
-of `build_user` behaves the same way as the one in Listing 5-4. The field init
-syntax can make cases like this shorter to write, especially when structs have
-many fields.
+Debido a que los nombres de parámetro `email` y `username` son los mismos que los nombres 
+de campo de la estructura `User`, `email` y `username`, podemos escribir `build_user` sin 
+la repetición de `email` y `username` como se muestra en el Listado 5-5. Esta versión
+de `build_user` se comporta de la misma manera que la de Listing 5-4. La sintaxis del
+campo puede hacer que casos como este sean más cortos de escribir, especialmente cuando las estructuras
+tienen muchos campos.
 
 ```rust
 # struct User {
@@ -133,17 +133,17 @@ fn build_user(email: String, username: String) -> User {
 }
 ```
 
-<span class="caption">Listing 5-5: A `build_user` function that uses field init
-syntax since the `email` and `username` parameters have the same name as struct
-fields</span>
+<span class="caption">Listado 5-5: Una función `build_user` que utiliza la sintaxis del campo 
+ya que los parámetros `email` y `username` tienen el mismo nombre que los campos
+de estructura</span>
 
-### Creating Instances From Other Instances With Struct Update Syntax
+### Creación de Instancias Desde otras Instancias con la Sintaxis de Actualización de Estructura
 
-It's often useful to create a new instance from an old instance, using most of
-the old instance's values but changing some. Listing 5-6 shows an example of
-creating a new `User` instance in `user2` by setting the values of `email` and
-`username` but using the same values for the rest of the fields from the
-`user1` instance we created in Listing 5-2:
+A menudo es útil crear una nueva instancia a partir de una instancia antigua, usando la mayoría
+de los valores de la instancia antigua pero cambiando algunos. El Listado 5-6 muestra un ejemplo de
+creación de una nueva instancia de `User` en `user2` al establecer los valores de `email` y
+`usuario` pero usando los mismos valores para el resto de los campos de la instancia 
+`user1` que creamos en el Listado 5-2:
 
 ```rust
 # struct User {
@@ -166,17 +166,17 @@ let user2 = User {
     active: user1.active,
     sign_in_count: user1.sign_in_count,
 };
-```
+``` 
 
-<span class="caption">Listing 5-6: Creating a new `User` instance, `user2`, and
-setting some fields to the values of the same fields from `user1`</span>
+<span class="caption">Listado 5-6: Creando una nueva instancia de `User`, `user2`, y
+poniendo algunos campos a los valores de los mismos campos de `user1`</span>
 
-The *struct update syntax* achieves the same effect as the code in Listing 5-6
-using less code. The struct update syntax uses `..` to specify that the
-remaining fields not set explicitly should have the same value as the fields in
-the given instance. The code in Listing 5-7 also creates an instance in `user2`
-that has a different value for `email` and `username` but has the same values
-for the `active` and `sign_in_count` fields that `user1` has:
+La *struct update syntax* logra el mismo efecto que el código en Listing 5-6 
+usando menos código. La sintaxis de actualización de estructura utiliza `... ` para especificar que 
+los campos restantes no configurados explícitamente deben tener el mismo valor que los campos de la
+instancia en cuestión. El código en Listado 5-7 también crea una instancia en `user2`
+que tiene un valor diferente para los campos `email` y `username` pero tiene los mismos valores
+para los campos `active` y `sign_in_count` que `user1`:
 
 ```rust
 # struct User {
@@ -200,18 +200,18 @@ let user2 = User {
 };
 ```
 
-<span class="caption">Listing 5-7: Using struct update syntax to set a new
-`email` and `username` values for a `User` instance but use the rest of the
-values from the fields of the instance in the `user1` variable</span>
+<span class="caption">Listado 5-7: Usando la sintaxis de actualización de estructura para establecer un nuevo valor de
+`email` y `username` para una instancia `User` pero usa el resto de los
+valores de los campos de la instancia en la variable `user1`.</span>
 
-### Tuple Structs without Named Fields to Create Different Types
+### Estructuras Tupla sin campos especificados para crear tipos diferentes
 
-We can also define structs that look similar to tuples, called *tuple structs*,
-that have the added meaning the struct name provides, but don't have names
-associated with their fields, just the types of the fields. The definition of a
-tuple struct still starts with the `struct` keyword and the struct name, which
-are followed by the types in the tuple. For example, here are definitions and
-usages of tuple structs named `Color` and `Point`:
+También podemos definir estructuras que parecen similares a tuplas, llamadas *estructuras tupla*,
+que tienen el significado añadido que proporciona el nombre de la estructura, pero no tienen nombres
+asociados con sus campos, sólo los tipos de campos. La definición de una
+estructura tupla todavía comienza con la palabra clave `struct` y el nombre de la estructura, que son
+seguidos por los tipos en la tupla. Por ejemplo, aquí están las definiciones y 
+usos de las estructuras dobles llamadas `Color` y `Point`:
 
 ```rust
 struct Color(i32, i32, i32);
@@ -221,10 +221,10 @@ let black = Color(0, 0, 0);
 let origin = Point(0, 0, 0);
 ```
 
-Note that the `black` and `origin` values are different types, since they're
-instances of different tuple structs. Each struct we define is its own type,
-even though the fields within the struct have the same types. Otherwise, tuple
-struct instances behave like tuples, which we covered in Chapter 3.
+Ten en cuenta que los valores `black` y `origin` son diferentes tipos, ya que son 
+instancias de diferentes estructuras tuplas. Cada estructura que definimos es su propio tipo,
+aunque los campos dentro de la estructura tienen los mismos tipos. De lo contrario, 
+las instancias de estructura tupla se comportan como tuplas, que hemos tratado en el Capítulo 3.
 
 ### Unit-Like Structs without Any Fields
 
