@@ -117,6 +117,7 @@ fn main() {
     }
 }
 ```
+
 Al ejecutar este código se imprimirá `number was something other than zero`.
 
 #### Multiple Condiciones con `else if`
