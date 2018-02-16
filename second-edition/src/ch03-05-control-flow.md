@@ -264,7 +264,7 @@ Rust tiene tres tipos de bucles: `loop`, `while` y `for`. Probemos cada uno.
 La palabra clave "loop" le dice a Rust que ejecute un bloque de código una y otra vez
 por siempre o hasta que le diga explícitamente que se detenga.
 
-Como ejemplo, cambia el archivo *src/main. rs* en tu directorio *loops* para que se
+Como ejemplo, cambia el archivo *src/main.rs* en tu directorio *loops* para que se
 vea así:
 
 <span class="filename">Filename: src/main.rs</span>
@@ -331,7 +331,7 @@ fn main() {
 }
 ```
 
-Este construción elimina muchos nidos que serían necesarios si usas
+Este construción elimina muchas anidaciones que serían necesarias si usas
 `loop`, `if`, `else`, y `break`, y es más claro. Mientras una condición se mantiene
 verdadera, el código se ejecuta; de lo contrario, sale del loop.
 
