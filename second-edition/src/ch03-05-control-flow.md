@@ -163,13 +163,6 @@ Usar demasiadas expresiones `else if` puede desordenar tu código, así que si t
 de una, quizás quieras refactorizar tu código. El capítulo 6 describe una poderosa
 construcción de ramificación de Rust llamada `match` para estos casos.
 
-When this program executes, it checks each `if` expression in turn and executes
-the first body for which the condition holds true. Note that even though 6 is
-divisible by 2, we don’t see the output `number is divisible by 2`, nor do we
-see the `number is not divisible by 4, 3, or 2` text from the `else` block. The
-reason is that Rust will only execute the block for the first true condition,
-and once it finds one, it won’t even check the rest.
-
 #### Usando `if` en una Declaración `let`
 
 Debido a que `if` es una expresión, podemos usarla en el lado derecho de una declaración 
