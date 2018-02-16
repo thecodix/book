@@ -38,7 +38,7 @@ error[E0507]: cannot move out of borrowed content
    |             ^^^^^^ cannot move out of borrowed content
 ```
 
-Como solo tenemos un préstamo mutable de cada `worker`, no podemos llamar` join`: `join` toma posesión de su argumento. Para resolver esto, necesitamos una manera para mover el `thread` de la instancia` Worker` que posee `thread` para que `join` pueda consumir el hilo. Vimos una forma de hacer esto en el listado 17-15: si el `Worker` contiene una` Opción <thread :: JoinHandle <()> `en su lugar, podemos llamar al método `take` en la` Opción` para mover el valor fuera de la variante `Some` y dejar una variante `None` en su lugar. En otras palabras, un `Worker` que se está ejecutando tendrá una variante `Some` en` thread`, y cuando queramos limpiar un worker, reemplazaremos `Some` con` None` para que el trabajador no tenga un hilo para ejecutar.
+Como solo tenemos un préstamo mutable de cada `worker`, no podemos llamar` join`: `join` toma posesión de su argumento. Para resolver esto, necesitamos una manera para mover el `thread` de la instancia` Worker` que posee `thread` para que `join` pueda consumir el hilo. Vimos una forma de hacer esto en el listado 17-15: si el `Worker` contiene una` Opción <thread :: JoinHandle <()> `en su lugar, podemos llamar al método `take` en la` Opción` para mover el valor fuera de la variante `Some` y dejar una variante `None` en su lugar. En otras palabras, un `Worker` que se está ejecutando tendrá una variante `Some` en` thread`, y cuando queramos limpiar un worker, reemplazaremos `Some` con` None` para que el worker no tenga un hilo para ejecutar.
 
 Entonces sabemos que queremos actualizar la definición de `worker` de esta manera:
 
