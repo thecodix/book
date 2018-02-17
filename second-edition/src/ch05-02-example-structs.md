@@ -1,13 +1,13 @@
-## An Example Program Using Structs
+## Un Programa de Ejemplo Utilizando Instrucciones
 
-To understand when we might want to use structs, let’s write a program that
-calculates the area of a rectangle. We’ll start with single variables, and then
-refactor the program until we’re using structs instead.
+Para entender cuándo podríamos querer usar las estructuras, escribamos un programa que 
+calcule el área de un rectángulo. Empezaremos con variables individuales y luego 
+refactorizaremos el programa hasta que utilicemos estructuras.
 
-Let’s make a new binary project with Cargo called *rectangles* that will take
-the width and height of a rectangle specified in pixels and will calculate the
-area of the rectangle. Listing 5-8 shows a short program with one way of doing
-just that in our project’s *src/main.rs*:
+Hagamos un nuevo proyecto binario con Cargo llamado *rectangles* que tomará 
+el ancho y la altura de un rectángulo especificado en píxeles y calculará el 
+área del rectángulo. El Listado 5-8 muestra un programa corto con una forma de hacer
+eso en nuestro proyecto *src/main.rs*:
 
 <span class="filename">Filename: src/main.rs</span>
 
@@ -27,34 +27,34 @@ fn area(width: u32, height: u32) -> u32 {
 }
 ```
 
-<span class="caption">Listing 5-8: Calculating the area of a rectangle
-specified by its width and height in separate variables</span>
+<span class="caption">Listado 5-8: Cálculo del área de un rectángulo
+especificado por su anchura y altura en variables separadas.</span>
 
-Now, run this program using `cargo run`:
+Ahora, ejecuta este programa usando `cargo run`:
 
 ```text
 The area of the rectangle is 1500 square pixels.
 ```
 
-### Refactoring with Tuples
+### Refactorizando con Tuplas
 
-Even though Listing 5-8 works and figures out the area of the rectangle by
-calling the `area` function with each dimension, we can do better. The width
-and the height are related to each other because together they describe one
-rectangle.
+Aunque Listing 5-8 funciona y calcula el área del rectángulo 
+llamando a la función `area` con cada dimensión, podemos hacerlo mejor. El ancho
+y alto se relacionan entre sí porque juntas describen 
+un rectángulo.
 
-The issue with this code is evident in the signature of `area`:
+El problema con este código es evidente en la firma de `area`:
 
 ```rust,ignore
 fn area(width: u32, height: u32) -> u32 {
 ```
 
-The `area` function is supposed to calculate the area of one rectangle, but the
-function we wrote has two parameters. The parameters are related, but that’s
-not expressed anywhere in our program. It would be more readable and more
-manageable to group width and height together. We’ve already discussed one way
-we might do that in the “Grouping Values into Tuples” section of Chapter 3: by
-using tuples. Listing 5-9 shows another version of our program that uses tuples:
+La función `area` se supone que calcula el área de un rectángulo, pero la
+función que escribimos tiene dos parámetros. Los parámetros están relacionados, pero eso 
+no se expresa en ninguna parte de nuestro programa. Sería más legible y más
+manejable agrupar el ancho y la altura juntos. Ya hemos discutido una forma de 
+hacerlo en la sección "Agrupando valores en Tuplas" del Capítulo 3: 
+usando tuplas. El Listado 5-9 muestra otra versión de nuestro programa que usa tuplas:
 
 <span class="filename">Filename: src/main.rs</span>
 
@@ -73,21 +73,21 @@ fn area(dimensions: (u32, u32)) -> u32 {
 }
 ```
 
-<span class="caption">Listing 5-9: Specifying the width and height of the
-rectangle with a tuple</span>
+<span class="caption">Listado 5-9: Especificación del ancho y altura del
+ rectángulo con una tupla</span>
 
-In one way, this program is better. Tuples let us add a bit of structure, and
-we’re now passing just one argument. But in another way this version is less
-clear: tuples don’t name their elements, so our calculation has become more
-confusing because we have to index into the parts of the tuple.
+De alguna manera, este programa es mejor. Las tuplas añaden un poco de estructura, y
+ahora estamos pasando sólo un argumento. Pero de otra forma esta versión es menos
+clara: las tuplas no nombran sus elementos, así que nuestro cálculo se ha vuelto más
+confuso porque tenemos que indexar en las partes de la tupla.
 
-It doesn’t matter if we mix up width and height for the area calculation, but
-if we want to draw the rectangle on the screen, it would matter! We would have
-to keep in mind that `width` is the tuple index `0` and `height` is the tuple
-index `1`. If someone else worked on this code, they would have to figure this
-out and keep it in mind as well. It would be easy to forget or mix up these
-values and cause errors, because we haven’t conveyed the meaning of our data in
-our code.
+No importa si mezclamos ancho y alto para el cálculo del área, pero 
+si queremos dibujar el rectángulo en la pantalla, ¡esto importaría! Deberíamos tener
+en cuenta que `width` es el índice de tupla `0` y `height` es el índice de
+tupla `1`. Si alguien más trabajó en este código, tendrían que averiguar esto
+y tenerlo en cuenta. Sería fácil olvidar o confundir estos valores y 
+causar errores, porque no hemos transmitido el significado de nuestros datos
+en nuestro código.
 
 ### Refactoring with Structs: Adding More Meaning
 
