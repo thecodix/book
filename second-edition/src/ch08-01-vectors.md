@@ -165,10 +165,10 @@ let first = &v[0];
 v.push(6);
 ```
 
-<span class="caption">Listing 8-7: Attempting to add an element to a vector
-while holding a reference to an item</span>
+<span class="caption">Listando 8-7: Intentando agregar un elemento a un vector
+mientras mantiene una referencia a un elemento </ span>
 
-Compiling this code will result in this error:
+Compilar este código dará como resultado este error:
 
 ```text
 error[E0502]: cannot borrow `v` as mutable because it is also borrowed as immutable
@@ -184,24 +184,24 @@ error[E0502]: cannot borrow `v` as mutable because it is also borrowed as immuta
   | - immutable borrow ends here
 ```
 
-The code in Listing 8-7 might look like it should work: why should a reference
-to the first element care about what changes at the end of the vector? The
-reason behind this error is due to the way vectors work: adding a new element
-onto the end of the vector might require allocating new memory and copying the
-old elements to the new space if there isn’t enough room to put all the
-elements next to each other where the vector was. In that case, the reference
-to the first element would be pointing to deallocated memory. The borrowing
-rules prevent programs from ending up in that situation.
+El código en el Listado 8-7 podría parecer que debería funcionar: ¿por qué una referencia
+al primer elemento le importa lo que cambia al final del vector? la
+razón detrás de este error se debe a la forma en que funcionan los vectores: agregar un nuevo elemento
+en el extremo del vector podría requerir asignar nueva memoria y copiar los
+elementos antiguos al nuevo espacio si no hay espacio suficiente para poner todos los
+elementos uno al lado del otro donde estaba el vector. En ese caso, la referencia
+al primer elemento estaría apuntando a la memoria desasignada. El préstamo de
+las reglas impiden que los programas terminen en esa situación.
 
-> Note: For more on the implementation details of the `Vec<T>` type, see “The
-> Rustonomicon” at https://doc.rust-lang.org/stable/nomicon/vec.html.
+> Nota: Para obtener más información sobre los detalles de implementación del tipo `Vec <T>`, consulte "
+> Rustonomicon” en https://doc.rust-lang.org/stable/nomicon/vec.html.
 
-### Iterating Over the Values in a Vector
+### Iteración sobre los valores en un vector
 
-If we want to access each element in a vector in turn, we can iterate through
-all of the elements rather than use indexes to access one at a time. Listing
-8-8 shows how to use a `for` loop to get immutable references to each element
-in a vector of `i32` values and print them out:
+Si queremos acceder a cada elemento en un vector a su vez, podemos iterar a través de
+todos los elementos en lugar de utilizar índices para acceder uno a la vez. El listado
+8-8 muestra como usar `for` bucle para obtener referencias inmutables a cada elemento
+en un vector de valores `i32` e imprímalos:
 
 ```rust
 let v = vec![100, 32, 57];
@@ -210,12 +210,12 @@ for i in &v {
 }
 ```
 
-<span class="caption">Listing 8-8: Printing each element in a vector by
-iterating over the elements using a `for` loop</span>
+<span class="caption">Listado 8-8: Imprimir cada elemento en un vector por el
+iterando sobre los elementos usando un bucle `for` </ span>
 
-We can also iterate over mutable references to each element in a mutable vector
-in order to make changes to all the elements. The `for` loop in Listing 8-9
-will add `50` to each element:
+También podemos iterar sobre referencias mutables para cada elemento en un vector mutable
+para hacer cambios a todos los elementos. El bucle `for` en el Listado 8-9
+agregará `50` a cada elemento:
 
 ```rust
 let mut v = vec![100, 32, 57];
@@ -224,27 +224,27 @@ for i in &mut v {
 }
 ```
 
-<span class="caption">Listing 8-9: Iterating over mutable references to
-elements in a vector</span>
+<span class="caption">Listado 8-9: Iterando sobre referencias mutables a
+elementos en un vector </span>
 
-To change the value that the mutable reference refers to, we have to use the
-dereference operator (`*`) to get to the value in `i` before we can use the
-`+=` operator .
+Para cambiar el valor al que se refiere la referencia mutable, tenemos que usar el
+operador de referencia (`*`) para obtener el valor en `i` antes de que podamos usar el
+operador `+=`.
 
-### Using an Enum to Store Multiple Types
+### Usando un Enum para almacenar múltiples tipos
 
-At the beginning of this chapter, we said that vectors can only store values
-that are the same type. This can be inconvenient; there are definitely use
-cases for needing to store a list of items of different types. Fortunately, the
-variants of an enum are defined under the same enum type, so when we need to
-store elements of a different type in a vector, we can define and use an enum!
+Al comienzo de este capítulo, dijimos que los vectores solo pueden almacenar valores
+que son del mismo tipo. Esto puede ser un inconveniente; definitivamente hay uso de
+casos por la necesidad de almacenar una lista de artículos de diferentes tipos. Afortunadamente, las
+variantes de una enumeración se definen bajo el mismo tipo de enumeración, por lo que cuando necesitamos
+almacenar elementos de un tipo diferente en un vector, podemos definir y usar una enumeración!
 
-For example, let’s say we want to get values from a row in a spreadsheet where
-some of the columns in the row contain integers, some floating-point numbers,
-and some strings. We can define an enum whose variants will hold the different
-value types, and then all the enum variants will be considered the same type:
-that of the enum. Then we can create a vector that holds that enum and so,
-ultimately, holds different types. We’ve demonstrated this in Listing 8-10:
+Por ejemplo, supongamos que queremos obtener valores de una fila en una hoja de cálculo donde
+algunas de las columnas en la fila contienen enteros, algunos números de coma flotante,
+y algunas cuerdas. Podemos definir una enumeración cuyas variantes sostendrán los diferentes
+tipos de valor, y luego todas las variantes enum se considerarán del mismo tipo:
+el de la enumeración. Entonces podemos crear un vector que contenga esa enumeración y así,
+finalmente, tiene diferentes tipos. Hemos demostrado esto en el Listado 8-10:
 
 ```rust
 enum SpreadsheetCell {
@@ -260,24 +260,24 @@ let row = vec![
 ];
 ```
 
-<span class="caption">Listing 8-10: Defining an `enum` to store values of
-different types in one vector</span>
+<span class="caption">Listado 8-10: Definir un `enum` para almacenar valores de
+diferentes tipos en un vector </span>
 
-The reason Rust needs to know what types will be in the vector at compile time
-is so it knows exactly how much memory on the heap will be needed to store each
-element. A secondary advantage is that we can be explicit about what types are
-allowed in this vector. If Rust allowed a vector to hold any type, there would
-be a chance that one or more of the types would cause errors with the
-operations performed on the elements of the vector. Using an enum plus a
-`match` expression means that Rust will ensure at compile time that we always
-handle every possible case, as discussed in Chapter 6.
+La razón por la que Rust necesita saber qué tipos estarán en el vector en tiempo de compilación
+es así que sabe exactamente cuánta memoria en el montón será necesaria para almacenar cada
+elemento. Una ventaja secundaria es que podemos ser explícitos sobre qué tipos son
+permitido en este vector. Si Rust permitiera que un vector tuviera cualquier tipo, habría
+ser una posibilidad de que uno o más de los tipos causaría errores con las
+operaciones realizadas en los elementos del vector. Usando una enumeración más 
+la expresión `match` significa que Rust asegurará en tiempo de compilación que siempre
+maneja todos los casos posibles, como se discutió en el Capítulo 6.
 
-If you don’t know the exhaustive set of types the program will get at runtime
-to store in a vector when you’re writing a program, the enum technique won’t
-work. Instead, you can use a trait object, which we’ll cover in Chapter 17.
+Si no conoce el conjunto exhaustivo de tipos que el programa obtendrá en tiempo de ejecución
+para almacenar en un vector cuando estás escribiendo un programa, la técnica enum no
+trabaja. En cambio, puede usar un objeto de rasgo, que veremos en el Capítulo 17.
 
-Now that we’ve discussed some of the most common ways to use vectors, be sure
-to review the API documentation for all the many useful methods defined on
-`Vec<T>` by the standard library. For example, in addition to `push`, a `pop`
-method removes and returns the last element. Let’s move on to the next
-collection type: `String`!
+Ahora que hemos discutido algunas de las formas más comunes de usar vectores, asegúrese
+para revisar la documentación API para todos los muchos métodos útiles definidos en
+`Vec <T>` por la biblioteca estándar. Por ejemplo, además de `push`,` pop`
+este método elimina y devuelve el último elemento. Pasemos al siguiente
+tipo de colección: `String`!
