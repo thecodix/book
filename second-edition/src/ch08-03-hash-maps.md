@@ -181,7 +181,7 @@ scores.insert(String::from("Blue"), 25);
 println!("{:?}", scores);
 ```
 
-<span class="caption">Listado 8-24: Reemplazar un valor almacenado con una llave
+<span class="caption">Listado 8-24: Reemplazar un valor almacenado con una clave
 particular</span>
 
 Este código pondrá `{"Blue": 25}`. El valor original de `10` ha sido
@@ -279,7 +279,7 @@ Los vectores, cadenas y mapas hash proporcionarán una gran cantidad de funciona
 que necesita en programas donde necesita almacenar, acceder y modificar datos.
 Aquí hay algunos ejercicios que ahora debes estar preparado para resolver:
 
-* Dada una lista de enteros, usa un vector y regresa la media (promedio), mediana
+* Dada una lista de enteros, usa un vector y devuelve la media (promedio), mediana
  (cuando está ordenado, el valor en la posición media) y modo (el valor que
   ocurre más a menudo; un mapa hash será útil aquí) de la lista.
 * Convierte cadenas para cerdo latino. La primera consonante de cada palabra se mueve a
@@ -288,7 +288,7 @@ Aquí hay algunos ejercicios que ahora debes estar preparado para resolver:
   “apple-hay”). ¡Tenga en cuenta los detalles sobre la codificación UTF-8!
 * Usando un mapa hash y vectores, crea una interfaz de texto para permitir que un usuario agregue
   nombres de empleados a un departamento en una empresa. Por ejemplo, "Agregar a Sally a
-  Ingeniería "o" Agregar Amir a Ventas ". Luego, deje que el usuario recupere una lista de todos
+  Ingeniería "o" Agregar Amir a Ventas ". Luego, deje que el usuario recupere una lista de todas las
   personas en un departamento o todas las personas en la empresa por departamento, ordenadas
   alfabeticamente.
 
