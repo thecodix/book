@@ -1,4 +1,4 @@
-## ## Listas de valores guardando vectores
+## ## Los Vectores Almacenan Listas de Valores
 
 El primer tipo de colección que veremos es `Vec <T>`, también conocido como * vector *.
 Los vectores nos permiten almacenar más de un valor en una única estructura de datos que
@@ -64,7 +64,7 @@ v.push(8);
 vector</span>
 
 Como con cualquier variable, como se discutió en el Capítulo 3, si queremos ser capaces de
-cambiar su valor, tenemos que hacerlo mutable usando la palabra clave `mut`. los
+cambiar su valor, tenemos que hacerlo mutable usando la palabra clave `mut`. 
 los números que colocamos dentro son todos de tipo `i32`, y Rust infiere esto de los
 datos, por lo que no necesitamos la anotación `Vec <i32>`.
 
@@ -83,9 +83,9 @@ anotandolo en el Listado 8-4:
 ```
 
 <span class="caption">Listando 8-4: Mostrando donde el vector y sus elementos
-son dejados caer</span>
+son descartados</span>
 
-Cuando el vector se cae, todos sus contenidos también se descartarán, lo que significa
+Cuando el vector se descarta, todos sus contenidos también se descartarán, lo que significa que
 esos enteros que contiene serán limpiados. Esto puede parecer como un
 punto directo, pero puede ser un poco más complicado cuando comenzamos a
 introducir referencias a los elementos del vector. ¡Vamos a abordar eso enseguida!
@@ -107,13 +107,13 @@ let third: &i32 = &v[2];
 let third: Option<&i32> = v.get(2);
 ```
 
-<span class="caption">Listando 8-5: Usando la sintaxis de indexación o el método `get` para
+<span class="caption">Listando 8-5: Usando la sintaxis de índices o el método `get` para
 acceder a un elemento en un vector</span>
 
 Tenga en cuenta dos detalles aquí. Primero, usamos el valor de índice de `2` para obtener el tercer
-elemento: los vectores están indexados por número, comenzando por cero. En segundo lugar, los dos
-diferentes formas de obtener el tercer elemento son usando `&` y `[]`, que da
-usen una referencia, o usando el método `get` con el índice pasado como
+elemento: los vectores están en los índices por números, comenzando por cero. En segundo lugar, los dos tienen
+diferentes formas de obtener el tercer elemento usando `&` y `[]`, que da
+una referencia, o usando el método `get` con el índice pasado como
 argumento, que nos da una `Opción <& T>`.
 
 La razón por la que Rust tiene dos formas de hacer referencia a un elemento es para que pueda elegir cómo
@@ -132,10 +132,10 @@ let does_not_exist = v.get(100);
 <span class="caption">Listando 8-6: Intentando acceder al elemento en el índice
 100 en un vector que contiene 5 elementos </ span>
 
-Cuando ejectures este código, el primer método `[]` causará `panic!` por que este
-hace referencia a un elemento inexistente. Este método se usa mejor cuando quiere su
-programa para considerar un intento de acceder a un elemento más allá del final del vector
-sería un error fatal que bloquea el programa.
+Cuando ejecutes este código, el primer método `[]` causará `panic!` por que este
+hace referencia a un elemento inexistente. Este método podría usarse de una mejor manera
+si quiere que su programa considere el acceder a un elemento que está más allá del final del vector
+ya que sería un grave error si el programa llegara a bloquearse.
 
 Cuando el método `get` se pasa un índice que está fuera del vector, regresa al
 `None` sin entrar en pánico. Deberías usar este método si accedes a un elemento
