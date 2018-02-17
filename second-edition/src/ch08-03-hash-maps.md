@@ -1,28 +1,28 @@
-## Hash Maps Store Keys Associated with Values
+## Hash Maps Store claves asociadas con valores
 
-The last of our common collections is the *hash map*. The type `HashMap<K, V>`
-stores a mapping of keys of type `K` to values of type `V`. It does this via a
-*hashing function*, which determines how it places these keys and values into
-memory. Many different programming languages support this kind of data
-structure, but often use a different name, such as hash, map, object, hash
-table, or associative array, just to name a few.
+La última de nuestras colecciones comunes es el * hash map *. El tipo `HashMap <K, V>`
+almacena una asignación de claves de tipo `K` a valores de tipo` V`. Lo hace a través de 
+* hashing function *, que determina cómo coloca estas claves y valores en la
+memoria. Muchos lenguajes de programación diferentes admiten este tipo de datos
+estructura, pero a menudo usan un nombre diferente, como hash, mapa, objeto, mesa
+hash, o matriz asociativa, solo por mencionar algunos
 
-Hash maps are useful for when you want to look up data not by an index, as you
-can with vectors, but by using a key that can be of any type. For example, in a
-game, you could keep track of each team’s score in a hash map where each key is
-a team’s name and the values are each team’s score. Given a team name, you can
-retrieve its score.
+Los mapas hash son útiles para cuando quiere buscar datos no por un índice, ya que
+puede con vectores, pero usando una clave que puede ser de cualquier tipo. Por ejemplo, en un
+juego, puedes hacer un seguimiento del puntaje de cada equipo en un mapa hash donde cada clave es
+el nombre de un equipo y los valores son el puntaje de cada equipo. Dado el nombre de un equipo, puedes
+recuperar su puntaje
 
-We’ll go over the basic API of hash maps in this section, but many more goodies
-are hiding in the functions defined on `HashMap<K, V>` by the standard library.
-As always, check the standard library documentation for more information.
+Repasaremos la API básica de los mapas hash en esta sección, pero muchos más detalles
+se esconden en las funciones definidas en `HashMap <K, V>` por la biblioteca estándar.
+Como siempre, consulte la documentación estándar de la biblioteca para obtener más información.
 
-### Creating a New Hash Map
+### Crear un nuevo mapa hash
 
-We can create an empty hash map with `new` and add elements with `insert`. In
-Listing 8-20, we’re keeping track of the scores of two teams whose names are
-Blue and Yellow. The Blue team will start with 10 points, and the Yellow team
-starts with 50:
+Podemos crear un mapa hash vacío con `new` y agregar elementos con` insert`. En
+Listado 8-20, estamos haciendo un seguimiento de los puntajes de dos equipos cuyos nombres son
+Azul y amarillo. El equipo azul comenzará con 10 puntos, y el equipo amarillo
+comienza con 50:
 
 ```rust
 use std::collections::HashMap;
@@ -33,27 +33,27 @@ scores.insert(String::from("Blue"), 10);
 scores.insert(String::from("Yellow"), 50);
 ```
 
-<span class="caption">Listing 8-20: Creating a new hash map and inserting some
-keys and values</span>
+<span class="caption">Listado 8-20: Creando un nuevo mapa hash e insertando algunos
+llaves y valores</span>
 
-Note that we need to first `use` the `HashMap` from the collections portion of
-the standard library. Of our three common collections, this one is the least
-often used, so it’s not included in the features brought into scope
-automatically in the prelude. Hash maps also have less support from the
-standard library; there’s no built-in macro to construct them, for example.
+Tenga en cuenta que necesitamos primero `use` el` HashMap` de la porción de colecciones de
+la biblioteca estándar. De nuestras tres colecciones comunes, esta es la menos siendo
+de uso frecuente, por lo que no está incluido en las características incluidas en el alcance
+automático del preludio. Los mapas Hash también tienen menos soporte de la
+biblioteca estándar; no hay una macro incorporada para construirlos, por ejemplo.
 
-Just like vectors, hash maps store their data on the heap. This `HashMap` has
-keys of type `String` and values of type `i32`. Like vectors, hash maps are
-homogeneous: all of the keys must have the same type, and all of the values
-must have the same type.
+Al igual que los vectores, los mapas hash almacenan sus datos en el montón. Este `HashMap` tiene
+teclas de tipo `String` y valores de tipo` i32`. Como vectores, los mapas hash son
+homogéneo: todas las claves deben tener el mismo tipo y todos los valores
+debe tener el mismo tipo.
 
-Another way of constructing a hash map is by using the `collect` method on a
-vector of tuples, where each tuple consists of a key and its value. The
-`collect` method gathers data into a number of collection types, including
-`HashMap`. For example, if we had the team names and initial scores in two
-separate vectors, we can use the `zip` method to create a vector of tuples
-where “Blue” is paired with 10, and so forth. Then we can use the `collect`
-method to turn that vector of tuples into a `HashMap` as shown in Listing 8-21:
+Otra forma de construir un mapa hash es usar el método `collect` en un
+vector de tuplas, donde cada tupla consiste en una clave y su valor. los
+métodos `collect` reúnen datos en una cantidad de tipos de colección, incluyendo
+`HashMap`. Por ejemplo, si tuviéramos los nombres de los equipos y puntajes iniciales en dos
+vectores separados, podemos usar el método `zip` para crear un vector de tuplas
+donde "Azul" está emparejado con 10, y así sucesivamente. Entonces podemos usar el método `collect`
+para convertir ese vector de tuplas en un `HashMap` como se muestra en el Listado 8-21:
 
 ```rust
 use std::collections::HashMap;
@@ -64,20 +64,20 @@ let initial_scores = vec![10, 50];
 let scores: HashMap<_, _> = teams.iter().zip(initial_scores.iter()).collect();
 ```
 
-<span class="caption">Listing 8-21: Creating a hash map from a list of teams
-and a list of scores</span>
+<span class="caption">Listado 8-21: Crear un mapa hash a partir de una lista de equipos
+y una lista de puntajes</span>
 
-The type annotation `HashMap<_, _>` is needed here because it’s possible to
-`collect` into many different data structures, and Rust doesn’t know which you
-want unless you specify. For the type parameters for the key and value types,
-however, we use underscores, and Rust can infer the types that the hash map
-contains based on the types of the data in the vectors.
+La anotación tipo `HashMap <_, _>` es necesaria aquí porque es posible
+`recoger` en muchas estructuras de datos diferentes, y Rust no sabe cuál 
+escoger a menos que especifiques. Para los parámetros de tipo para los tipos de clave y valor,
+sin embargo, usamos caracteres de subrayado, y Rust puede inferir los tipos que el mapa de hash
+contiene en base a los tipos de datos en los vectores.
 
-### Hash Maps and Ownership
+### Mapas Hash y Propiedad
 
-For types that implement the `Copy` trait, like `i32`, the values are copied
-into the hash map. For owned values like `String`, the values will be moved and
-the hash map will be the owner of those values as demonstrated in Listing 8-22:
+Para los tipos que implementan el rasgo `Copiar`, como` i32`, los valores se copian
+en el mapa hash. Para valores propios como `String`, los valores se moverán y
+el mapa hash será el propietario de esos valores como se muestra en el Listado 8-22:
 
 ```rust
 use std::collections::HashMap;
@@ -91,21 +91,21 @@ map.insert(field_name, field_value);
 // see what compiler error you get!
 ```
 
-<span class="caption">Listing 8-22: Showing that keys and values are owned by
-the hash map once they’re inserted</span>
+<span class="caption">Listado 8-22: Mostrar que las claves y los valores son propiedad del
+mapa hash una vez que se insertan</span>
 
-We aren’t able to use the variables `field_name` and `field_value` after
-they’ve been moved into the hash map with the call to `insert`.
+No podemos usar las variables `field_name` y` field_value` después de que
+se han movido al mapa hash con la llamada a `insert`.
 
-If we insert references to values into the hash map, the values won’t be moved
-into the hash map. The values that the references point to must be valid for at
-least as long as the hash map is valid. We’ll talk more about these issues in
-the “Validating References with Lifetimes” section in Chapter 10.
+Si insertamos referencias a valores en el mapa hash, los valores no se moverán
+en el mapa hash. Los valores a los que apuntan las referencias deben ser válidos al
+menos mientras el mapa hash sea válido. Hablaremos más sobre estos temas en
+la sección "Validación de referencias con tiempos de vida" en el Capítulo 10.
 
-### Accessing Values in a Hash Map
+### Acceso a valores en un mapa hash
 
-We can get a value out of the hash map by providing its key to the `get` method
-as shown in Listing 8-23:
+Podemos obtener un valor del mapa hash proporcionando su clave para el método `get`
+como se muestra en el Listado 8-23:
 
 ```rust
 use std::collections::HashMap;
@@ -119,17 +119,17 @@ let team_name = String::from("Blue");
 let score = scores.get(&team_name);
 ```
 
-<span class="caption">Listing 8-23: Accessing the score for the Blue team
-stored in the hash map</span>
+<span class="caption">Listado 8-23: Accediendo al puntaje del equipo azul
+almacenado en el mapa hash</span>
 
-Here, `score` will have the value that’s associated with the Blue team, and the
-result will be `Some(&10)`. The result is wrapped in `Some` because `get`
-returns an `Option<&V>`; if there’s no value for that key in the hash map,
-`get` will return `None`. The program will need to handle the `Option` in one
-of the ways that we covered in Chapter 6.
+Aquí, `score` tendrá el valor que está asociado con el equipo azul, y el
+resultado será `Some(&10)`. El resultado está envuelto en `Some` porque `get`
+devuelve a `Option<&V>`; si no hay ningún valor para esa clave en el mapa hash,
+`get` regresará a `None`. El programa necesitará manejar la `Option` en una de 
+las maneras que cubrimos en el capítulo 6.
 
-We can iterate over each key/value pair in a hash map in a similar manner as we
-do with vectors, using a `for` loop:
+Podemos iterar sobre cada par clave / valor en un mapa hash de manera similar a como lo hacemos
+hacer con vectores, usando un bucle `for`:
 
 ```rust
 use std::collections::HashMap;
@@ -144,31 +144,31 @@ for (key, value) in &scores {
 }
 ```
 
-This code will print each pair in an arbitrary order:
+Este código imprimirá cada par en un orden arbitrario:
 
 ```text
 Yellow: 50
 Blue: 10
 ```
 
-### Updating a Hash Map
+### Actualización de un mapa Hash
 
-Although the number of keys and values is growable, each key can only have one
-value associated with it at a time. When we want to change the data in a hash
-map, we have to decide how to handle the case when a key already has a value
-assigned. We could replace the old value with the new value, completely
-disregarding the old value. We could keep the old value and ignore the new
-value, and only add the new value if the key *doesn’t* already have a value. Or
-we could combine the old value and the new value. Let’s look at how to do each
-of these!
+Aunque la cantidad de claves y valores es creíble, cada clave solo puede tener un
+valor asociado con él a la vez. Cuando queremos cambiar los datos en un mapa
+hash, tenemos que decidir cómo manejar el caso cuando una clave ya tiene un valor
+asignado. Podríamos reemplazar el valor anterior por el nuevo valor, completamente
+sin tener en cuenta el valor anterior. Podríamos mantener el valor anterior e ignorar el nuevo
+valor, y solo agregue el nuevo valor si la clave * no * ya tiene un valor. O
+podríamos combinar el valor anterior y el nuevo valor. ¡Veamos cómo hacer cada
+de estos!
 
-#### Overwriting a Value
+#### Sobrescribir un valor
 
-If we insert a key and a value into a hash map, and then insert that same key
-with a different value, the value associated with that key will be replaced.
-Even though the code in Listing 8-24 calls `insert` twice, the hash map will
-only contain one key/value pair because we’re inserting the value for the Blue
-team’s key both times:
+Si insertamos una clave y un valor en un mapa hash, y luego insertamos esa misma clave
+con un valor diferente, el valor asociado con esa clave será reemplazado.
+Aunque el código en el Listado 8-24 llama `insert` dos veces, el hash map
+solo contiene un par de key/value porque estamos insertando el valor para el equipo azul
+en ambas ocasiones:
 
 ```rust
 use std::collections::HashMap;
