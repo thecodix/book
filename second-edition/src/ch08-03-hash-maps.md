@@ -153,7 +153,7 @@ Blue: 10
 
 ### Actualización de un mapa Hash
 
-Aunque la cantidad de claves y valores es creíble, cada clave solo puede tener un
+Aunque la cantidad de claves y valores puede crecer, cada clave solo puede tener un
 valor asociado con él a la vez. Cuando queremos cambiar los datos en un mapa
 hash, tenemos que decidir cómo manejar el caso cuando una clave ya tiene un valor
 asignado. Podríamos reemplazar el valor anterior por el nuevo valor, completamente
