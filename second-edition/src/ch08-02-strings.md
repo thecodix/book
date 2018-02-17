@@ -1,50 +1,50 @@
-## Strings Store UTF-8 Encoded Text
+## Tienda de cadenas de caracteres de texto codificado UTF-8
 
-We talked about strings in Chapter 4, but we’ll look at them in more depth now.
-New Rustaceans commonly get stuck on strings due to a combination of three
-concepts: Rust’s propensity for exposing possible errors, strings being a more
-complicated data structure than many programmers give them credit for, and
-UTF-8. These concepts combine in a way that can seem difficult when you’re
-coming from other programming languages.
+Hablamos sobre cadenas de caracteres (Strings) en el Capítulo 4, pero ahora los veremos con más profundidad.
+Los nuevos "Rustaceans" se quedan atascados en las cadenas de caracteres comúnmente debido a la combinación de tres
+conceptos: la propensidad de Rust a exponer posbiles errores, las cadenas de caracteres siendo una estructura
+de datos más complicada de lo que muchos programadores les dan crédito, y
+UTF-8. Estos conceptos se combinan de una manera que puede parecer difícil cuando vienes
+de otros lenguajes de programación.
 
-This discussion of strings is in the collections chapter because strings are
-implemented as a collection of bytes plus some methods to provide useful
-functionality when those bytes are interpreted as text. In this section, we’ll
-talk about the operations on `String` that every collection type has, such as
-creating, updating, and reading. We’ll also discuss the ways in which `String`
-is different than the other collections, namely how indexing into a `String` is
-complicated by the differences between how people and computers interpret
-`String` data.
+Esta discusión de cadenas de caracteres está en este capítulo porque las cadenas de caracteres están
+implementadas como una colección de bytes más algunos métodos para proveer funcionalidades
+útiles cuando esos bytes son interceptados como texto. En esta sección, vamos a
+hablar sobre las operaciones en `String` que todo tipo de colección tiene, tales como
+crear, actualizar, y leer. También discutiremos la forma en la que `String`
+es completamente diferente a otras colecciones, concretamente, cómo indexar en una `String` es
+complicado por las diferencias entre cómo interpretan las personas y las computadoras
+los datos de `String`.
 
-### What Is a String?
+### ¿Qué es una cadena de caracteres (String)?
 
-We’ll first define what we mean by the term *string*. Rust has only one string
-type in the core language, which is the string slice `str` that is usually seen
-in its borrowed form `&str`. In Chapter 4, we talked about *string slices*,
-which are references to some UTF-8 encoded string data stored elsewhere. String
-literals, for example, are stored in the binary output of the program and are
-therefore string slices.
+Primero definiremos a qué nos referimos con el término *string*. Rust tiene un solo tipo de cadena de
+caracteres en el lenguaje central, el cual es el trozo de cadena `str` que es visto usualmente
+en su forma prestada `&str`. En el Capítulo 4, hablamos sobre *string slices*,
+las cuales son referencias a algunas cadenas de caracteres de datos cifradas en UTF-8 guardadas en otra parte. Las String
+literales, por ejemplo, son guardadas en la salida binaria del programa y son,
+por lo tanto, trozos de cadena.
 
-The `String` type is provided in Rust’s standard library rather than coded into
-the core language and is a growable, mutable, owned, UTF-8 encoded string type.
-When Rustaceans refer to “strings” in Rust, they usually mean the `String` and
-the string slice `&str` types, not just one of those types. Although this
-section is largely about `String`, both types are used heavily in Rust’s
-standard library and both `String` and string slices are UTF-8 encoded.
+El tipo `String` es dado en la biblioteca estándar de Rust en vez de estar cifrado en
+el lenguaje central y es un tipo de cadena de caracteres cifrado en UTF-8 cultivable, mutable y propio.
+Cuando los "Rustaceans" se refieren a “strings” en Rust, ellos usualemnte quieren decir el `String` y
+los tipos de trozo de cadena `&str`, no sólo uno de esos tipos. A pesar de que esta
+sección es en garn parte sobre `String`, ambos tipos son muy usados en la biblioteca
+estándar de Rust y ambos `String` y trozos de cadena son cifrados en UTF-8.
 
-Rust’s standard library also includes a number of other string types, such as
-`OsString`, `OsStr`, `CString`, and `CStr`. Library crates can provide even
-more options for storing string data. Similar to the `*String`/`*Str` naming,
-they often provide an owned and borrowed variant, just like `String`/`&str`.
-These string types can store text in different encodings or be represented in
-memory in a different way, for example. We won’t discuss these other string
-types in this chapter; see their API documentation for more about how to use
-them and when each is appropriate.
+La biblioteca estándar de Rust también incluye una serie de otros tipos de cadenas, tales como
+`OsString`, `OsStr`, `CString`, y `CStr`. Los cajones de biblioteca pueden proveer incluso
+más opciones para almacenar datos de cadenas de caracteres. Similar a la asignación de nombre `*String`/`*Str`,
+ellos a menudo proveen una variante propia y prestada, justo como `String`/`&str`.
+Estos tipos de cadenas pueden almacenar texto en diferentes cifrados o ser representados en
+la memoria de una manera diferente, por ejemplo. No discutiremos estos otros tipos
+de cadena en este capítulo; vea su manual API para más sobre cómo usarlos
+y cuando cada uno es apropiado.
 
-### Creating a New String
+### Creando una nueva cadena de caracteres
 
-Many of the same operations available with `Vec<T>` are available with `String`
-as well, starting with the `new` function to create a string, shown in Listing
+Muchas de las mismas operaciones disponibles con `Vec<T>` están disponibles con `String`
+también, empezando con la función `new` para crear una cadena de caracteres, mostrada en el Listado
 8-11:
 
 ```rust
@@ -53,11 +53,11 @@ let mut s = String::new();
 
 <span class="caption">Listing 8-11: Creating a new, empty `String`</span>
 
-This line creates a new empty string called `s` that we can then load data
-into. Often, we’ll have some initial data that we want to start the string
-with. For that, we use the `to_string` method, which is available on any type
-that implements the `Display` trait, which string literals do. Listing 8-12
-shows two examples:
+Esta línea crea una nueva cadena vacía llamada `s` a la que luego podemos cargar datos.
+A menudo, tendremos algunos datos iniciales con los que querremos iniciar la
+cadena. Para esto, usamos el método `to_string`, el cual está disponible en cualquier tipo
+que implemente la característica `Display`, la cual las string literales tienen. El listado 8-12
+muetra dos ejemplos:
 
 ```rust
 let data = "initial contents";
@@ -71,11 +71,11 @@ let s = "initial contents".to_string();
 <span class="caption">Listing 8-12: Using the `to_string` method to create a
 `String` from a string literal</span>
 
-This code creates a string containing `initial contents`.
+Este código crea una cadena, conteniendo `initial contents`.
 
-We can also use the function `String::from` to create a `String` from a string
-literal. The code in Listing 8-13 is equivalent to the code from Listing 8-12
-that uses `to_string`:
+Podemos también usar la función `String::from` para crear una `String` desde una string
+literal. El código en el Listado 8-13 es equivalente al código del Listado 8-12
+que usa `to_string`:
 
 ```rust
 let s = String::from("initial contents");
@@ -84,13 +84,13 @@ let s = String::from("initial contents");
 <span class="caption">Listing 8-13: Using the `String::from` function to create
 a `String` from a string literal</span>
 
-Because strings are used for so many things, we can use many different generic
-APIs for strings, providing us with a lot of options. Some of them can seem
-redundant, but they all have their place! In this case, `String::from` and
-`to_string` do the same thing, so which you choose is a matter of style.
+Debido a que las cadenas de caracteres son usadas de muchas maneras, podemos usar muchas diferentes APIs
+genericas para las cadenas, proporcionándonos un montón de opciones. Algunas de ellas pueden parecer
+redundantes, ¡pero todas ellas tienen su lugar! En este caso, `String::from` y
+`to_string` hacen lo mismo, entonces, la que elijas es una cuestión de estilo.
 
-Remember that strings are UTF-8 encoded, so we can include any properly encoded
-data in them, as shown in Listing 8-14:
+Recuerda que las cadenas de caracteres están cifradas en UTF-8, así que podemos incluir cualquier dato propiamente
+cifrado en ellas, como se muestra en el Listado 8-14:
 
 ```rust
 let hello = String::from("السلام عليكم");
@@ -109,19 +109,19 @@ let hello = String::from("Hola");
 <span class="caption">Listing 8-14: Storing greetings in different languages in
 strings</span>
 
-All of these are valid `String` values.
+Todos estos son valores válidos de `String`.
 
-### Updating a String
+### Actualizando una cadena de caracteres
 
-A `String` can grow in size and its contents can change, just like the contents
-of a `Vec<T>`, by pushing more data into it. In addition, we can conveniently
-use the `+` operator or the `format!` macro to concatenate `String` values
-together.
+Una `String` puede incrementar su tamaño y su contenido puede cambiar, justo como el contenido
+de un `Vec<T>`, poniendo más datos en él. En adición, podemos usar
+convenientemente el operador `+` o la Macro `format!` para encadenar valores de `String`
+juntos.
 
-#### Appending to a String with `push_str` and `push`
+#### Añadiendo a una cadena de caracteres con `push_str` y `push`
 
-We can grow a `String` by using the `push_str` method to append a string slice,
-as shown in Listing 8-15:
+Podemos aumentar el tamaño de `String` usando el método `push_str` para añadir un trozo de cadena,
+como se muestra en el Listado 8-15:
 
 ```rust
 let mut s = String::from("foo");
@@ -131,10 +131,10 @@ s.push_str("bar");
 <span class="caption">Listing 8-15: Appending a string slice to a `String`
 using the `push_str` method</span>
 
-After these two lines, `s` will contain `foobar`. The `push_str` method takes a
-string slice because we don’t necessarily want to take ownership of the
-parameter. For example, the code in Listing 8-16 shows that it would be
-unfortunate if we weren’t able to use `s2` after appending its contents to `s1`:
+Después de estas dos líneas, `s` contendrá `foobar`. El método `push_str` toma un
+trozo de cadena porque no queremos necesariamente tomar posesión del
+parametro. Por ejemplo, el código en el Listado 8-16 muestra que sería
+desafortunado si no estuviéramos capaces de usar `s2` después de añadir su contenido a `s1`:
 
 ```rust
 let mut s1 = String::from("foo");
@@ -146,12 +146,12 @@ println!("s2 is {}", s2);
 <span class="caption">Listing 8-16: Using a string slice after appending its
 contents to a `String`</span>
 
-If the `push_str` method took ownership of `s2`, we wouldn’t be able to print
-out its value on the last line. However, this code works as we’d expect!
+Si el método `push_str` toma posesión de `s2`, nosotros no seríamos capaces de poner
+su valor en la última línea. Sin embargo, ¡este código funciona como hemos esperado!
 
-The `push` method takes a single character as a parameter and adds it to the
-`String`. Listing 8-17 shows code that adds the letter l character to a
-`String` using the `push` method:
+El método `push` toma un solo caracter como parámetro y lo añade a el
+`String`. El Listado 8-17 muestra un código que añade el caracter letra l a una
+`String` usando el método `push`:
 
 ```rust
 let mut s = String::from("lo");
@@ -161,12 +161,12 @@ s.push('l');
 <span class="caption">Listing 8-17: Adding one character to a `String` value
 using `push`</span>
 
-As a result of this code, `s` will contain `lol`.
+Como resultado de este código, `s` contendrá `lol`.
 
-#### Concatenation with the `+` Operator or the `format!` Macro
+#### Encadenamiento con el operador `+` o la Macro `format!`
 
-Often, we’ll want to combine two existing strings. One way is to use the `+`
-operator, as shown in Listing 8-18:
+A menudo, querremos combinar dos cadenas de caracteres existentes. Una forma es usar el operador `+`,
+como se muestra en el Listado 8-18:
 
 ```rust
 let s1 = String::from("Hello, ");
@@ -177,22 +177,22 @@ let s3 = s1 + &s2; // Note that s1 has been moved here and can no longer be used
 <span class="caption">Listing 8-18: Using the `+` operator to combine two
 `String` values into a new `String` value</span>
 
-The string `s3` will contain `Hello, world!` as a result of this code. The
-reason `s1` is no longer valid after the addition and the reason we used a
-reference to `s2` has to do with the signature of the method that gets called
-when we use the `+` operator. The `+` operator uses the `add` method, whose
-signature looks something like this:
+La cadena `s3` contendrá `Hello, world!` como resultado de este códiigo. La
+razón `s1` ya no es is válida luego de la adición y la razón que usamos en
+referencia a `s2` tiene que ver con la firma del método que es llamado
+cuando usamos el operador `+`. El operador `+` usa el método `add`, cuya
+firma luce algo así:
 
 ```rust,ignore
 fn add(self, s: &str) -> String {
 ```
 
-This isn’t the exact signature that’s in the standard library: in the standard
-library, `add` is defined using generics. Here, we’re looking at the signature
-of `add` with concrete types substituted for the generic ones, which is what
-happens when we call this method with `String` values. We’ll discuss generics
-in Chapter 10. This signature gives us the clues we need to understand the
-tricky bits of the `+` operator.
+Esta no es la firma exacta que está en la biblioteca estándar: En la biblioteca
+estándar, `add` es definido usando genéricos. Aquí, estamos echando un vistazo a la firma
+de `add` con tipos concretos substituidos por los genéricos, que es lo que
+pasa cuando convocamos este método con valores de `String`. Descutiremos genéricos
+en el Capítulo 10. Esta firma nos da las pistas que necesitamos para entener los
+bits complicados del operador `+`.
 
 First, `s2` has an `&`, meaning that we’re adding a *reference* of the second
 string to the first string because of the `s` parameter in the `add` function:
