@@ -1,4 +1,4 @@
-## Tienda de cadenas de caracteres de texto codificado UTF-8
+## Los strings almacenan texto codificado en UTF-8
 
 Hablamos sobre cadenas de caracteres (Strings) en el Capítulo 4, pero ahora los veremos con más profundidad.
 Los nuevos "Rustaceans" se quedan atascados en las cadenas de caracteres comúnmente debido a la combinación de tres
