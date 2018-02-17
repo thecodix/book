@@ -40,7 +40,8 @@ The area of the rectangle is 1500 square pixels.
 
 Aunque Listing 5-8 funciona y calcula el área del rectángulo 
 llamando a la función `area` con cada dimensión, podemos hacerlo mejor. El ancho
-y alto se relacionan entre sí porque juntas describen un rectángulo.
+y alto se relacionan entre sí porque juntas describen 
+un rectángulo.
 
 El problema con este código es evidente en la firma de `area`:
 
