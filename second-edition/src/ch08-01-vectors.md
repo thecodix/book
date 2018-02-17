@@ -134,7 +134,7 @@ let does_not_exist = v.get(100);
 
 Cuando ejecutes este código, el primer método `[]` causará `panic!` por que este
 hace referencia a un elemento inexistente. Este método podría usarse de una mejor manera
-si quiere que su programa considere el acceder a un elemento que está más allá del final del vector
+si quiere que su programa pueda considerar el acceder a un elemento que está más allá del final del vector
 ya que sería un grave error si el programa llegara a bloquearse.
 
 Cuando el método `get` se pasa un índice que está fuera del vector, regresa al
