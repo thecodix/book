@@ -17,7 +17,7 @@ Repasaremos la API básica de los mapas hash en esta sección, pero muchos más 
 se esconden en las funciones definidas en `HashMap <K, V>` por la biblioteca estándar.
 Como siempre, consulte la documentación estándar de la biblioteca para obtener más información.
 
-### Crear un nuevo mapa hash
+### Crear un nuevo hash map
 
 Podemos crear un mapa hash vacío con `new` y agregar elementos con` insert`. En
 Listado 8-20, estamos haciendo un seguimiento de los puntajes de dos equipos cuyos nombres son
@@ -73,7 +73,7 @@ escoger a menos que especifiques. Para los parámetros de tipo para los tipos de
 sin embargo, usamos caracteres de subrayado, y Rust puede inferir los tipos que el mapa de hash
 contiene en base a los tipos de datos en los vectores.
 
-### Mapas Hash y Propiedad
+### hash map y Propiedad
 
 Para los tipos que implementan el rasgo `Copiar`, como` i32`, los valores se copian
 en el mapa hash. Para valores propios como `String`, los valores se moverán y
@@ -102,7 +102,7 @@ en el mapa hash. Los valores a los que apuntan las referencias deben ser válido
 menos mientras el mapa hash sea válido. Hablaremos más sobre estos temas en
 la sección "Validación de referencias con tiempos de vida" en el Capítulo 10.
 
-### Acceso a valores en un mapa hash
+### Acceso a valores en un hash map
 
 Podemos obtener un valor del mapa hash proporcionando su clave para el método `get`
 como se muestra en el Listado 8-23:
@@ -151,7 +151,7 @@ Yellow: 50
 Blue: 10
 ```
 
-### Actualización de un mapa Hash
+### Actualización de un hash map
 
 Aunque la cantidad de claves y valores puede crecer, cada clave solo puede tener un
 valor asociado con él a la vez. Cuando queremos cambiar los datos en un mapa
