@@ -196,7 +196,7 @@ muchos proyectos de Rust!
 
 ### El Proceso RFC y Los Equipos
 
-Así que ¿Cómo aprende usted de estas nuevas funcionalidades? El modelo dedesarrollo
+Así que ¿Cómo aprende usted de estas nuevas funcionalidades? El modelo de desarrollo
 de Rust sigue un *Request For Comments (RFC)(Proceso de Pedir Por Comentarios)*.
 Si quiere una mejora en Rust, puede escribir una propuesta, llamada RFC.
 
@@ -225,7 +225,7 @@ como lo discutimos en la sección de "Funcionalidades Inestables".
 convenciones de `cargo`
 * Encontrado sobre el cómo Rust está desarrollado
 
-Este es un buen momento para escribir un programa substancioso, para acostumbrarse
+Este es un buen momento para escribir un programa importante, para acostumbrarse
 a leer y escribir códigos Rust. En el próximo capítulo, crearemos un programa de
 un juego de adivinanzas. Si prefiere comenzar aprendiendo sobre cómo los conceptos
 de programación común funcionan en Rust, vea el Capítulo 3.
