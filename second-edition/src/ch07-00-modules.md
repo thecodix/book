@@ -1,4 +1,4 @@
-# Usando de módulos para Reutilizar y Organizar el Código
+# Usando Módulos para Reutilizar y Organizar el Código
 
 Cuando empiezas a escribir programas en Rust, tu código podría vivir únicamente en la
 función `main`. A medida que tu código crezca, con el tiempo trasladarás la funcionalidad a otras
@@ -21,4 +21,4 @@ puedes elegir si esas definiciones son visibles fuera de su módulo
 * La palabra clave `use` trae módulos, o las definiciones dentro de los módulos, al 
   alcance para que sea más fácil referirse a ellos.
 
-Miraremos cada una de estas partes para ver cómo encajan en el todo.
+Miraremos cada una de estas partes para ver cómo encajan en lo global.
