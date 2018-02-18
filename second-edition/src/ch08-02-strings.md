@@ -1,13 +1,13 @@
 ## Los strings almacenan texto codificado en UTF-8
 
-Hablamos sobre cadenas de caracteres (Strings) en el Capítulo 4, pero ahora los veremos con más profundidad.
-Los nuevos "Rustaceans" se quedan atascados en las cadenas de caracteres comúnmente debido a la combinación de tres
-conceptos: la propensidad de Rust a exponer posbiles errores, las cadenas de caracteres siendo una estructura
+Hablamos sobre cadenas de caracteres (Strings) en el Capítulo 4,                                                                          pero ahora los veremos con más profundidad.
+Los nuevos "Rustaceans" se quedan atascados en las cadenas de caracteres                                                          comúnmente debido a la combinación de tres
+conceptos: la propensidad de Rust a exponer posbiles errores, las cadenas                                                                de caracteres siendo una estructura
 de datos más complicada de lo que muchos programadores les dan crédito, y
-UTF-8. Estos conceptos se combinan de una manera que puede parecer difícil cuando vienes
+UTF-8. Estos conceptos se combinan de una manera que                                                                                puede parecer difícil cuando vienes
 de otros lenguajes de programación.
 
-Esta discusión de cadenas de caracteres está en este capítulo porque las cadenas de caracteres están
+Esta discusión de cadenas de caracteres está en este capítulo                                                                      porque las cadenas de caracteres están
 implementadas como una colección de bytes más algunos métodos para proveer funcionalidades
 útiles cuando esos bytes son interceptados como texto. En esta sección, vamos a
 hablar sobre las operaciones en `String` que todo tipo de colección tiene, tales como
