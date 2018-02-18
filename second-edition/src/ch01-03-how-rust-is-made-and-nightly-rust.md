@@ -1,6 +1,6 @@
 ## Cómo está Hecho Rust y "Rust Nocturno"
 
-Antes de cavar en el lenguaje, quisiéramos terminar el capítulo introductorio
+Antes de indagar en el lenguaje, quisiéramos terminar el capítulo introductorio
 hablando de cómo está hecho Rust, y cómo eso le afecta a usted como
 desarrollador de Rust. Nosotros mencionamos en la sección de "Instalación"
 que las salidas de este libro fueron generadas en la versión estable
@@ -26,35 +26,39 @@ a actualizar a una versión estable de Rust. Cada actualización debería ser si
 dolor. Al mismo tiempo, la actualización debería de traerle nuevas funcionalidades,
 menos errores, y mejores tiempos de compilación.
 
-### Choo, Choo! Release Channels and Riding the Trains
+### ¡Choo, Choo! Canales de Lanzamientos y Abordando los Trenes
 
-Rust development operates on a *train schedule*. That is, all development is
-done on the `master` branch of the Rust repository. Releases follow a software
-release train model, which has been used by Cisco IOS and other software
-projects. There are three *release channels* for Rust:
+El desarrollo de Rust opera en una *programación de tren*. Eso significa que
+todo desarrollo se hace en la rama `master` del repositorio Rust. Los lanzamientos
+siguen un modelo de tren de lanzamiento de software, el cual ha sido usado por
+Cisco IOS y otros proyectos de software. Hay tres *canales de lanzamientos*
+para Rust:
 
-* Nightly
+* Nocturno
 * Beta
-* Stable
+* Estable
 
-Most Rust developers primarily use the stable channel, but those who want to
-try out experimental new features may use nightly or beta.
+La mayoría de los desarrolladores de Rust principalmente usan el canal estable,
+pero aquellos que quieran probar funcionalidades experimentales nuevas pueden
+usar el canal nocturno o el beta.
 
-Here’s an example of how the development and release process works: let’s
-assume that the Rust team is working on the release of Rust 1.5. That release
-happened in December of 2015, but it will provide us with realistic version
-numbers. A new feature is added to Rust: a new commit lands on the `master`
-branch. Each night, a new nightly version of Rust is produced. Every day is a
-release day, and these releases are created by our release infrastructure
-automatically. So as time passes, our releases look like this, once a night:
+Aquí se muestra un ejemplo de cómo funciona el proceso de desarrollo y lanzamiento:
+Asumamos que el equipo Rust está trabajando en el lanzamiento de la versión de Rust
+1.5. Ese lanzamiento ocurrió en el Diciembre del 2015, pero nos proveerá con
+números de versión reales. Una nueva funcionalidad es añadida a Rust: una nueva
+encomienda termina en la rama `master`. Cada noche, una nueva versión nocturna
+de Rust es producida. Cada día es un día de lanzamiento de versión, y estos
+lanzamientos de versiones son creados por nuestra infraestructura de lanzamientos de
+versiones automáticamente. Así que a medida que pasa el tiempo, nuestros lanzamientos
+de versiones se ven así, una vez por noche:
 
 ```text
 nightly: * - - * - - *
 ```
 
-Every six weeks, it’s time to prepare a new release! The `beta` branch of the
-Rust repository branches off from the `master` branch used by nightly. Now,
-there are two releases:
+Cada seis semanas, ¡Es hora de preparar una nueva versión! La rama `beta` del
+repositorio de Rust se subdivide de la rama `master` usada por nocturno. Ahora,
+hay dos lanzamientos de versiones:
 
 ```text
 nightly: * - - * - - *
@@ -62,20 +66,18 @@ nightly: * - - * - - *
 beta:                *
 ```
 
-Most Rust users do not use beta releases actively, but test against beta in
-their CI system to help Rust discover possible regressions. In the meantime,
-there’s still a nightly release every night:
-
+La mayoría de los usuarios de Rust no usan las versiones beta activamente, pero
+prueban la beta en sus sistemas CI para ayudar a Rust a encontrar regresiones
+posibles. Mientras tanto, aún hay un lanzamiento nocturno cada noche:
 ```text
 nightly: * - - * - - * - - * - - *
                      |
 beta:                *
 ```
 
-Let’s say a regression is found. Good thing we had some time to test the beta
-release before the regression snuck into a stable release! The fix is applied
-to `master`, so that nightly is fixed, and then the fix is backported to the
-`beta` branch, and a new release of beta is produced:
+Digamos que se encontró una regresión. ¡Qué bueno que tuvimos algo de tiempo para
+probar la versión beta antes de que la regresión se metiera en la versión estable!
+
 
 ```text
 nightly: * - - * - - * - - * - - * - - *
@@ -83,8 +85,8 @@ nightly: * - - * - - * - - * - - * - - *
 beta:                * - - - - - - - - *
 ```
 
-Six weeks after the first beta was created, it’s time for a stable release! The
-`stable` branch is produced from the `beta` branch:
+Seis semanas despues de que la primera versión beta es creada, ¡Es hora de una
+versión estable! la rama `stable` se produce de la rama `beta`:
 
 ```text
 nightly: * - - * - - * - - * - - * - - * - * - *
@@ -94,10 +96,10 @@ beta:                * - - - - - - - - *
 stable:                                *
 ```
 
-Hooray! Rust 1.5 is done! However, we’ve forgotten one thing: because the six
-weeks have gone by, we also need a new beta of the *next* version of Rust, 1.6.
-So after `stable` branches off of `beta`, the next version of `beta` branches
-off of `nightly` again:
+¡Hurrah! ¡Rust 1.5 está listo! Sin embargo, olvidamos una cosa: debido a que las
+seis semanas se han ido, también necesitamos una nueva versión beta para la
+*próxima* versión de Rust, 1.6. Así que después de que la rama `stable` resulte de
+`beta`, la próxima versión de `beta` resulta de `nightly` otra vez:
 
 ```text
 nightly: * - - * - - * - - * - - * - - * - * - *
@@ -107,28 +109,32 @@ beta:                * - - - - - - - - *       *
 stable:                                *
 ```
 
-This is called the “train model” because every six weeks, a release “leaves the
-station”, but still has to take a journey through the beta channel before it
-arrives as a stable release.
+Esto es llamado el "modelo de tren" porque cada seis semanas, una versión
+"sale de la estación", pero aún tiene que dar un viaje a través del canal beta
+antes de llegar como un lanzamiento de versión estable.
 
-Rust releases every six weeks, like clockwork. If you know the date of one Rust
-release, you can know the date of the next one: it’s six weeks later. A nice
-aspect of having releases scheduled every six weeks is that the next train is
-coming soon. If a feature happens to miss a particular release, there’s no need
-to worry: another one is happening in a short time! This helps reduce pressure
-to sneak possibly unpolished features in close to the release deadline.
+Rust hace lanzamiento de versión cada seis semanas, de forma programada. Si
+usted sabe la fecha de algún lanzamiento de versión de Rust, podrá saber la
+fecha del siguiente lanzamiento de versión: es seis semanas después. Un buen
+aspecto de tener lanzamientos de versión programados cada seis semanas es que
+el próximo tren viene pronto. Si una funcionalidad no está en una versión en
+particular, no habrá necesidad de preocuparse: ¡Otra versión vendrá pronto!
+Esto ayuda a reducir la presión de colocar funcionalidades no terminadas justo
+antes de la fecha de lanzamiento de la versión.
 
-Thanks to this process, you can always check out the next build of Rust and
-verify for yourself that it’s easy to upgrade to: if a beta release doesn’t
-work as expected, you can report it to the team and get it fixed before the
-next stable release happens! Breakage in a beta release is relatively rare, but
-`rustc` is still a piece of software, and bugs do exist.
+Gracias a este proceso, siempre podrá revisar la próxima versión de Rust y
+verificar por usted mismo que es fácil de actualizar: si una versión beta
+no funciona como se esperaba, ¡Puede reportarla al equipo para que la arreglen
+antes de que el próximo lanzamiento ocurra! Una fractura es relativamente rara
+que suceda en una versión beta, pero `rustc` aún es una pieza de software, y
+los errores aún existen.
 
-### Unstable Features
+### Funcionalidades Inestables
 
-There’s one more catch with this release model: unstable features. Rust uses a
-technique called “feature flags” to determine what features are enabled in a
-given release. If a new feature is under active development, it lands on
+Hay otro beneficio con este modelo de lanzamiento de versiones: funcionalidades
+inestables. Rust usa una técnica llamada "banderas de funcionalidades" para
+determinar qué funcionalidades están presentes en una versión en particular.
+Si una nueva funcionalidad está bajo desarrollo activo, it lands on
 `master`, and therefore, in nightly, but behind a *feature flag*. If you, as a
 user, wish to try out the work-in-progress feature, you can, but you must be
 using a nightly release of Rust and annotate your source code with the
@@ -144,6 +150,7 @@ This book only contains information about stable features, as in-progress
 features are still changing, and surely they’ll be different between when this
 book was written and when they get enabled in stable builds. You can find
 documentation for nightly-only features online.
+
 
 ### Rustup and the Role of Rust Nightly
 
