@@ -8,22 +8,23 @@ que las salidas de este libro fueron generadas en la versión estable
 compilando en cualquier versión estable de Rust futura. ¡Esta sección está
 para explicar cómo aseguramos que eso es cierto!
 
-### Stability Without Stagnation
+### Estabilidad Sin Estancamiento
 
-As a language, Rust cares a *lot* about the stability of your code. We want
-Rust to be a rock-solid foundation you can build on, and if things were
-constantly changing, that would be impossible. At the same time, if we can’t
-experiment with new features, we may not find out important flaws until after
-their release, when we can no longer change things.
+Como lenguaje, a Rust le importa *mucho* la estabilidad de su código. Queremos
+que Rust sea una base sólida como roca donde usted pueda construir, y si las
+cosas cambian constantemente, eso sería imposible. Al mismo tiempo, si no
+podemos experimentar con algunas funcionalidades nuevas, no podríamos encontrar
+fallas importantes hasta despues de su lanzamiento, cuando ya no podemos cambiar
+nada.
 
-Our solution to this problem is what we call “stability without stagnation” and
-is the way we can change and improve Rust while making sure that using Rust
-stays nice, stable, and boring.
+Nuestra solución as este problema es algo que llamamos "estabilidad sin
+estancamiento" y es la forma en la que podemos cambiar y mejorar Rust mientras
+nos aseguramos de que usar Rust se mantenga como algo bueno, estable y aburrido.
 
-Our guiding principle for Rust releases is this: you should never have to fear
-upgrading to a new version of stable Rust. Each upgrade should be painless. At
-the same time, the upgrade should bring you new features, fewer bugs, and
-faster compile times.
+Nuestro principio guía para los lanzamientos de Rust es: nunca deberás temerle
+a actualizar a una versión estable de Rust. Cada actualización debería ser sin
+dolor. Al mismo tiempo, la actualización debería de traerle nuevas funcionalidades,
+menos errores, y mejores tiempos de compilación.
 
 ### Choo, Choo! Release Channels and Riding the Trains
 
