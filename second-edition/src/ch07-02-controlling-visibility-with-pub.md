@@ -88,7 +88,8 @@ crucial de las advertencias. Es también la primera vez que nos encontramos con 
 *public* y *private* en el contexto de Rust. El estado predeterminado de todo el código en 
 Rust es privado: nadie más puede usar el código. Si tu no usas una 
 función privada dentro de tu programa, porque tu programa es el único código
-permitido para usar esa función, Rust te advertirá que la función no se ha usado.
+permitido para usar esa función, Rust te advertirá que la función no se ha
+usado.
 
 Después de especificar que una función como `client::connect` es pública, no sólo 
 se permitirá nuestro llamado a esa función desde nuestra cajón binario, sino que 
