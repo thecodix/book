@@ -97,7 +97,8 @@ la advertencia de que la función no se utiliza desaparecerá. Marcar una funci�
 le permite a Rust saber que la función será usada por código fuera de nuestro programa.
 Rust considera el uso externo teórico que ahora es posible como la 
 función "en uso". Por lo tanto, cuando una función está marcada como pública, Rust no 
-requerirá que se utilice en nuestro programa y dejará de advertir que la función no se utiliza.
+requerirá que se utilice en nuestro programa y dejará de advertir que la función no se 
+utiliza.
 
 ### Haciendo una Función Pública
 
