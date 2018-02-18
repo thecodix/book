@@ -423,15 +423,15 @@ The corresponding file layout now looks like this:
 │       └── server.rs
 ```
 
-So when we wanted to extract the `network::server` module, why did we have to
-also change the *src/network.rs* file to the *src/network/mod.rs* file and put
-the code for `network::server` in the *network* directory in
-*src/network/server.rs* instead of just being able to extract the
-`network::server` module into *src/server.rs*? The reason is that Rust wouldn’t
-be able to recognize that `server` was supposed to be a submodule of `network`
-if the *server.rs* file was in the *src* directory. To clarify Rust’s behavior
-here, let’s consider a different example with the following module hierarchy,
-where all the definitions are in *src/lib.rs*:
+Así que cuando quisimos extraer el módulo `network::server`, ¿por qué tuvimos que 
+cambiar también el archivo *src/network.rs* al archivo *src/network/mod.rs* y poner el
+código para `network::server` en el directorio *network* en 
+*src/network/server.rs* en lugar de simplemente poder extraer el
+módulo `network::server` en *src/server.rs*? La razón es que Rust no sería 
+capaz de reconocer que el `server` debía ser un submódulo de `network`
+si el archivo *server.rs* estuviera en el directorio *src*. Para aclarar el comportamiento de Rust 
+aquí, vamos a considerar un ejemplo diferente con la siguiente jerarquía de módulos, 
+donde todas las definiciones están en *src/lib.rs*:
 
 ```text
 communicator
@@ -440,36 +440,36 @@ communicator
      └── client
 ```
 
-In this example, we have three modules again: `client`, `network`, and
-`network::client`. Following the same steps we did earlier for extracting
-modules into files, we would create *src/client.rs* for the `client` module.
-For the `network` module, we would create *src/network.rs*. But we wouldn’t be
-able to extract the `network::client` module into a *src/client.rs* file
-because that already exists for the top-level `client` module! If we could put
-the code for *both* the `client` and `network::client` modules in the
-*src/client.rs* file, Rust wouldn’t have any way to know whether the code was
-for `client` or for `network::client`.
+En este ejemplo, tenemos de nuevo tres módulos: `client`, `network` y 
+`network::client`. Siguiendo los mismos pasos que hicimos anteriormente para extraer 
+módulos en archivos, crearíamos *src/client.rs* para el módulo `client`.
+Para el módulo `network`, crearíamos *src/network.rs*. Pero no podríamos
+extraer el módulo `network::client` en un archivo *src/client.rs*
+porque ya existe para el módulo `client` de alto nivel! Si pudiéramos poner
+el código para *ambos* módulos `client` y `network::client` en el
+archivo *src/client.rs*, Rust no tendría forma de saber si el código era 
+para `client` o para `network::client`.
 
-Therefore, in order to extract a file for the `network::client` submodule of
-the `network` module, we needed to create a directory for the `network` module
-instead of a *src/network.rs* file. The code that is in the `network` module
-then goes into the *src/network/mod.rs* file, and the submodule
-`network::client` can have its own *src/network/client.rs* file. Now the
-top-level *src/client.rs* is unambiguously the code that belongs to the
-`client` module.
+Por lo tanto, para extraer un archivo para el submódulo `networl::client` del
+módulo `network`, necesitábamos crear un directorio para el módulo `network`
+en lugar de un archivo *src/network.rs*. El código que se encuentra en el módulo `network`
+entra en el archivo *src/network/mod.rs*, y el submódulo 
+`network::client` puede tener su propio archivo *src/network/client.rs*. Ahora el
+nivel superior *src/client.rs* es inequívocamente el código que pertenece al
+módulo `client`.
 
-### Rules of Module Filesystems
+### Reglas de los Sistemas de Ficheros del Módulo
 
-Let’s summarize the rules of modules with regard to files:
+Resumamos las reglas de los módulos con respecto a los archivos:
 
-* If a module named `foo` has no submodules, you should put the declarations
-  for `foo` in a file named *foo.rs*.
-* If a module named `foo` does have submodules, you should put the declarations
-  for `foo` in a file named *foo/mod.rs*.
+* Si un módulo llamado `foo` no tiene submódulos, debes poner las declaraciones
+para `foo` en un archivo llamado *foo.rs*.
+* Si un módulo llamado `foo` tiene submódulos, debes poner las declaraciones
+para `foo` en un archivo llamado *foo/mod.rs*.
 
-These rules apply recursively, so if a module named `foo` has a submodule named
-`bar` and `bar` does not have submodules, you should have the following files
-in your *src* directory:
+Estas reglas se aplican recursivamente, así que si un módulo llamado `foo` tiene un submódulo llamado
+`bar` y `bar` no tiene submódulos, deberías tener los siguientes archivos
+en tu directorio *src*:
 
 ```text
 ├── foo
@@ -477,7 +477,7 @@ in your *src* directory:
 │   └── mod.rs (contains the declarations in `foo`, including `mod bar`)
 ```
 
-The modules should be declared in their parent module’s file using the `mod`
-keyword.
+Los módulos deben declararse en el archivo del módulo padre utilizando la palabra 
+clave `mod`.
 
-Next, we’ll talk about the `pub` keyword and get rid of those warnings!
+A continuación, hablaremos de la palabra clave `pub` y nos desharemos de esas advertencias!
