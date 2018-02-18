@@ -1,4 +1,4 @@
-## Agraciado cierre y limpieza
+## Cierre elegante
 
 El código del listado 20-21 responde a las solicitudes de forma asincrónica
 a través del uso de un grupo de subprocesos, como pretendíamos. Recibimos 
