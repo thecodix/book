@@ -194,8 +194,8 @@ happens when we call this method with `String` values. We’ll discuss generics
 in Chapter 10. This signature gives us the clues we need to understand the
 tricky bits of the `+` operator.
 
-Primero, `s2` tiene un `&`, queriendo decir que estamos añadiendo una *reference* de la segunda cadena de caracteres a la segunda cadena debido al parámetro `s` en la función `add`: solo podemos añadir una `&str` a una `String`; no podemos añadir dos valores de `String`
-juntos. Pero espera - el tipo de `&s2` es `&String`, no `&str`, como se especifica en el segundo parámetro a `add`. Entonces,  ¿por qué el Listado 8-18 recopila?
+Primero, `s2` tiene un `&`, queriendo decir que estamos añadiendo una *referencia* de la segunda cadena de caracteres a la segunda cadena debido al parámetro `s` en la función `add`: solo podemos añadir una `&str` a una `String`; no podemos añadir dos valores de `String`
+juntos. Pero espera - el tipo de `&s2` es `&String`, no `&str`, como se especifica en el segundo parámetro a `add`. Entonces,  ¿por qué el Listado 8-18 compila?
 
 La razón por al cual somos capaces de usar `&s2` en la convocatoria a `add` es que el compilador puede *coerce* el argumento `&String` en una `&str`. Cuando convocamos el método `add`, Rust usa una *deref coercion*, el cual vuelve a `&s2` en `&s2[..]`.
 Discutiremos el deref coercion con mayor profundidad en el Capítulo 15. Porque `add` no toma posesión del parámetro `s`, `s2` seguirá siendo un `String` válido luego de esta operación.
@@ -223,7 +223,7 @@ let s3 = String::from("toe");
 let s = format!("{}-{}-{}", s1, s2, s3);
 ```
 
-Este código también establece a `s` para `tic-tac-toe`. La Macro `format!` funciona en la misma forma que `println!`, pero en lugar de poner la salida en la pantalla, regresa una `String` con los contenidos. La versión del código que usa `format!` es mucho más fácil de leer y tampoco toma posesión de ninguno de sus parámetros.
+Este código también establece a `s` para `tic-tac-toe`. La Macro `format!` funciona en la misma forma que `println!`, pero en lugar de poner la salida en la pantalla, devuelve una `String` con los contenidos. La versión del código que usa `format!` es mucho más fácil de leer y tampoco toma posesión de ninguno de sus parámetros.
 
 ### Indexación en cadenas de caracteres
 
@@ -249,7 +249,7 @@ error[E0277]: the trait bound `std::string::String: std::ops::Index<{integer}>` 
   = help: the trait `std::ops::Index<{integer}>` is not implemented for `std::string::String`
 ```
 
-El error y la nota cuentan la historia: Las cadenas de caracteres de Rust no soportan indexado0. ¿Pero por qué no? Para responder esa pregunta, necesitamos discutir cómo Rust almacena cadenas en la memoria.
+El error y la nota cuentan la historia: Las cadenas de caracteres de Rust no soportan indexado. ¿Pero por qué no? Para responder esa pregunta, necesitamos discutir cómo Rust almacena cadenas en la memoria.
 
 #### Representación interna
 
@@ -266,7 +266,7 @@ let len = String::from("Здравствуйте").len();
 ```
 
 Note que esta cadena empieza con la letra capital cirílica Ze, no con el número arábico 3. Preguntado cuánto pesa la cadena, podrías decir 12. Sin embargo, la respuesta de Rust es 24: ese es el número de bytes que toma codificar “Здравствуйте” en UTF-8, porque cada valor escalar de Unicode usa dos bytes de almacenamiento. Por lo tanto, un índice en los bytes de la cadena no siempre se correlacionará
-con un valor escalar de Unicode. Para demostralo, considere este codígo inválido de Rust:
+con un valor escalar de Unicode. Para demostrarlo, considere este codígo inválido de Rust:
 
 ```rust,ignore
 let hello = "Здравствуйте";
@@ -298,11 +298,11 @@ Hay seis valores `char` aquí, pero el cuarto y el quinto no son letras: son dia
 ["न", "म", "स्", "ते"]
 ```
 
-Rust proporciona diferentes maneras de interpretar las información cruda de las cadenas que las computadoras almacenan, así que cada programa puede escoger  la interpretación que necesite, sin importar en qué idioma humano esté la infromación.
+Rust proporciona diferentes maneras de interpretar las información bruta de las cadenas que las computadoras almacenan, así que cada programa puede escoger  la interpretación que necesite, sin importar en qué idioma humano esté la infromación.
 
 Una razón final de por qué Rust no nos permite indexar en una `String` para obtener un caracter es que se espera que las operaciones de indexación siempre tomen un tiempo constante (O(1)). Pero es imposible garantizar ese desempeño con una `String`, porque Rust tendría que guíar los contenidos desde el inicio hasta el índice para determinar cuántos caracteres válidos hubo.
 
-### Trozos de cadena
+### Dividiendo Strings
 
 Indexar en una cadena de caracteres es a menudo una mala idea porque no está claro lo que el tipo de retorno de la operación de indexación de cadenas debería ser: un valor de byte, un caracter, un grafema cluster, o un trozo de cadena. Por lo tanto, Rust te pide ser más específico si de verdad necesitas usar indices para crear trozos de cadena. Para ser más específico en tu indexado e indicar que quieres un trozo de cadena, en lugar de indexar usando `[]` con un solo número, puedes usar `[]` con un rango para crear un trozo de cadena que contenga bytes en particular:
 
@@ -366,10 +366,10 @@ Este código mostrará los 18 bytes que forman esta `String`, empezando con:
 
 Pero asegúrate de recordar que un valor escalar de Unicode puede ser hecho por más de un byte.
 
-Conseguir un grafema clusters desde cadenas de caracteres es complejo, así que esta funcionalidad no es proporcionada por la biblioteca estándar. Los cajones están disponibles en [crates.io](https://crates.io) si esta es la funcionalidad que necesitas.
+Conseguir un grafema clusters desde cadenas de caracteres es complejo, así que esta funcionalidad no es proporcionada por la biblioteca estándar. Las cajas están disponibles en [crates.io](https://crates.io) si esta es la funcionalidad que necesitas.
 
 ### Las cadenas de caracteres no son tan simples
 
-Resumiendo, las cadenas de caracteres son complicadas. Los diferentes lenguajes de programación hacen diferentes elecciones sobre cómo presentar esta complejidad al programador. Rust ha elegido hacer el manejo correcto de la información de `String`. El comportamiento por defecto para todos los programas de Rust, lo que significa que los programadores tienen que pensar más en manejar información de UTF-8 por adelantado. Este punto intermedio expone más la complejidad de las cadenas de caracteres que de otros lenguajes de programación, pero le impide tener errores de manejo, envolviendo caracteres non-ASCII luego en tu ciclo de vida de desarrollo.
+Resumiendo, las cadenas de caracteres son complicadas. Los diferentes lenguajes de programación hacen diferentes elecciones sobre cómo presentar esta complejidad al programador. Rust ha elegido hacer el manejo correcto de la información de `String`. El comportamiento por defecto para todos los programas de Rust, lo que significa que los programadores tienen que pensar más en manejar información de UTF-8 por adelantado. Este punto intermedio expone más la complejidad de las cadenas de caracteres que de otros lenguajes de programación, pero le impide tener errores de manejo que hacen referencia a caracteres no ASCII luego en tu ciclo de vida de desarrollo.
 
 Cambiemos a algo un poquito menos complejo: ¡mapas hash!
