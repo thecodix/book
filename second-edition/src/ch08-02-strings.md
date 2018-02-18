@@ -21,7 +21,7 @@ y cuando cada uno es apropiado.
 
 ### Creando una nueva cadena de caracteres
 
-Muchas de las mismas operaciones disponibles con `Vec<T>` están disponibles con `String` también, empezando con la función `new` para crear una cadena de caracteres, mostrada en el Listado
+muchas de las mismas operaciones disponibles con `Vec<T>` están disponibles con `String` también, empezando con la función `new` para crear una cadena de caracteres, mostrada en el Listado
 8-11:
 
 ```rust
