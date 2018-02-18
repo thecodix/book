@@ -51,7 +51,7 @@ y algún código. El primer brazo aquí tiene un patrón que es el valor `Coin::
 y luego el operador `=>` que separa el patrón y el código a ejecutar. El código en este caso
 es solo el valor 1 `1`. Cada brazo está separado del próximo con una coma.
 
-Cuando la expresión `match` ejectua, compara el valor resultante contra el 
+Cuando la expresión `match` ejecuta, compara el valor resultante contra el 
 patrón de cada brazo, en orden. Si un patrón coincide con el valor, el código
 asociado con el patrón es ejecutado. Si el patrón no coincide con el valor, 
 la ejecución continúa con el siguiente brazo, como en una maquina clasificadora de monedas.
@@ -65,7 +65,7 @@ Las llaves tipicamente no son usadas si el código del brazo de coincidencia es 
 lo es en el Listado 6-3 donde cada brazo solo retorna un valor. Si quieres ejecutar múltiples
 líneas de código en un brazo de coincidencia, puedes usar llaves. Por ejemplo, el
 siguiente código imprimirá “Lucky penny!” cada vez que el método sea llamado
-con un `Coin::Penny` pero seguirá retornando el último valor del bloque, `1`:
+con un `Moneda::Penny` pero seguirá retornando el último valor del bloque, `1`:
 
 ```rust
 # enum Coin {
@@ -125,10 +125,10 @@ Mientras clasificamos nuestro cambio impreciso por tipo de moneda, tambien llama
 nombre del estado asociado con cada alojamiento asique si uno de nuestros amigos no tiene,
 ellos pueden agregarlo a su colección.
 
-En la expresión de coincidencia para este código, agregamos una variable llamada `state` al
-patrón que coincide con el valor de la variante `Coin::Quarter`. Cuando un
-`Coin::Quarter` coincide, la variable `state` se juntará al valor del 
-estado de alojamientos. Entonces podemos usar `state` en el código para ese brazo, asi:
+En la expresión de coincidencia para este código, agregamos una variable llamada `EstadosUs` al
+patrón que coincide con el valor de la variante `Moneda::Quarter`. Cuando un
+`Moneda::Quarter` coincide, la variable `EstadosUs` se juntará al valor del 
+estado de alojamientos. Entonces podemos usar `EstadosUs` en el código para ese brazo, asi:
 
 ```rust
 # #[derive(Debug)]
