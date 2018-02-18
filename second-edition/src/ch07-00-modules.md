@@ -14,7 +14,8 @@ puedes elegir si esas definiciones son visibles fuera de su módulo
 (público) o no (privado). A continuación se muestra un resumen de cómo funcionan los módulos:
 
 * La palabra clave `mod` declara un nuevo módulo. El código dentro del módulo aparece
-  inmediatamente después de esta declaración entre llaves o en otro archivo.
+  inmediatamente después de esta declaración entre llaves
+  o en otro archivo.
 * Por defecto, las funciones, tipos, constantes y módulos son privados. La palabra clave
   `pub` hace que un elemento sea público y por lo tanto visible fuera de su espacio de nombre.
 * La palabra clave `use` trae módulos, o las definiciones dentro de los módulos, al 
