@@ -8,6 +8,7 @@ que las salidas de este libro fueron generadas en la versión estable
 compilando en cualquier versión estable de Rust futura. ¡Esta sección está
 para explicar cómo aseguramos que eso es cierto!
 
+
 ### Estabilidad Sin Estancamiento
 
 Como lenguaje, a Rust le importa *mucho* la estabilidad de su código. Queremos
