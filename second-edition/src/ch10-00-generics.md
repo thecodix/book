@@ -1,4 +1,4 @@
-# Tipos de genéricos, rasgos y tiempos de vida
+# Tipos Genéricos, Rasgos y Tiempos de Vida
 
 Cada lenguaje de traducción tiene herramientas para lidiar efectivamente con la duplicación
 de conceptos; en Rust, una de esas herramientas es *Genéricos*. Genéricos son conceptos
@@ -31,7 +31,7 @@ darle al compilador información sobre cómo las referencias están relacionadas
 Los tiempos de vida son las característica en Rust que nos deja tomar prestados valores en varias 
 situaciones y tener la prueba del compilador de que las referencias serán válidas.
 
-## Retirando la duplicación al extraer una función
+## Evitar la duplicación al extraer una función
 
 Antes de entrar de lleno con la sintaxis de los genéricos, aprendamos primero una técnica para lidiar
 con la duplicación que no usa tipos genéricos: extraer una función. Una vez
@@ -158,7 +158,7 @@ fn main() {
 }
 ```
 
-<span class="caption">Listado 10-3: Código de abstracción para encontrar el número más grande
+<span class="caption">Listado 10-3: Código abstracto para encontrar el número más grande
 en dos listas</span>
 
 La función tiene un parametro, `list`, que representa cualquier pedazo concreto de los valores de
