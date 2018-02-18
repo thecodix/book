@@ -1,6 +1,6 @@
 ## Cierre elegante
 
-El código del listado 20-21 responde a las solicitudes de forma asincrónica
+El código del listado 20-21 responde a las solicitudes de forma asíncrona
 a través del uso de un grupo de subprocesos, como pretendíamos. Recibimos 
 algunas advertencias sobre los campos que no estamos usando de manera directa,
 que son un recordatorio de que no estamos limpiando todo arriba. Cuando usamos
