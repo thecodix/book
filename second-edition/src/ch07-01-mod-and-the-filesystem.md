@@ -1,26 +1,26 @@
-## `mod` and the Filesystem
+## `mod` y el Sistema de Archivos
 
-We’ll start our module example by making a new project with Cargo, but instead
-of creating a binary crate, we’ll make a library crate: a project that other
-people can pull into their projects as a dependency. For example, the `rand`
-crate discussed in Chapter 2 is a library crate that we used as a dependency in
-the guessing game project.
+Empezaremos nuestro ejemplo de módulo haciendo un nuevo proyecto con Cargo, pero en lugar
+de crear un cajón binario, haremos un cajón de biblioteca: un proyecto que otras
+personas pueden llevar a sus proyectos como una dependencia. Por ejemplo, la caja
+`rand` discutida en el Capítulo 2 es una caja de biblioteca que usamos como dependencia 
+en el proyecto del juego de adivinanzas.
 
-We’ll create a skeleton of a library that provides some general networking
-functionality; we’ll concentrate on the organization of the modules and
-functions but we won’t worry about what code goes in the function bodies. We’ll
-call our library `communicator`. By default, Cargo will create a library unless
-another type of project is specified: if we omit the `--bin` option that we’ve
-been using in all of the chapters preceding this one, our project will be a
-library:
+Vamos a crear el esqueleto de una biblioteca que proporciona algo de funcionalidad 
+a la red general; nos concentraremos en la organización de los módulos y 
+funciones, pero no nos preocuparemos de qué código entra en los cuerpos funcionales. 
+Llamaremos a nuestra biblioteca `communicator`. De forma predeterminada, Cargo creará una biblioteca a menos
+que se especifique otro tipo de proyecto: si omitimos la opción `--bin` que hemos
+estado usando en todos los capítulos anteriores, nuestro proyecto será una 
+biblioteca:
 
 ```text
 $ cargo new communicator
 $ cd communicator
 ```
 
-Notice that Cargo generated *src/lib.rs* instead of *src/main.rs*. Inside
-*src/lib.rs* we’ll find the following:
+Nota que Cargo generó *src/lib.rs* en lugar de *src/main.rs*. Dentro de
+*src/lib.rs* encontraremos lo siguiente:
 
 <span class="filename">Filename: src/lib.rs</span>
 
@@ -34,25 +34,25 @@ mod tests {
 }
 ```
 
-Cargo creates an example test to help us get our library started, rather than
-the “Hello, world!” binary that we get when we use the `--bin` option. We’ll
-look at the `#[]` and `mod tests` syntax in the “Using `super` to Access a
-Parent Module” section later in this chapter, but for now, leave this code at
-the bottom of *src/lib.rs*.
+Cargo crea un ejemplo de prueba para ayudarnos a poner en marcha nuestra biblioteca, en lugar 
+de "¡Hola, mundo!" binario que conseguimos cuando usamos la opción `---bin`. Veremos
+la sintaxis `#[]` y `mod tests` en la sección "Usando `super` para acceder a 
+un módulo padre" más adelante en este capítulo, pero por ahora, deja este código en
+la parte inferior de *src/lib.rs*.
 
-Because we don’t have a *src/main.rs* file, there’s nothing for Cargo to
-execute with the `cargo run` command. Therefore, we’ll use the `cargo build`
-command to compile our library crate’s code.
+Debido a que no tenemos un archivo *src/main.rs*, no hay nada para que Cargo 
+ejecute con el comando `cargo run`. Por lo tanto, usaremos el comando `cargo build`
+para compilar nuestro código del cajón de la biblioteca.
 
-We’ll look at different options for organizing your library’s code that will be
-suitable in a variety of situations, depending on the intent of the code.
+Examinaremos las diferentes opciones para organizar el código de tu biblioteca, que sean
+adecuadas en una variedad de situaciones, dependiendo de la intención del código.
 
-### Module Definitions
+### Definiciones del Módulo
 
-For our `communicator` networking library, we’ll first define a module named
-`network` that contains the definition of a function called `connect`. Every
-module definition in Rust starts with the `mod` keyword. Add this code to the
-beginning of the *src/lib.rs* file, above the test code:
+Para nuestra biblioteca de redes `communicator`, primero definiremos un módulo 
+llamado `network` que contiene la definición de una función llamada `connect`. Cada 
+definición de módulo en Rust comienza con la palabra clave `mod`. Añade este código al 
+principio del archivo *src/lib.rs*, encima del código de prueba:
 
 <span class="filename">Filename: src/lib.rs</span>
 
@@ -63,16 +63,16 @@ mod network {
 }
 ```
 
-After the `mod` keyword, we put the name of the module, `network`, and then a
-block of code in curly brackets. Everything inside this block is inside the
-namespace `network`. In this case, we have a single function, `connect`. If we
-wanted to call this function from code outside the `network` module, we
-would need to specify the module and use the namespace syntax `::`, like so:
-`network::connect()` rather than just `connect()`.
+Después de la palabra clave `mod`, ponemos el nombre del módulo, `network`, y luego 
+un bloque de código entre llaves. Todo dentro de este bloque está dentro del
+espacio de nombres `network`. En este caso, tenemos una sola función, `connect`. Si 
+quisiéramos llamar esta función desde un código fuera del módulo `network`, 
+tendríamos que especificar el módulo y utilizar la sintaxis del espacio de nombres `::`, así:
+`network::connect()` en lugar de simplemente `connect()`.
 
-We can also have multiple modules, side by side, in the same *src/lib.rs* file.
-For example, to also have a `client` module that has a function named `connect`
-as well, we can add it as shown in Listing 7-1:
+También podemos tener múltiples módulos, uno al lado del otro, en el mismo archivo *src/lib.rs*.
+Por ejemplo, para tener también un módulo `client` que tenga una función llamada `connect`
+también, podemos agregarlo como se muestra en eñ Listado 7-1:
 
 <span class="filename">Filename: src/lib.rs</span>
 
@@ -88,24 +88,24 @@ mod client {
 }
 ```
 
-<span class="caption">Listing 7-1: The `network` module and the `client` module
-defined side by side in *src/lib.rs*</span>
+<span class="caption">Listado 7-1: El módulo `network` y el módulo  `client`
+definidos uno al lado del otro en *src/lib. rs*</span>
 
-Now we have a `network::connect` function and a `client::connect` function.
-These can have completely different functionality, and the function names do
-not conflict with each other because they’re in different modules.
+Ahora tenemos una función `network::connect` y una función `client::connect`.
+Éstos pueden tener una funcionalidad completamente diferente, y los nombres de las funciones 
+no entran en conflicto entre sí porque están en módulos diferentes.
 
-In this case, because we’re building a library, the file that serves as the
-entry point for building our library is *src/lib.rs*. However, in respect to
-creating modules, there’s nothing special about *src/lib.rs*. We could also
-create modules in *src/main.rs* for a binary crate in the same way as we’re
-creating modules in *src/lib.rs* for the library crate. In fact, we can put
-modules inside of modules, which can be useful as your modules grow to keep
-related functionality organized together and separate functionality apart. The
-choice of how you organize your code depends on how you think about the
-relationship between the parts of your code. For instance, the `client` code
-and its `connect` function might make more sense to users of our library if
-they were inside the `network` namespace instead, as in Listing 7-2:
+En este caso, como estamos construyendo una biblioteca, el archivo que sirve como
+punto de entrada para construir nuestra biblioteca es *src/lib.rs*. Sin embargo, con respecto a
+la creación de módulos, no hay nada especial en *src/lib.rs*. También podríamos
+crear módulos en *src/main.rs* para un cajón binario de la misma manera que 
+creamos módulos en *src/lib.rs* para el cajón de la biblioteca. De hecho, podemos colocar 
+módulos dentro de los módulos, lo que puede ser útil a medida que los módulos crecen para mantener
+las funciones relacionadas organizadas y separadas entre sí. La 
+elección de cómo organizar tu código depende de cómo pienses sobre la
+relación entre las partes de tu código. Por ejemplo, el código `client` 
+y su función `conect` podrían tener más sentido para los usuarios de nuestra biblioteca si 
+estuvieran dentro del espacio de nombres `network`, como en el Listado 7-2:
 
 <span class="filename">Filename: src/lib.rs</span>
 
@@ -121,19 +121,19 @@ mod network {
 }
 ```
 
-<span class="caption">Listing 7-2: Moving the `client` module inside the
-`network` module</span>
+<span class="caption">Listado 7-2: Moviendo el módulo `client` dentro del
+módulo `network`</span>
 
-In your *src/lib.rs* file, replace the existing `mod network` and `mod client`
-definitions with the ones in Listing 7-2, which have the `client` module as an
-inner module of `network`. Now we have the functions `network::connect` and
-`network::client::connect`: again, the two functions named `connect` don’t
-conflict with each other because they’re in different namespaces.
+En tu archivo *src/lib.rs*, reemplaza las definiciones existentes de `mod network` y `mod client`
+con las definiciones del Listado 7-2, que tienen el módulo `client` como módulo 
+interno de `network`. Ahora tenemos las funciones `network::connect` y 
+`network::client::connect`: de nuevo, las dos funciones llamadas `connect` no
+entran en conflicto entre sí porque están en diferentes espacios de nombres.
 
-In this way, modules form a hierarchy. The contents of *src/lib.rs* are at the
-topmost level, and the submodules are at lower levels. Here’s what the
-organization of our example in Listing 7-1 looks like when thought of as a
-hierarchy:
+De este modo, los módulos forman una jerarquía. El contenido de *src/lib.rs* se encuentra en
+el nivel superior, y los submódulos en los niveles inferiores. Aquí se muestra cómo se 
+ve la organización de nuestro ejemplo en el Listado 7-1 cuando se piensa que es una
+jerarquía:
 
 ```text
 communicator
@@ -141,7 +141,7 @@ communicator
  └── client
 ```
 
-And here’s the hierarchy corresponding to the example in Listing 7-2:
+Y aquí está la jerarquía correspondiente al ejemplo del Listado 7-2:
 
 ```text
 communicator
@@ -149,13 +149,13 @@ communicator
      └── client
 ```
 
-The hierarchy shows that in Listing 7-2, `client` is a child of the `network`
-module rather than a sibling. More complicated projects can have many modules,
-and they’ll need to be organized logically in order to keep track of them. What
-“logically” means in your project is up to you and depends on how you and your
-library’s users think about your project’s domain. Use the techniques shown
-here to create side-by-side modules and nested modules in whatever structure
-you would like.
+La jerarquía muestra que en el Listado 7-2, `client` es un hijo del módulo 
+`network` en lugar de un hermano. Los proyectos más complicados pueden tener muchos módulos,
+y necesitarán organizarse lógicamente para poder hacer un seguimiento de ellos. Lo que
+"lógicamente" significa que tu proyecto depende de ti y depende de cómo tu y los
+usuarios de tu biblioteca piensen sobre el dominio de tu proyecto. Utiliza las técnicas mostradas
+aquí para crear módulos lado a lado y módulos anidados en cualquier estructura
+que desees.
 
 ### Moving Modules to Other Files
 
