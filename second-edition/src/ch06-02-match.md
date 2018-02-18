@@ -1,23 +1,22 @@
-## The `match` Control Flow Operator
+## El operador de flujo de control `match` 
 
-Rust has an extremely powerful control-flow operator called `match` that allows
-us to compare a value against a series of patterns and then execute code based
-on which pattern matches. Patterns can be made up of literal values, variable
-names, wildcards, and many other things; Chapter 18 covers all the different
-kinds of patterns and what they do. The power of `match` comes from the
-expressiveness of the patterns and the compiler checks that all
-possible cases are handled.
+Rust tiene un extramadamente poderoso operador de flujo de control llamado `match` 
+que nos permite comparar un valor contra una serie de patrones y luego ejecutar código 
+basado en que patrón coincide. Los patrones pueden estar compuestos por valores literales, 
+nombres de variable, comodines, y muchas otras cosas; El capítulo 18 cubre todos los
+diferentes tipos de patrones y que hacen. El poder de `match` viene de la expresividad
+de los patrones y el compilador verifica que todos los posibles casos son manejados.
 
-Think of a `match` expression kind of like a coin sorting machine: coins slide
-down a track with variously sized holes along it, and each coin falls through
-the first hole it encounters that it fits into. In the same way, values go
-through each pattern in a `match`, and at the first pattern the value “fits,”
-the value will fall into the associated code block to be used during execution.
+Piense en una expresión de tipo `match` como una máquina clasificadora de monedas: las
+monedas se deslizan por una pista con agujeros de distintos tamaños a lo largo de ella, y
+cada moneda moneda cae a travpes del primer hoyo que encuentra que encaja. De la misma forma,
+los valores van a través de cada patrón en una en un `match`, y en el primer patrón el valor
+“encaja,” el valor caerá en el código de bloque asociado para ser usado durante la ejecución.
 
-Because we just mentioned coins, let’s use them as an example using `match`! We
-can write a function that can take an unknown United States coin and, in a
-similar way as the counting machine, determine which coin it is and return its
-value in cents, as shown here in Listing 6-3:
+Ya que acabamos de mencionar a las monedas, utilicemoslas como ejemplo usando `match`! Podemos
+escribir una función que pueda tomar una moneda desconocida de United States y en una
+forma similar a la máquina contadora, determina que moneda es y devuelve su valor
+en cantavos, como se muestra en en Listado 6-3:
 
 ```rust
 enum Coin {
@@ -37,36 +36,36 @@ fn value_in_cents(coin: Coin) -> u32 {
 }
 ```
 
-<span class="caption">Listing 6-3: An enum and a `match` expression that has
-the variants of the enum as its patterns.</span>
+<span class="caption">Listado 6-3: Una enumeración y una expresión`match` que tiene
+las variantes de la enumeración como sus patrones.</span>
 
-Let’s break down the `match` in the `value_in_cents` function. First, we list
-the `match` keyword followed by an expression, which in this case is the value
-`coin`. This seems very similar to an expression used with `if`, but there’s a
-big difference: with `if`, the expression needs to return a Boolean value.
-Here, it can be any type. The type of `coin` in this example is the `Coin` enum
-that we defined in Listing 6-3.
+Desglosemos el `match` en la función `value_in_cents`. Primero, listamos la
+palabra clave `match` seguida de una expresión, que en este caso es el valor
+`coin`. Esto parece muy similar a una expresión usada con `if`, pero hay una
+gran diferencia: con `if`, la expresión necesita devolver un valor Booleano.
+Aquí, puede ser de cualquier tipo. El tipo de `coin` en este ejemplo es la enumeración
+`Coin` que es definida en el Listado 6-3.
 
-Next are the `match` arms. An arm has two parts: a pattern and some code. The
-first arm here has a pattern that is the value `Coin::Penny` and then the `=>`
-operator that separates the pattern and the code to run. The code in this case
-is just the value `1`. Each arm is separated from the next with a comma.
+A continuación están los brazos del `match`. Un brazo tiene dos partes: un patrón
+y algún código. El primer brazo aquí tiene un patrón que es el valor `Coin::Penny`
+y luego el operador `=>` que separa el patrón y el código a ejecutar. El código en este caso
+es solo el valor 1 `1`. Cada brazo está separado del próximo con una coma.
 
-When the `match` expression executes, it compares the resulting value against
-the pattern of each arm, in order. If a pattern matches the value, the code
-associated with that pattern is executed. If that pattern doesn’t match the
-value, execution continues to the next arm, much like a coin sorting machine.
-We can have as many arms as we need: in Listing 6-3, our `match` has four arms.
+Cuando la expresión `match` ejectua, compara el valor resultante contra el 
+patrón de cada brazo, en orden. Si un patrón coincide con el valor, el código
+asociado con el patrón es ejecutado. Si el patrón no coincide con el valor, 
+la ejecución continúa con el siguiente brazo, como en una maquina clasificadora de monedas.
+Podemos tener tantos brazos como necesitemos: En el Listado 6-3, nuestro `match` tiene cuatro brazos.
 
-The code associated with each arm is an expression, and the resulting value of
-the expression in the matching arm is the value that gets returned for the
-entire `match` expression.
+El cógido asociado con cada brazo es una expresión, y el valor resultante de la
+expresión en el brazo correspondiente es el valor que se devuelve para la expresión
+entera `match`.
 
-Curly brackets typically aren’t used if the match arm code is short, as it is
-in Listing 6-3 where each arm just returns a value. If you want to run multiple
-lines of code in a match arm, you can use curly brackets. For example, the
-following code would print out “Lucky penny!” every time the method was called
-with a `Coin::Penny` but would still return the last value of the block, `1`:
+Las llaves tipicamente no son usadas si el código del brazo de coincidencia es corto, como
+lo es en el Listado 6-3 donde cada brazo solo retorna un valor. Si quieres ejecutar múltiples
+líneas de código en un brazo de coincidencia, puedes usar llaves. Por ejemplo, el
+siguiente código imprimirá “Lucky penny!” cada vez que el método sea llamado
+con un `Coin::Penny` pero seguirá retornando el último valor del bloque, `1`:
 
 ```rust
 # enum Coin {
@@ -89,18 +88,18 @@ fn value_in_cents(coin: Coin) -> u32 {
 }
 ```
 
-### Patterns that Bind to Values
+### Patrones que se unen a los Valores
 
-Another useful feature of match arms is that they can bind to parts of the
-values that match the pattern. This is how we can extract values out of enum
-variants.
+Otra característica útil de los brazos de coincidencia es que ellos pueden unirse a partes
+de los valores que coinciden con ek patrón. Así es como extraemos valores fuera de las
+variantes de enumeración.
 
-As an example, let’s change one of our enum variants to hold data inside it.
-From 1999 through 2008, the United States minted quarters with different
-designs for each of the 50 states on one side. No other coins got state
-designs, so only quarters have this extra value. We can add this information to
-our `enum` by changing the `Quarter` variant to include a `UsState` value stored
-inside it, which we’ve done here in Listing 6-4:
+Como un ejemplo, cambiemos una de nuestras variantes para mantener los datos dentro de ella.
+Desde 1999 hasta 2008, los Estados Unidos inventaron alojamientos con diferentes
+diseños para cada uno de los 50 estados de un lado. Ninguna otra moneda obtuvo diseños
+de estado, por lo que solo los alojamientos tienen este valor extra. Podemos agregar esta
+información a nuestro `enum` usando la variante `Quarter` para incluir un valor `UsState`
+almacenado dentro de ella, que hemos hecho en el Listado 6-4:
 
 ```rust
 #[derive(Debug)] // So we can inspect the state in a minute
@@ -118,18 +117,18 @@ enum Coin {
 }
 ```
 
-<span class="caption">Listing 6-4: A `Coin` enum where the `Quarter` variant
-also holds a `UsState` value</span>
+<span class="caption">Listado 6-4: Una enumeración `Coin` donde la variante `Quarter` 
+tambien contiene un valor `UsState`</span>
 
-Let’s imagine that a friend of ours is trying to collect all 50 state quarters.
-While we sort our loose change by coin type, we’ll also call out the name of
-the state associated with each quarter so if it’s one our friend doesn’t have,
-they can add it to their collection.
+Imaginemos que un amigo nuestro esta intentando recolectar los 50 alojamientos del estado.
+Mientras clasificamos nuestro cambio impreciso por tipo de moneda, tambien llamamos el
+nombre del estado asociado con cada alojamiento asique si uno de nuestros amigos no tiene,
+ellos pueden agregarlo a su colección.
 
-In the match expression for this code, we add a variable called `state` to the
-pattern that matches values of the variant `Coin::Quarter`. When a
-`Coin::Quarter` matches, the `state` variable will bind to the value of that
-quarter’s state. Then we can use `state` in the code for that arm, like so:
+En la expresión de coincidencia para este código, agregamos una variable llamada `state` al
+patrón que coincide con el valor de la variante `Coin::Quarter`. Cuando un
+`Coin::Quarter` coincide, la variable `state` se juntará al valor del 
+estado de alojamientos. Entonces podemos usar `state` en el código para ese brazo, asi:
 
 ```rust
 # #[derive(Debug)]
@@ -158,28 +157,26 @@ fn value_in_cents(coin: Coin) -> u32 {
 }
 ```
 
-If we were to call `value_in_cents(Coin::Quarter(UsState::Alaska))`, `coin`
-would be `Coin::Quarter(UsState::Alaska)`. When we compare that value with each
-of the match arms, none of them match until we reach `Coin::Quarter(state)`. At
-that point, the binding for `state` will be the value `UsState::Alaska`. We can
-then use that binding in the `println!` expression, thus getting the inner
-state value out of the `Coin` enum variant for `Quarter`.
+Si tuviésemos que llamar `value_in_cents(Coin::Quarter(UsState::Alaska))`, `coin`
+sería `Coin::Quarter(UsState::Alaska)`. Cuando comparamos el valor con cada uno
+de los brazos de coincidencia, ninguno de ellos coincide hasta alcanzar `Coin::Quarter(state)`. A
+ese punto, el enlace `state` tendrá el valor `UsState::Alaska`. Podemos entonces
+usar ese enlace en la expresión `println!`, obteniendo el valor de estado de la variante
+de enumeración  `Coin` para `Quarter`.
 
-### Matching with `Option<T>`
+### Coincidencia con `Option<T>`
 
-In the previous section we wanted to get the inner `T` value out of the `Some`
-case when using `Option<T>`; we can also handle `Option<T>` using `match` as we
-did with the `Coin` enum! Instead of comparing coins, we’ll compare the
-variants of `Option<T>`, but the way that the `match` expression works remains
-the same.
+En la sección previa queriamos obtener el valor interno `T` del caso `Some`
+cuando usamos `Option<T>`; también podemos manejar `Option<T>` usando `match` asi como
+hicimos con la enumeración `Coin`! En lugar de comparar monedas, comparamos las variantes
+de `Option<T>`, pero la manera en que la expresión `match` funciona es igual.
 
-Let’s say we want to write a function that takes an `Option<i32>`, and if
-there’s a value inside, adds one to that value. If there isn’t a value inside,
-the function should return the `None` value and not attempt to perform any
-operations.
+Digamos que queremos escribir una faunción que tome una `Option<i32>`, y si
+tiene un valor adentro, agregamos uno a ese valor. Si no tiene un valor adentro,
+la función debería retornar el valor `None` y no intentar realizar ninguna operación.
 
-This function is very easy to write, thanks to `match`, and will look like
-Listing 6-5:
+Esta función es muy fácil de escribir, gracias a `match`, y se verá como en el
+Listado 6-5:
 
 ```rust
 fn plus_one(x: Option<i32>) -> Option<i32> {
