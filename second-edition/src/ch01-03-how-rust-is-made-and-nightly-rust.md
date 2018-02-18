@@ -134,37 +134,40 @@ los errores aún existen.
 Hay otro beneficio con este modelo de lanzamiento de versiones: funcionalidades
 inestables. Rust usa una técnica llamada "banderas de funcionalidades" para
 determinar qué funcionalidades están presentes en una versión en particular.
-Si una nueva funcionalidad está bajo desarrollo activo, it lands on
-`master`, and therefore, in nightly, but behind a *feature flag*. If you, as a
-user, wish to try out the work-in-progress feature, you can, but you must be
-using a nightly release of Rust and annotate your source code with the
-appropriate flag to opt in.
+Si una nueva funcionalidad está bajo desarrollo activo, terminará en `master`,
+y por lo tanto, en nocturno, pero antes de una *bandera de funcionalidad*. Si
+usted, como usuario, desea probar la funcionalidad que está en proceso, usted
+puede, pero necesitará estar usando una versión nocturna de Rust y anotar su
+código fuente con la bandera apropiada para ingresar.
 
-If you’re using a beta or stable release of Rust, you can’t use any feature
-flags. This is the key that allows us to get practical use with new features
-before we declare them stable forever. Those who wish to opt into the bleeding
-edge can do so, and those who want a rock-solid experience can stick with
-stable and know that their code won’t break. Stability without stagnation.
+Si usted está usando una versión beta o estable de Rust, no puede usar ninguna
+bandera de funcionalidad. Esta es la clave que nos permite tener uso práctico
+con nuevas funcionalidades antes de declararlas como estables para siempre.
+Aquellos que deseen ingresar a las versiones más nuevas pueden hacerlo, y
+aquellos que quieran una experiencia sólida como-roca pueden quedarse con la
+versión estable sabiendo que sus códigos jamás fallarán. Estabilidad sin
+Estancamiento.
 
-This book only contains information about stable features, as in-progress
-features are still changing, and surely they’ll be different between when this
-book was written and when they get enabled in stable builds. You can find
-documentation for nightly-only features online.
+Este libro solo contiene información sobre funcionalidades estables, ya que las
+funcionalidades en proceso aún están cambiando, y seguramente serán diferentes
+entre el momento en el que se escriba este libro y el momento en el que llegarán
+a la versión estable. Usted puede encontrar documentación acerca de sólo
+funcionalidades nocturnas en línea.
 
 
-### Rustup and the Role of Rust Nightly
+### Rustup y el Rol de Rust Nocturno
 
-Rustup makes it easy to change between different release channels of Rust, on a
-global or per-project basis. By default, you’ll have stable Rust installed. To
-install nightly, for example:
+Rustup hace fácil cambiar entre diferentes canales de versiones de Rust,
+en un fundamento global o por-proyecto. Por defecto, usted tendrá la versión
+de Rust estable instalada. Para instalar la versión nocturna, por ejemplo:
 
 ```text
 $ rustup install nightly
 ```
 
-You can see all of the *toolchains* (releases of Rust and associated
-components) you have installed with `rustup` as well. Here’s an example on one
-of your authors’ computers:
+Puede ver todas las *toolchains* (versiones de Rust y componentes asociados)
+que tenga instaladas con `rustup` también. Aquí hay un ejemplo de uno de los
+computadores de su autor:
 
 ```powershell
 > rustup toolchain list
@@ -173,63 +176,57 @@ beta-x86_64-pc-windows-msvc
 nightly-x86_64-pc-windows-msvc
 ```
 
-As you can see, the stable toolchain is the default. Most Rust users use stable
-most of the time. You might want to use stable most of the time, but use
-nightly on a specific project, because you care about a cutting-edge feature.
-To do so, you can use `rustup override` in that project’s directory to set the
-nightly toolchain as the one `rustup` should use when you’re in that directory:
+Como puede ver, la toolchain estable es la que está por defecto. La mayoría de
+los usuarios de Rust usan la versión estable la mayoría del tiempo. Usted
+querría usar la versión estable la mayoría del tiempo, pero usar la versión
+nocturna en un proyecto en específico, porque le importan las funcionalidades
+recién hechas. Para hacerlo, puede usar `rustup override` en ese directorio del
+proyecto para establecer la toolchain de la versión nocturna como la que `rustup`
+debería de usar cuando esté en ese directorio:
 
 ```text
 $ cd ~/projects/needs-nightly
 $ rustup override add nightly
 ```
 
-Now, every time you call `rustc` or `cargo` inside of
-*~/projects/needs-nightly*, `rustup` will make sure that you are using nightly
-Rust, rather than your default of stable Rust. This comes in handy when you
-have a lot of Rust projects!
+Ahora, cada vez que llame `rustc` o `cargo` dentro de *~/projects/needs-nightly*,
+`rustup` se encargará de que usted esté usando la versión nocturna de Rust, en
+vez de su versión estable por defecto de Rust. ¡Esto es útil cuando quiere tener
+muchos proyectos de Rust!
 
-### The RFC Process and Teams
+### El Proceso RFC y Los Equipos
 
-So how do you learn about these new features? Rust’s development model follows
-a *Request For Comments (RFC) process*. If you’d like an improvement in Rust,
-you can write up a proposal, called an RFC.
+Así que ¿Cómo aprende usted de estas nuevas funcionalidades? El modelo dedesarrollo
+de Rust sigue un *Request For Comments (RFC)(Proceso de Pedir Por Comentarios)*.
+Si quiere una mejora en Rust, puede escribir una propuesta, llamada RFC.
 
-Anyone can write RFCs to improve Rust, and the proposals are reviewed and
-discussed by the Rust team, which is comprised of many topic subteams. There’s
-a full list of the teams [on Rust’s
-website](https://www.rust-lang.org/en-US/team.html), which includes teams for
-each area of the project: language design, compiler implementation,
-infrastructure, documentation, and more. The appropriate team reads the
-proposal and the comments, writes some comments of their own, and eventually,
-there’s consensus to accept or reject the feature.
+Cualquiera puede escribir RFCs para mejorar Rust, y las propuestas son revisadas
+y discutidas por el equipo de Rust, el cual está comprendido de sub-equipos
+de muchos temas. Hay una lista completa de los equipos [en Rust’s website]
+(https://www.rust-lang.org/en-US/team.html), la cual incluye equipos para cada
+area del proyecto: diseño del lenguaje, implementación del compilador,
+infraestructura, documentación, y más. Los equipos apropiados leen las propuestas
+y los comentarios, escriben algunos comentarios ellos mismo, y eventualmente,
+hay un consenso para aceptar o negar la funcionalidad.
 
-If the feature is accepted, an issue is opened on the Rust repository, and
-someone can implement it. The person who implements it very well may not be the
-person who proposed the feature in the first place! When the implementation is
-ready, it lands on the `master` branch behind a feature gate, as we discussed
-in the “Unstable Features” section.
+Si hay una funcionalidad aceptada, una cuestión se abre en el repositorio de Rust,
+y alguien la puede implementar. ¡La persona que la implementa puede fácilmente no
+ser la persona que propuso la funcionalidad en primer lugar! Cuando la implementación
+está lista, termina en la rama `master` detrás de una entrada de funcionalidades,
+como lo discutimos en la sección de "Funcionalidades Inestables".
 
-After some time, once Rust developers who use nightly releases have been able
-to try out the new feature, team members will discuss the feature, how it’s
-worked out on nightly, and decide if it should make it into stable Rust or not.
-If the decision is to move forward, the feature gate is removed, and the
-feature is now considered stable! It rides the trains into a new stable release
-of Rust.
+## Resumen
 
-## Summary
+¡Ya está listo para un buen comienzo en su viaje con Rust! En este capítulo usted ha:
 
-You’re already off to a great start on your Rust journey! In this chapter,
-you’ve:
+* Aprendido qué hace a Rust único
+* Instalado las últimas versiones estables de Rust
+* Escrito un programa "Hello, world!" usando `rustc` directamente y usando las
+convenciones de `cargo`
+* Encontrado sobre el cómo Rust está desarrollado
 
-* Learned what makes Rust unique
-* Installed the latest stable version of Rust
-* Written a “Hello, world!” program using both `rustc` directly and using
-  the conventions of `cargo`
-* Found out about how Rust is developed
-
-This is a great time to build a more substantial program, to get used to
-reading and writing Rust code. In the next chapter, we’ll build a guessing game
-program. If you’d rather start by learning about how common programming
-concepts work in Rust, see Chapter 3.
+Este es un buen momento para escribir un programa substancioso, para acostumbrarse
+a leer y escribir códigos Rust. En el próximo capítulo, crearemos un programa de
+un juego de adivinanzas. Si prefiere comenzar aprendiendo sobre cómo los conceptos
+de programación común funcionan en Rust, vea el Capítulo 3.
 
