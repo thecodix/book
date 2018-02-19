@@ -6,7 +6,7 @@ de datos concretos. Miremos cómo definir funciones, estructuras, enum y
 métodos usando genéricos, y al final de esta sección discutiremos el
 desempeño del código usando genéricos.
 
-### Usando tipos de datos genéricos en la definición de funciones
+### Usando Tipos de Datos Genéricos en la Definición de Funciones
 
 Podemos definir funciones que usan genéricos en la firma de la función
 donde los tipos de datos de los parametros y los valores de respuesta van. De esta manera,
