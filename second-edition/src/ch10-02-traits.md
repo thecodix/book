@@ -1,4 +1,4 @@
-## Características: Definiendo comportamientos compartidos
+## Rasgo: Definiendo comportamientos compartidos
 
 Las características permiten usar otro tipo de abstracción: permiten abstraernos sobre
 el comportamiento que los tipos pueden tener en común. Un *trait* hace saber al compilador de Rust sobre
@@ -10,7 +10,7 @@ una característica y que, por lo tanto, posee el comportamiento que deseamos us
 > Nota: Las *Traits* son similares a una característica comúmente conocida como ‘interfaces’ en otros
 > lenguajes, auqnue con algunas diferencias.
 
-### Definir una característica
+### Definiendo un Rasgo
 
 El comportamiento de un tipo consiste en los métodos que se convoque en ese tipo.
 Tipos distintos comparten el mismo comportamiento cuando es posible convocar los mismos métodos en todos
@@ -52,7 +52,7 @@ definido para el mismo con esta firma exacta.
 Una característica puede tener múltiples métodos en su cuerpo, con las firmas del método
 en una lista de una por línea y cada línea terminando en un punto y coma.
 
-### Implementando una característica en un tipo
+### Implementando un Rasgo en un tipo
 
 Ahora que se ha definido la característica `Summarizable`, es posible implementarla en los
 tipos que queramos que tengan este comportamiento en nuestro agregador de redes sociales. El Listado 10-13
