@@ -252,7 +252,7 @@ Aquí hay algunos ejemplos: tenemos una referencia a un `i32` sin un parametro d
 vida, una referencia a un `i32` que tiene un parámetro de vida llamado`'a`,
 y una referencia mutable en `i32` que tiene la vida de `'a`:
 
-```rust,ignora
+```rust,ignore
 &i32        // una referencia
 &'a i32     // una referencia con el tiempo de vida explícito
 &'a mut i32 // una referencia mutable con el tiempo de vida explícito
