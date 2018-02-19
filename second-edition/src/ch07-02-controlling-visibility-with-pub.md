@@ -157,10 +157,10 @@ warning: function is never used: `connect`
   | |_^
 ```
 
-El código compilado, y la advertencia de `client::connect` que no se está usando
+El código ha compilado, y la advertencia de `client::connect` que no se está usando
 ha desaparecido!
 
-Las advertencias de código no utilizadas no siempre indican que un elemento de tu código debe
+Las advertencias de código no utilizado no siempre indican que un elemento de tu código debe
 hacerse público: si tu *no* deseas que estas funciones formen parte de tu API
 pública, las advertencias de código no utilizadas podrían estar alertándote sobre el código que ya no necesitas
 para poder eliminarlo de forma segura. También podrían estar alertándote de un error si acabas
@@ -203,7 +203,7 @@ warning: function is never used: `connect`
 Hmmm, todavía estamos recibiendo una advertencia de función no utilizada, aunque
 `network::connect` está configurada en `pub`. La razón es que la función es pública
 dentro del módulo, pero el módulo de `network` en el que reside la función no es
-pública. Estamos trabajando desde el interior de la biblioteca esta vez, mientras que
+público. Estamos trabajando desde el interior de la biblioteca esta vez, mientras que
 con `client::connect` trabajamos desde el exterior. Necesitamos cambiar
 *src/lib.rs* para hacer también a `network` pública, así:
 
@@ -241,7 +241,7 @@ y por cualquiera de los módulos hijo del padre.
 ### Ejemplos de Privacidad
 
 Veamos algunos ejemplos más de privacidad para tener un poco de práctica. Crea un nuevo
-proyecto de biblioteca e introduce el código en Listado 7-6 en el archivo *src/lib.rs*
+proyecto de biblioteca e introduce el código en el Listado 7-6 en el archivo *src/lib.rs*
 de tu nuevo proyecto:
 
 <span class="filename">Nombre del archivo: src/lib.rs</span>
@@ -272,9 +272,9 @@ algunas de las cuales son incorrectas</span>
 
 Antes de intentar compilar este código, adivina qué líneas de la función
 `try_me` tendrán errores. Luego, intenta compilar el código para ver si
-tenías razón, y siga leyendo para la discusión de los errores!
+tenías razón, y sigue leyendo para la discusión de los errores!
 
-#### Mirando los Errores
+#### Analizando los Errores
 
 La función `try_me` está en el módulo raíz de nuestro proyecto. El módulo llamado
 `outermost` es privado, pero la segunda regla de privacidad establece que la función
