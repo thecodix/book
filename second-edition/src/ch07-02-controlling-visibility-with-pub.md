@@ -164,7 +164,8 @@ Las advertencias de código no utilizadas no siempre indican que un elemento de 
 hacerse público: si tu *no* deseas que estas funciones formen parte de tu API
 pública, las advertencias de código no utilizadas podrían estar alertándote sobre el código que ya no necesitas
 para poder eliminarlo de forma segura. También podrían estar alertándote de un error si acabas
-de eliminar accidentalmente todos los lugares de tu biblioteca donde se llama esta función.
+de eliminar accidentalmente todos los lugares de tu biblioteca donde se llama 
+esta función.
 
 Pero en este caso, *queremos* que las otras dos funciones formen parte de la
 API pública de nuestro cajón, así que marquémoslas como `pub` y deshagámonos de las 
