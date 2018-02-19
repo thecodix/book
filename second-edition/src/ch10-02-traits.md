@@ -1,34 +1,32 @@
-## Traits: Defining Shared Behavior
+## Características: Definiendo comportamientos compartidos
 
-Traits allow us to use another kind of abstraction: they let us abstract over
-behavior that types can have in common. A *trait* tells the Rust compiler about
-functionality a particular type has and might share with other types. In
-situations where we use generic type parameters, we can use *trait bounds* to
-specify, at compile time, that the generic type may be any type that implements
-a trait and therefore has the behavior we want to use in that situation.
+Las características permiten usar otro tipo de abstracción: permiten abstraernos sobre
+el comportamiento que los tipos pueden tener en común. Un *trait* hace saber al compilador de Rust sobre
+la funcionalidad que tiene un tipo particular y que podría compartir con otros tipos. En
+situaciones en las que se usan parámetros genéricos de tipo, puede usarse *trait bounds* para
+especificar, al momento de compilar, que el tipo genérico puede tener cualquier tipo que implemente
+una característica y que, por lo tanto, posee el comportamiento que deseamos usar en esa situación.
 
-> Note: *Traits* are similar to a feature often called ‘interfaces’ in other
-> languages, though with some differences.
+> Nota: Las *Traits* son similares a una característica comúmente conocida como ‘interfaces’ en otros
+> lenguajes, auqnue con algunas diferencias.
 
-### Defining a Trait
+### Definir una característica
 
-The behavior of a type consists of the methods we can call on that type.
-Different types share the same behavior if we can call the same methods on all
-of those types. Trait definitions are a way to group method signatures together
-in order to define a set of behaviors necessary to accomplish some purpose.
+El comportamiento de un tipo consiste en los métodos que se convoque en ese tipo.
+Tipos distintos comparten el mismo comportamiento cuando es posible convocar los mismos métodos en todos
+esos tipos. Las definiciones de características son una forma de agrupar firmas de métodos
+con la finalidad de definir un conjunto de comportamientos necesarios para alcanzar un propósito.
 
-For example, say we have multiple structs that hold various kinds and amounts
-of text: a `NewsArticle` struct that holds a news story filed in a particular
-place in the world, and a `Tweet` that can have at most 140 characters in its
-content along with metadata like whether it was a retweet or a reply to another
-tweet.
+Por ejemplo, digamos que tenemos múltiples estructuras que mantienen diversos tipos y cantidades
+de texto: Una estructura `NewsArticle` que mantiene un historial archivado en un lugar 
+particular en el mundo, y un `Tweet` que puede tener un máximo de 140 caracteres en su
+contenido dentro de los metadatos, sin importar si fue un retweet o una respuesta hecha a otro tweet.
 
-We want to make a media aggregator library that can display summaries of data
-that might be stored in a `NewsArticle` or `Tweet` instance. The behavior we
-need each struct to have is that it’s able to be summarized, and that we can
-ask for that summary by calling a `summary` method on an instance. Listing
-10-12 shows the definition of a `Summarizable` trait that expresses this
-concept:
+Queremos crear una biblioteca agregadora de redes sociales que exhiba resúmenes de datos
+que podrían ser almacenados en un `NewsArticle` o en un `Tweet`. Cada estructura necesita tener
+un comportamiento que le permita ser resumido y que pueda
+ser pedido convocando un método `summary` en una instancia. El Listado
+10-12 demuestra la definición de una caracterísctica `Summarizable` que expresa este concepto:
 
 <span class="filename">Filename: lib.rs</span>
 
@@ -41,28 +39,28 @@ pub trait Summarizable {
 <span class="caption">Listing 10-12: Definition of a `Summarizable` trait that
 consists of the behavior provided by a `summary` method</span>
 
-We declare a trait with the `trait` keyword, then the trait’s name, in this
-case `Summarizable`. Inside curly brackets we declare the method signatures
-that describe the behaviors that types that implement this trait will need to
-have, in this case `fn summary(&self) -> String`. After the method signature,
-instead of providing an implementation within curly brackets, we put a
-semicolon. Each type that implements this trait must then provide its own
-custom behavior for the body of the method, but the compiler will enforce that
-any type that has the `Summarizable` trait will have the method `summary`
-defined for it with this signature exactly.
+Declaramos una característica con la palabra clave `trait` y, seguidamente, el nombre de la característica, en este
+caso `Summarizable`. Dentro de llaves, declaramos las firmas de los métodos
+que describen los comportamientos que los tipos que implementan esta característica necesitarán, 
+en este caso `fn summary(&self) -> String`. Después de la firma de método,
+en lugar de proveer una implementación dentro de llaves, se usa un
+punto y coma. Cada tipo que implementa esta característica deberá proveer su propio
+comportamiento personalizado para el cuerpo del método, pero el compilador se asegurará de que
+cada tipo que tiene la característica `Summarizable` tenga el método `summary`
+definido para el mismo con esta firma exacta.
 
-A trait can have multiple methods in its body, with the method signatures
-listed one per line and each line ending in a semicolon.
+Una característica puede tener múltiples métodos en su cuerpo, con las firmas del método
+en una lista de una por línea y cada línea terminando en un punto y coma.
 
-### Implementing a Trait on a Type
+### Implementando una característica en un tipo
 
-Now that we’ve defined the `Summarizable` trait, we can implement it on the
-types in our media aggregator that we want to have this behavior. Listing 10-13
-shows an implementation of the `Summarizable` trait on the `NewsArticle` struct
-that uses the headline, the author, and the location to create the return value
-of `summary`. For the `Tweet` struct, we’ve chosen to define `summary` as the
-username followed by the whole text of the tweet, assuming that tweet content
-is already limited to 140 characters.
+Ahora que se ha definido la característica `Summarizable`, es posible implementarla en los
+tipos que queramos que tengan este comportamiento en nuestro agregador de redes sociales. El Listado 10-13
+muestra una implementación de la característica `Summarizable` en la estructura `NewsArticle`
+que emplea el encabezado, el autor, y la ubicación para crear el valor de retorno
+de `summary`. Para la estructura de `Tweet`, se ha escogido definir `summary` como el
+nombre de usuario seguido del texto completo del tweet, asumiendo que el contenido del tweet
+ya se encuentra limitado a 140 caracteres.
 
 <span class="filename">Filename: lib.rs</span>
 
@@ -101,18 +99,18 @@ impl Summarizable for Tweet {
 <span class="caption">Listing 10-13: Implementing the `Summarizable` trait on
 the `NewsArticle` and `Tweet` types</span>
 
-Implementing a trait on a type is similar to implementing methods that aren’t
-related to a trait. The difference is after `impl`, we put the trait name that
-we want to implement, then say `for` and the name of the type that we want to
-implement the trait for. Within the `impl` block, we put the method signatures
-that the trait definition has defined, but instead of putting a semicolon after
-each signature, we put curly brackets and fill in the method body with the
-specific behavior that we want the methods of the trait to have for the
-particular type.
+Implementar una característica en un tipo es similar a implementar métodos que no están
+relacionados con una característica. La diferencia está en que después de `impl`, se pone el nombre de la característica que
+se desea implementar, luego se pone `for` y el nombre del tipo al que deseamos
+implementarle la característica. Dentro del bloque `impl`, se ponen las firmas del método
+que la definición de la característica ha definido, pero en lugar de poner un punto y coma después de
+cada firma, se ponen llaves y se llena el cuerpo del método con el
+comportamiento específico que se quiera que los métodos de la características tengan para el
+tipo particular.
 
-Once we’ve implemented the trait, we can call the methods on instances of
-`NewsArticle` and `Tweet` in the same manner that we call methods that aren’t
-part of a trait:
+Una vez que se ha implementado la característica, podemos convocar los métodos en instancias de
+`NewsArticle` y `Tweet` de la misma forma en que convocamos los métodos que no forman
+parte de una característica:
 
 ```rust,ignore
 let tweet = Tweet {
@@ -125,16 +123,16 @@ let tweet = Tweet {
 println!("1 new tweet: {}", tweet.summary());
 ```
 
-This will print `1 new tweet: horse_ebooks: of course, as you probably already
+Esto pondrá `1 new tweet: horse_ebooks: of course, as you probably already
 know, people`.
 
-Note that because we’ve defined the `Summarizable` trait and the `NewsArticle`
-and `Tweet` types all in the same `lib.rs` in Listing 10-13, they’re all in the
-same scope. If this `lib.rs` is for a crate we’ve called `aggregator`, and
-someone else wants to use our crate’s functionality plus implement the
-`Summarizable` trait on their `WeatherForecast` struct, their code would need
-to import the `Summarizable` trait into their scope first before they could
-implement it, like in Listing 10-14:
+Tome en cuenta que debido a que hemos definido la característica `Summarizable` y los tipos `NewsArticle`
+y `Tweet` dentro del mismo `lib.rs` en el Listado 10-13, todos están dentro
+del mismo campo de acción. Si este `lib.rs` es para un cajón que hemos llamado `aggregator` y
+alguien más desea usar la funcionabilidad de nuestro cajón e implementar la característica
+`Summarizable` en su estructura `WeatherForecast`, su código necesitaría
+importar la característica `Summarizable` en su campo de acción antes de poder
+implementarlo, como en el Listado 10-14:
 
 <span class="filename">Filename: lib.rs</span>
 
@@ -158,37 +156,37 @@ impl Summarizable for WeatherForecast {
 }
 ```
 
-<span class="caption">Listing 10-14: Bringing the `Summarizable` trait from our
-`aggregator` crate into scope in another crate</span>
+<span class="caption"> El Listado 10-14: Trayendo la característica `Summarizable` desde nuestro
+cajón `aggregator` dentro del campo de acción en otro cajón</span>
 
-This code also assumes `Summarizable` is a public trait, which it is because we
-put the `pub` keyword before `trait` in Listing 10-12.
+Este código también asume que `Summarizable` es una característica pública, lo cual se debe a que
+pone la palabra clave `pub` antes de `trait` en el Listado 10-12.
 
-One restriction to note with trait implementations: we may implement a trait on
-a type as long as either the trait or the type are local to our crate. In other
-words, we aren’t allowed to implement external traits on external types. We
-can’t implement the `Display` trait on `Vec`, for example, since both `Display`
-and `Vec` are defined in the standard library. We are allowed to implement
-standard library traits like `Display` on a custom type like `Tweet` as part of
-our `aggregator` crate functionality. We could also implement `Summarizable` on
-`Vec` in our `aggregator` crate, since we’ve defined `Summarizable` there. This
-restriction is part of what’s called the *orphan rule*, which you can look up
-if you’re interested in type theory. Briefly, it’s called the orphan rule
-because the parent type is not present. Without this rule, two crates could
-implement the same trait for the same type, and the two implementations would
-conflict: Rust wouldn’t know which implementation to use. Because Rust enforces
-the orphan rule, other people’s code can’t break your code and vice versa.
+Una reestricción a tener en cuenta con la implementación de características: se puede implementar una característica en 
+un tipo siempre y cuando la característica o el tipo sean locales para nuestro cajón. En otras
+palabras, no está permitido implementar características externas en tipos externos. No se puede
+implementar la característica `Display` en `Vec`, por ejemplo, ya que `Display`
+y `Vec` son definidos en la biblioteca estándar. Está permitido implementar
+características de la biblioteca estándar como `Display` en un tipo personalizado como `Tweet` como parte de
+la funcionalidad de cajón de nuestro `aggregator`. También podría implementarse `Summarizable` en
+`Vec` en nuestro cajón `aggregator`, ya que allí se ha definido `Summarizable`. Esta
+restricción es parte de lo que se conoce como *orphan rule*, la cual puede ser consultada
+si este tipo de teorías son de su interés. En resumen, se llama regla huérfana
+porque el tipo parental no está presente. Sin esta regla, dos cajones pueden
+implementar la misma característica para el mismo tipo, y las dos implementaciones entrarían
+en conflicto: el Rust no sabría cuál implementación usar. Ya que el Rust hace cumplir
+la regla huérfana, los códigos de otras personas no pueden romper su código y viceversa.
 
-### Default Implementations
+### Implementaciones por defecto
 
-Sometimes it’s useful to have default behavior for some or all of the methods
-in a trait, instead of making every implementation on every type define custom
-behavior. When we implement the trait on a particular type, we can choose to
-keep or override each method’s default behavior.
+Algunas veces, es útil tener un comportamiento por defecto para algunos o todos los métodos
+en una característica,  en lugar de crear cada implementación en cada uno de los comportamientos personalizados de tipos
+definidos. Cuando se implementa la característica en un tipo particular, se puede elegir conservar 
+o saltarse el comportamiento por defecto de cada método.
 
-Listing 10-15 shows how we could have chosen to specify a default string for
-the `summary` method of the `Summarizable` trait instead of choosing to only
-define the method signature like we did in Listing 10-12:
+El Listado 10-15 muestra cómo podríamos haber elegido especificar una cadena de caracteres por defecto para
+el método `summary` de la característica `Summarizable` en lugar de elegir solo definir 
+la firma de un método como se hizo en el Listado 10-12:
 
 <span class="filename">Filename: lib.rs</span>
 
