@@ -1,4 +1,4 @@
-## Controlar la visibilidad con `pub`
+## Controlar la Visibilidad con `pub`
 
 Resolvimos los mensajes de error mostrados en el Listado 7-5 moviendo el código `network` y 
 `network::server` a los archivos *src/network/mod.rs* y 
@@ -40,10 +40,10 @@ otro proyecto, no por el nuestro.
 
 Para entender por qué este programa invoca estas advertencias, intentemos usar la
 biblioteca `connect` de otro proyecto, llamándola externamente. Para ello, 
-crearemos un cajón binario en el mismo directorio que nuestra biblioteca 
+crearemos un crate binario en el mismo directorio que nuestra biblioteca 
 haciendo un archivo *src/main.rs* que contenga este código:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,ignore
 extern crate communicator;
@@ -53,25 +53,25 @@ fn main() {
 }
 ```
 
-Usamos el comando `extern crate` para llevar el cajón de la biblioteca del `comunicador`
+Usamos el comando `extern crate` para llevar el crate de la biblioteca del `comunicador`
 al alcance. Nuestro paquete ahora contiene *dos* cajones. Cargo trata *src/main.rs*
-como el archivo raíz de un cajón binario, que está separado del cajón de la biblioteca existente
+como el archivo raíz de un crate binario, que está separado del crate de la biblioteca existente
 cuyo archivo raíz es *src/lib.rs*. Este patrón es bastante común para
-proyectos ejecutables: la mayoría de las funciones se encuentran en un cajón de biblioteca, y el cajón
-binario usa esa cajón de biblioteca. Como resultado, otros programas también pueden usar el
-cajón de la biblioteca, y es una buena separación de preocupaciones.
+proyectos ejecutables: la mayoría de las funciones se encuentran en un crate de biblioteca, y el crate
+binario usa ese crate de biblioteca. Como resultado, otros programas también pueden usar el
+crate de la biblioteca, y es una buena separación de preocupaciones.
 
-Desde el punto de vista de un cajón fuera de la biblioteca del `comunicator` 
+Desde el punto de vista de un crate fuera de la biblioteca del `comunicator` 
 mirando, todos los módulos que hemos estado creando están dentro de un módulo que tiene el mismo
-nombre que el cajón, `comunicator`. Llamamos al módulo de nivel superior de un cajón el
+nombre que el crate, `comunicator`. Llamamos al módulo de nivel superior de un crate el
 *módulo raíz*.
 
-También ten en cuenta que incluso si estamos usando un cajón externa dentro de un submódulo de
-nuestro proyecto, el `cajón externo` debería ir en nuestro módulo raíz (también en *src/main.rs*
+También ten en cuenta que incluso si estamos usando un crate externa dentro de un submódulo de
+nuestro proyecto, el `crate extern` debería ir en nuestro módulo raíz (también en *src/main.rs*
 o *src/lib.rs*). A continuación, en nuestros submódulos, podemos referirnos a los artículos de cajones
 externos como si se tratara de módulos de primer nivel.
 
-En este momento, nuestr cajón binario sólo llama a la función `connect` de
+En este momento, nuestr crate binario sólo llama a la función `connect` de
 nuestra biblioteca desde el módulo `client`. Sin embargo, invocando `cargo build` ahora nos dará un error
 después de las advertencias:
 
@@ -92,7 +92,7 @@ permitido para usar esa función, Rust te advertirá que la función no se ha
 usado.
 
 Después de especificar que una función como `client::connect` es pública, no sólo 
-se permitirá nuestro llamado a esa función desde nuestra cajón binario, sino que 
+se permitirá nuestro llamado a esa función desde nuestra crate binario, sino que 
 la advertencia de que la función no se utiliza desaparecerá. Marcar una función como pública
 le permite a Rust saber que la función será usada por código fuera de nuestro programa.
 Rust considera el uso externo teórico que ahora es posible como la 
@@ -105,10 +105,10 @@ utiliza.
 Para decirle a Rust que haga pública una función, añadimos la palabra clave `pub` al inicio
 de la declaración. Nos centraremos en arreglar la advertencia que indica 
 `cliente::connect` ha quedado sin usar por ahora, así como el `` módule `client` is
-private `` de nuestr cajón binario. Modifica *src/lib.rs* para hacer que
+private `` de nuestr crate binario. Modifica *src/lib.rs* para hacer que
 el módulo `client` sea público, así:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust,ignore
 pub mod client;
