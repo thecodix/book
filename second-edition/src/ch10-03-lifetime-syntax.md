@@ -75,7 +75,7 @@ Rsut que este código no debería estar permitido?
 
 #### El Verificador
 
-La parte del compilador llamada *Verificador* compara alcances para
+La parte del compilador llamada *Verificador* compara scopes para
 determinar que todos los puntos son válidos El Listado 10-19 muestra el mismo ejemplo del
 Listado 10-18 con anotaciones que muestran las vidas de las variables:
 
@@ -212,8 +212,8 @@ error[E0106]: falta especificador de vida
 1  | fn longest(x: &str, y: &str) -> &str {
    |                                 ^ parámetro de vida esperado
    |
-   = ayuda: el tipo de devolución de esta función contiene un valor prestado, pero la
-   firma no dice si es prestado de `x` o de `y`
+   = help: this function's return type contains a borrowed value, but the
+   signature does not say whether it is borrowed from `x` or `y`
 ```
 
 El texto de ayuda nos dice que el tipo de devolución necesita un ciclo de vida genérico
