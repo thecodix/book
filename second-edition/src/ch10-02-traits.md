@@ -1,20 +1,20 @@
 ## Rasgo: Definiendo comportamientos compartidos
 
-Las características permiten usar otro tipo de abstracción: permiten abstraernos sobre
+Las rasgos permiten usar otro tipo de abstracción: permiten abstraernos sobre
 el comportamiento que los tipos pueden tener en común. Un *trait* hace saber al compilador de Rust sobre
 la funcionalidad que tiene un tipo particular y que podría compartir con otros tipos. En
 situaciones en las que se usan parámetros genéricos de tipo, puede usarse *trait bounds* para
 especificar, al momento de compilar, que el tipo genérico puede tener cualquier tipo que implemente
 una característica y que, por lo tanto, posee el comportamiento que deseamos usar en esa situación.
 
-> Nota: Las *Traits* son similares a una característica comúmente conocida como ‘interfaces’ en otros
-> lenguajes, auqnue con algunas diferencias.
+> Nota: Las *Traits* son similares a un rasgo comúmente conocida como ‘interfaces’ en otros
+> lenguajes, aun que con algunas diferencias.
 
 ### Definiendo un Rasgo
 
 El comportamiento de un tipo consiste en los métodos que se convoque en ese tipo.
 Tipos distintos comparten el mismo comportamiento cuando es posible convocar los mismos métodos en todos
-esos tipos. Las definiciones de características son una forma de agrupar firmas de métodos
+esos tipos. Las definiciones de rasgos son una forma de agrupar firmas de métodos
 con la finalidad de definir un conjunto de comportamientos necesarios para alcanzar un propósito.
 
 Por ejemplo, digamos que tenemos múltiples estructuras que mantienen diversos tipos y cantidades
@@ -26,7 +26,7 @@ Queremos crear una biblioteca agregadora de redes sociales que exhiba resúmenes
 que podrían ser almacenados en un `NewsArticle` o en un `Tweet`. Cada estructura necesita tener
 un comportamiento que le permita ser resumido y que pueda
 ser pedido convocando un método `summary` en una instancia. El Listado
-10-12 demuestra la definición de una caracterísctica `Summarizable` que expresa este concepto:
+10-12 demuestra la definición de un rasgo `Summarizable` que expresa este concepto:
 
 <span class="filename">Filename: lib.rs</span>
 
@@ -39,24 +39,24 @@ pub trait Summarizable {
 <span class="caption">Listing 10-12: Definition of a `Summarizable` trait that
 consists of the behavior provided by a `summary` method</span>
 
-Declaramos una característica con la palabra clave `trait` y, seguidamente, el nombre de la característica, en este
+Declaramos un rasgo con la palabra clave `trait` y, seguidamente, el nombre de el rasgo, en este
 caso `Summarizable`. Dentro de llaves, declaramos las firmas de los métodos
-que describen los comportamientos que los tipos que implementan esta característica necesitarán, 
+que describen los comportamientos que los tipos que implementan este rasgo necesitarán, 
 en este caso `fn summary(&self) -> String`. Después de la firma de método,
 en lugar de proveer una implementación dentro de llaves, se usa un
-punto y coma. Cada tipo que implementa esta característica deberá proveer su propio
+punto y coma. Cada tipo que implementa este rasgo deberá proveer su propio
 comportamiento personalizado para el cuerpo del método, pero el compilador se asegurará de que
 cada tipo que tiene la característica `Summarizable` tenga el método `summary`
 definido para el mismo con esta firma exacta.
 
-Una característica puede tener múltiples métodos en su cuerpo, con las firmas del método
+Un rasgo puede tener múltiples métodos en su cuerpo, con las firmas del método
 en una lista de una por línea y cada línea terminando en un punto y coma.
 
 ### Implementando un Rasgo en un tipo
 
-Ahora que se ha definido la característica `Summarizable`, es posible implementarla en los
+Ahora que se ha definido el rasgo `Summarizable`, es posible implementarla en los
 tipos que queramos que tengan este comportamiento en nuestro agregador de redes sociales. El Listado 10-13
-muestra una implementación de la característica `Summarizable` en la estructura `NewsArticle`
+muestra una implementación de el rasgo `Summarizable` en la estructura `NewsArticle`
 que emplea el encabezado, el autor, y la ubicación para crear el valor de retorno
 de `summary`. Para la estructura de `Tweet`, se ha escogido definir `summary` como el
 nombre de usuario seguido del texto completo del tweet, asumiendo que el contenido del tweet
@@ -100,15 +100,15 @@ impl Summarizable for Tweet {
 the `NewsArticle` and `Tweet` types</span>
 
 Implementar una característica en un tipo es similar a implementar métodos que no están
-relacionados con una característica. La diferencia está en que después de `impl`, se pone el nombre de la característica que
+relacionados con un rasgo. La diferencia está en que después de `impl`, se pone el nombre de el rasgo que
 se desea implementar, luego se pone `for` y el nombre del tipo al que deseamos
-implementarle la característica. Dentro del bloque `impl`, se ponen las firmas del método
-que la definición de la característica ha definido, pero en lugar de poner un punto y coma después de
+implementarle el rasgo. Dentro del bloque `impl`, se ponen las firmas del método
+que la definición de el rasgo ha definido, pero en lugar de poner un punto y coma después de
 cada firma, se ponen llaves y se llena el cuerpo del método con el
-comportamiento específico que se quiera que los métodos de la características tengan para el
+comportamiento específico que se quiera que los métodos de el rasgo tengan para el
 tipo particular.
 
-Una vez que se ha implementado la característica, podemos convocar los métodos en instancias de
+Una vez que se ha implementado el rasgo, podemos convocar los métodos en instancias de
 `NewsArticle` y `Tweet` de la misma forma en que convocamos los métodos que no forman
 parte de una característica:
 
@@ -126,12 +126,12 @@ println!("1 new tweet: {}", tweet.summary());
 Esto pondrá `1 new tweet: horse_ebooks: of course, as you probably already
 know, people`.
 
-Tome en cuenta que debido a que hemos definido la característica `Summarizable` y los tipos `NewsArticle`
+Tome en cuenta que debido a que hemos definido el rasgo `Summarizable` y los tipos `NewsArticle`
 y `Tweet` dentro del mismo `lib.rs` en el Listado 10-13, todos están dentro
 del mismo campo de acción. Si este `lib.rs` es para un cajón que hemos llamado `aggregator` y
-alguien más desea usar la funcionabilidad de nuestro cajón e implementar la característica
+alguien más desea usar la funcionabilidad de nuestro cajón e implementar el rasgo
 `Summarizable` en su estructura `WeatherForecast`, su código necesitaría
-importar la característica `Summarizable` en su campo de acción antes de poder
+importar el rasgo `Summarizable` en su campo de acción antes de poder
 implementarlo, como en el Listado 10-14:
 
 <span class="filename">Filename: lib.rs</span>
@@ -156,36 +156,36 @@ impl Summarizable for WeatherForecast {
 }
 ```
 
-<span class="caption"> El Listado 10-14: Trayendo la característica `Summarizable` desde nuestro
+<span class="caption"> El Listado 10-14: Trayendo el rasgo `Summarizable` desde nuestro
 cajón `aggregator` dentro del campo de acción en otro cajón</span>
 
 Este código también asume que `Summarizable` es una característica pública, lo cual se debe a que
 pone la palabra clave `pub` antes de `trait` en el Listado 10-12.
 
-Una reestricción a tener en cuenta con la implementación de características: se puede implementar una característica en 
-un tipo siempre y cuando la característica o el tipo sean locales para nuestro cajón. En otras
-palabras, no está permitido implementar características externas en tipos externos. No se puede
+Una reestricción a tener en cuenta con la implementación de rasgo: se puede implementar un rasgo en 
+un tipo siempre y cuando el rasgo o el tipo sean locales para nuestro cajón. En otras
+palabras, no está permitido implementar rasgos externos en tipos externos. No se puede
 implementar la característica `Display` en `Vec`, por ejemplo, ya que `Display`
 y `Vec` son definidos en la biblioteca estándar. Está permitido implementar
-características de la biblioteca estándar como `Display` en un tipo personalizado como `Tweet` como parte de
+rasgos de la biblioteca estándar como `Display` en un tipo personalizado como `Tweet` como parte de
 la funcionalidad de cajón de nuestro `aggregator`. También podría implementarse `Summarizable` en
 `Vec` en nuestro cajón `aggregator`, ya que allí se ha definido `Summarizable`. Esta
 restricción es parte de lo que se conoce como *orphan rule*, la cual puede ser consultada
 si este tipo de teorías son de su interés. En resumen, se llama regla huérfana
 porque el tipo parental no está presente. Sin esta regla, dos cajones pueden
-implementar la misma característica para el mismo tipo, y las dos implementaciones entrarían
+implementar el mismo rasgo para el mismo tipo, y las dos implementaciones entrarían
 en conflicto: el Rust no sabría cuál implementación usar. Ya que el Rust hace cumplir
 la regla huérfana, los códigos de otras personas no pueden romper su código y viceversa.
 
 ### Implementaciones por defecto
 
 Algunas veces, es útil tener un comportamiento por defecto para algunos o todos los métodos
-en una característica,  en lugar de crear cada implementación en cada uno de los comportamientos personalizados de tipos
-definidos. Cuando se implementa la característica en un tipo particular, se puede elegir conservar 
+en un rasgo,  en lugar de crear cada implementación en cada uno de los comportamientos personalizados de tipos
+definidos. Cuando se implementa el rasgo en un tipo particular, se puede elegir conservar 
 o saltarse el comportamiento por defecto de cada método.
 
 El Listado 10-15 muestra cómo podríamos haber elegido especificar una cadena de caracteres por defecto para
-el método `summary` de la característica `Summarizable` en lugar de elegir solo definir 
+el método `summary` de el rasgo `Summarizable` en lugar de elegir solo definir 
 la firma de un método como se hizo en el Listado 10-12:
 
 <span class="filename">Filename: lib.rs</span>
