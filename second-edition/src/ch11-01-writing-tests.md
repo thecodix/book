@@ -479,30 +479,30 @@ Under the surface, the `assert_eq!` and `assert_ne!` macros use the operators
 arguments using debug formatting, which means the values being compared must
 implement the `PartialEq` and `Debug` traits. All the primitive types and most
 of the standard library types implement these traits. For structs and enums
-that you define, you’ll need to implement `PartialEq` to assert that values of
-those types are equal or not equal. You’ll need to implement `Debug` to print
-out the values when the assertion fails. Because both traits are derivable
-traits, as mentioned in Listing 5-12 in Chapter 5, this is usually as
-straightforward as adding the `#[derive(PartialEq, Debug)]` annotation to your
-struct or enum definition. See Appendix C for more details about these and
-other derivable traits.
+que definas, necesitarás implementar `PartialEq` para afirmar que los valores de
+esos tipos son iguales o desiguales. Necesitarás implementar `Debug` para emitir
+los valores cuando la afirmación falle. Ya que los dos rasgos son rasgos
+derivables, como fue mencionado en el listado Listing 5-12 en el capítulo 5, esto es usualmente tan
+directo como el agregar la anotación `#[derive(PartialEq, Debug)]` a tu 
+estructura o definición enum. Ve el apéndice C para más detalles sobre estos
+y otros rasgos derivables.
 
-### Adding Custom Failure Messages
+### Añadiendo mensajes de fallo personalizados
 
-We can also add a custom message to be printed with the failure message as
-optional arguments to the `assert!`, `assert_eq!`, and `assert_ne!` macros. Any
-arguments specified after the one required argument to `assert!` or the two
-required arguments to `assert_eq!` and `assert_ne!` are passed along to the
-`format!` macro (discussed in Chapter 8 in the “Concatenation with the `+`
-Operator or the `format!` Macro” section), so you can pass a format string that
-contains `{}` placeholders and values to go in those placeholders. Custom
-messages are useful to document what an assertion means; when a test fails,
-we’ll have a better idea of what the problem is with the code.
+Podemos añadir un mensaje personalizado para ser emitidos con el mensaje de fallo como
+argumentos opcionales para los macros `assert!`, `assert_eq!`, y `assert_ne!`. Cualquiera
+de los argumentos especificados luego del unico argumento requerido para `assert!` o los dos 
+requeridos para `assert_eq!` y `assert_ne!` son enviados al 
+macro `format!` (discutidos en el capitulo 8 en la sección “Concatenación con el operador `+`
+o el macro `format!`”), para que puedas pasar un cordel de formato que 
+contenga los marcadores `{}` y valores que vayan en esos marcadores. Los mensajes
+personalizados son útiles para documentar lo que una afirmación significa; cuando una prueba falla,
+tendremos una mejor idea de cuál es el problema con el código.
 
-For example, let’s say we have a function that greets people by name, and we
-want to test that the name we pass into the function appears in the output:
+Por ejemplo, digamos que tenemos una función que salude a las personas por su nombre, y
+queremos probar que el nombre que pasemos en la función aparezca en el resultado:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 pub fn greeting(name: &str) -> String {
@@ -521,15 +521,15 @@ mod tests {
 }
 ```
 
-The requirements for this program haven’t been agreed upon yet, and we’re
-pretty sure the `Hello` text at the beginning of the greeting will change. We
-decided we don’t want to have to update the test for the name when that
-happens, so instead of checking for exact equality to the value returned from
-the `greeting` function, we’ll just assert that the output contains the text of
-the input parameter.
+Los requerimientos para este programa no han sido aceptados, y 
+estamos bastante seguros que el texto `Hello` en el inicio del saludo cambiará.
+decidimos que no queremos tener que actualizar la prueba para el nombre cuando eso
+pase, así que en vez de chequear por la igualdad exacta al valor devuelto desde
+la función `greeting`, sólo afirmaremos que la salida contenga el texto de
+la entrada del parámetro.
 
-Let’s introduce a bug into this code by changing `greeting` to not include
-`name` to see what this test failure looks like:
+Introduzcamos un bug dentro de este código cambiando `greeting` para que no incluya
+`name` para ver como la prueba fallida luce: 
 
 ```rust
 pub fn greeting(name: &str) -> String {
@@ -537,7 +537,7 @@ pub fn greeting(name: &str) -> String {
 }
 ```
 
-Running this test produces the following:
+El ejecutar esta prueba produce lo siguiente:
 
 ```text
 running 1 test
@@ -554,11 +554,11 @@ failures:
     tests::greeting_contains_name
 ```
 
-This result just indicates that the assertion failed and which line the
-assertion is on. A more useful failure message in this case would print the
-value we got from the `greeting` function. Let’s change the test function,
-giving it a custom failure message made from a format string with a placeholder
-filled in with the actual value we got from the `greeting` function:
+Este resultado solo indica que la afirmación falló y en cual línea
+está la afirmación. Un mensaje de fallo más util en este caso podría emitir
+el valor que obtuvimos de la función `greeting`. Cambiemos la función de prueba,
+dándole un mensaje personalizado de fallo hecho por un formato de hilos con un marcador
+lleno con el valor que obtuvimos por la función `greeting`:
 
 ```rust,ignore
 #[test]
@@ -571,7 +571,7 @@ fn greeting_contains_name() {
 }
 ```
 
-Now when we run the test, we’ll get a more informative error message:
+Ahora cuando ejecutemos la prueba, obtendremos un mensaje de error más informativo:
 
 ```text
 ---- tests::greeting_contains_name stdout ----
@@ -580,27 +580,27 @@ contain name, value was `Hello!`', src/lib.rs:12:8
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
 ```
 
-We can see the value we actually got in the test output, which would help us
-debug what happened instead of what we were expecting to happen.
+Podemos ver el valor que obtuvimos en la respuesta de la prueba, lo que nos ayudaría
+a eliminar los errores de lo que pasó en vez de lo que esperamos que pase
 
-### Checking for Panics with `should_panic`
+### Chequeando por Panics con `should_panic`
 
-In addition to checking that our code returns the correct values we expect,
-it’s also important to check that our code handles error conditions as we
-expect. For example, consider the `Guess` type that we created in Chapter 9,
-Listing 9-9. Other code that uses `Guess` depends on the guarantee that `Guess`
-instances will only contain values between 1 and 100. We can write a test that
-ensures that attempting to create a `Guess` instance with a value outside that
-range panics.
+En adición al chequear que nuestro código devuelva los valores correctos que esperamos,
+es importante el chequear que nuestro código maneje condiciones de error como nosotros
+esperamos. Por ejemplo, considera el tipo `Guess` que creamos en el capítulo 9,
+en el listado 9-9. Otro código que use `Guess` depende de la garantía de que las instancias `Guess`
+solo contengan valores entre 1 y 100. Podemos escribir una prueba que
+asegure que intentando crear una instancia `Guess` con un valor fuera del 
+rango entre en pánico.
 
-We do this by adding another attribute, `should_panic`, to our test function.
-This attribute makes a test pass if the code inside the function panics; the
-test will fail if the code inside the function doesn’t panic.
+Hacemos esto añadiendo otro atributo, `should_panic`, a nuestra función de prueba.
+Este atributo hace que la prueba pase si el código dentro de la función entra en pánico; la
+prueba fallará si el código dentro de la función no entra en pánico.
 
-Listing 11-8 shows a test that checks that the error conditions of `Guess::new`
-happen when we expect:
+Listado 11-8 muestra una prueba que chequea que las condiciones de error de `Guess::new`
+pasan como lo hemos previsto:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 pub struct Guess {
@@ -631,12 +631,12 @@ mod tests {
 }
 ```
 
-<span class="caption">Listing 11-8: Testing that a condition will cause a
+<span class="caption">Listado 11-8: Prueba que una condición cause un
 `panic!`</span>
 
-We place the `#[should_panic]` attribute after the `#[test]` attribute and
-before the test function it applies to. Let’s look at the result when this test
-passes:
+Colocamos el atributo `#[should_panic]` luego del atributo `#[test]` y
+antes de la función de prueba que le aplica. Miremos el resultado cuando esta prueba
+pasa:
 
 ```text
 running 1 test
@@ -645,8 +645,8 @@ test tests::greater_than_100 ... ok
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-Looks good! Now let’s introduce a bug in our code by removing the condition
-that the `new` function will panic if the value is greater than 100:
+¡Luce bien! Ahora introduzcamos un bug en nuestro código eliminando la condición
+que la función `new` entre en pánico si el valor es mayor a 100:
 
 ```rust
 # pub struct Guess {
@@ -668,7 +668,7 @@ impl Guess {
 }
 ```
 
-When we run the test in Listing 11-8, it will fail:
+Cuando ejecutamos la prueba en el listado 11-8, fallará:
 
 ```text
 running 1 test
@@ -682,20 +682,20 @@ failures:
 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-We don’t get a very helpful message in this case, but when we look at the test
-function, we see that it’s annotated with `#[should_panic]`. The failure we got
-means that the code in the test function did not cause a panic.
+No recibimos un mensaje muy útil en este caso, pero cuando le echamos un vistazo a la función
+de prueba, vemos que está anotada con `#[should_panic]`. El fallo que obtuvimos
+significa que el código en la función de prueba no causo pánico.
 
-Tests that use `should_panic` can be imprecise because they only indicate that
-the code has caused some panic. A `should_panic` test would pass even if the
-test panics for a different reason than the one we were expecting to happen. To
-make `should_panic` tests more precise, we can add an optional `expected`
-parameter to the `should_panic` attribute. The test harness will make sure that
-the failure message contains the provided text. For example, consider the
-modified code for `Guess` in Listing 11-9 where the `new` function panics with
-different messages depending on whether the value was too small or too large:
+Pruebas que usan `should_panic` pueden no ser precisa porque ellas sólo indican que 
+código ha causado algún pánico. Una prueba `should_panic` pasaría si la
+prueba entra en pánico por una razón diferente que la que estabamos esperando que ocurriera. para
+hacer las pruebas `should_panic` más precisas, podemos añadir un parámetro `expected`
+opcional al atributo `should_panic`. El aprovechamiento de la prueba se asegurará que 
+el mensaje de fallo contenga el texto provisto. Por ejemplo, considera el
+código modificado para `Guess` en el listado 11-9 donde la función  `new` entre en pánico con
+diferentes mensajes dependiendo de si el valor fue muy pequeño o muy grande:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 # pub struct Guess {
@@ -732,22 +732,22 @@ mod tests {
 }
 ```
 
-<span class="caption">Listing 11-9: Testing that a condition will cause a
-`panic!` with a particular panic message</span>
+<span class="caption">Listado 11-9: Prueba de que una condición causará un
+`panic!` con un mensaje de pánico particular</span>
 
-This test will pass because the value we put in the `should_panic` attribute’s
-`expected` parameter is a substring of the message that the `Guess::new`
-function panics with. We could have specified the entire panic message that we
-expect, which in this case would be `Guess value must be less than or equal to
-100, got 200.` What you choose to specify in the expected parameter for
-`should_panic` depends on how much of the panic message is unique or dynamic
-and how precise you want your test to be. In this case, a substring of the
-panic message is enough to ensure that the code in the test function executes
-the `else if value > 100` case.
+Esta prueba pasará porque el valor que pusimos en el parámetro `should_panic` attribute’s
+`expected` del atributo es un subhilo del mensaje con la que la función `Guess::new`
+entra en pánico. Podríamos haber especificado el mensaje de pánico entero que
+esperamos, el cual en este caso sería `Guess value must be less than or equal to
+100, got 200.` Lo que tú decidas especificar en el parámetro esperado para
+`should_panic` depende de qué tan dinámico o único el mensaje de pánico sea
+y qué tan precisa quieres que sea tu prueba. En este caso, un subhilo del 
+mensaje de pánico es suficiente para asegurar que el código en la función de prueba ejecute
+el caso `else if value > 100`.
 
-To see what happens when a `should_panic` test with an `expected` message
-fails, let’s again introduce a bug into our code by swapping the bodies of the
-`if value < 1` and the `else if value > 100` blocks:
+Para ver lo que pasa cuando una prueba `should_panic` con un mensaje `expected` 
+falla, introduzcamos de nuevo un bug en nuestro código cambiando los cuerpos de
+los bloques`if value < 1` y `else if value > 100` :
 
 ```rust,ignore
 if value < 1 {
@@ -757,7 +757,7 @@ if value < 1 {
 }
 ```
 
-This time when we run the `should_panic` test, it will fail:
+Esta vez cuando ejecutemos `should_panic` fallará:
 
 ```text
 running 1 test
@@ -778,12 +778,12 @@ failures:
 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-The failure message indicates that this test did indeed panic as we expected,
-but the panic message did not include the expected string `'Guess value must be
-less than or equal to 100'`. The panic message that we did get in this case was
-`Guess value must be greater than or equal to 1, got 200.` Now we can start
-figuring out where our bug is!
+El mensaje de fallo indica que esta prueba de hecho entró en pánico como nosotros esperabamos ,
+pero el mensaje de pánico no incluyo el hilo `'Guess value must be
+less than or equal to 100'` que esperabamos. El mensaje de pánico que sí obtuvimos en este caso fue
+`Guess value must be greater than or equal to 1, got 200.` ¡Ahora podemos empezar a
+averiguar donde está el bug!
 
-Now that you know several ways to write tests, let’s look at what is happening
-when we run our tests and explore the different options we can use with `cargo
+Ahora que sabes varias formas para escribir pruebas, echemos un vistazo a lo que está pasando
+cuando corremos nuestras pruebas y exploramos las diferentes opciones que podemos usar con `cargo
 test`.
