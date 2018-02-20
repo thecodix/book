@@ -267,3 +267,4 @@ presentar una API pública ordenada a los usuarios de la biblioteca.
 
 A continuación, veremos algunas estructuras de recopilación de datos en la biblioteca estándar
 que puedes utilizar en su genial y ordenado código!
+
