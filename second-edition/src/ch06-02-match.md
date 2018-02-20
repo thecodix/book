@@ -204,14 +204,14 @@ Examinaremos la primera ejecución de `plus_one` en más detalles. Cuando llamam
 None => None,
 ```
 
-El valor `Some(5)` no coincie con el patrón `None`, entonces continuamos al siguiente
+El valor `Some(5)` no coincide con el patrón `None`, entonces continuamos al siguiente
 brazo.
 
 ```rust,ignore
 Some(i) => Some(i + 1),
 ```
 
-Coincide `Some(5)` con `Some(i)`? Si lo hace! Tenemos la misma variante.
+¿Coincide `Some(5)` con `Some(i)`? Si, lo hace! Tenemos la misma variante.
 La `i` se une al valor contenido en `Some`, entonces `i` toma el valor `5`. El
 código en el brazo de coincidencia es entonces ejecutado, asique agregamos uno
 al valor de `i` y creamos un nuevo valor `Some` con nuestro total `6` adentro.
@@ -219,7 +219,7 @@ al valor de `i` y creamos un nuevo valor `Some` con nuestro total `6` adentro.
 #### Emparejando `None`
 
 Ahora consideremos la segunda llamda de `plus_one` en el Listado 6-5 donde `x` es
-`None`. Ingreamos el valor `match` y lo comparamos al primer brazo.
+`None`. Ingresamos el valor `match` y lo comparamos al primer brazo.
 
 
 ```rust,ignore
@@ -230,11 +230,11 @@ Coincide! No hay valor para agregar, entonces el programa se detiene y devuelve 
 `None` en el lado derecho de `=>`. Debido a que el primer brazo coincide, no se 
 comparan otros brazos.
 
-Combinar `match` y enumaraciones en útil en muchas situaciones. Verás mucho este patrón
+Combinar `match` y enumeraciones es útil en muchas situaciones. Verás mucho este patrón
 en el código Rust: `match` contra una enumeración, junta una variable con los
-datos adentro, y entonces ejecuta código basado en él. Es un poco díficil ap principio, pero
+datos adentro, y entonces ejecuta código basado en él. Es un poco díficil al principio, pero
 una vez que lo usas, querrás tenerlo en todos los lenguajes. Es
-consistentemente un usuario favorito.
+una de las funciones favoritas de los usuarios.
 
 ### Los emparejamientos son exhaustivos
 
@@ -250,7 +250,7 @@ fn plus_one(x: Option<i32>) -> Option<i32> {
 }
 ```
 
-No manejamos el caso `None`, entonces este código causará un bug. Por suerte, es un
+No manejamos el caso `None`, entonces este código causará un bug. Por suerte, es un bug
 que Rust sabe como atrapar. Si intentamos compilar este código, obtendremos este
 error:
 
@@ -264,7 +264,7 @@ error[E0004]: non-exhaustive patterns: `None` not covered
 
 
 Rust sabe que no cubrimos cada caso posible every possible e incluso sabe que patrón
-olvidamos! Las coincidencias en Rust son *exhaustive*: debemos usar hasta la última 
+olvidamos! Las coincidencias en Rust son *agotadores*: debemos usar hasta la última 
 posibilidad para que el código sea válido. Especialmente en el caso de
 `Option<T>`, cuanto Rust previene olvidarnos de manejar explicitamente el caso
 `None`, esto nos protege de asumir que tenemos un valor cuando podríamos tener
@@ -296,4 +296,4 @@ decir que no queremos hacer nada para todos los valores posibles que no listamos
 antes del marcador de posición `_` .
 
 Sin embargo, la expresión `match` puede ser un poco tediosa en una situación en que solo
-nos importa *one* de los casos. Para esta situacuión, Rust provee `if let`.
+nos importa *uno* de los casos. Para esta situacuión, Rust provee `if let`.
