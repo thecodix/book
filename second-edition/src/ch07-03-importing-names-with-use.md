@@ -26,7 +26,7 @@ la trayectoria de su módulo adjunto</span>
 Como puedes ver, al referirse a un nombre totalmente calificado puede llegar a ser bastante largo.
 Afortunadamente, Rust tiene una palabra clave para hacer estas llamadas más concisas.
 
-### Cómo llevar los nombres al alcance de aplicación con la palabra clave `use`
+### Cómo llevar los Nombres al Alcance de Aplicación con la Palabra Clave `use`
 
 La palabra clave `use` de Rust acorta las largas llamadas de función al traer los módulos de
 la función que deseas llamar al alcance. Aquí un ejemplo de cómo llevar el módulo 
