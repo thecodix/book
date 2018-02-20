@@ -18,8 +18,8 @@ un código no seguro incorrecto, tendrá problemas con la memoria debido a la in
 puede ocurrir, por ejemplo la desreferenciación de indicadores nulos, 
 
 
-Hay otra razón por la cual Rust tiene un alter ego inseguro: el hardware subyacente de
-las computadoras no son intrínsecamente seguras. Si Rust no te permitió hacer 
+Hay otra razón por la cual Rust tiene un alter ego inseguro: el hardware que
+los ordenadores tienen por debajo no es seguro per se. Si Rust no te permitió hacer 
 operaciones inseguras, habrá algunas tareas que simplemente no podras hacer. 
 Rust necesita permitirte hacer programación de sistemas de bajo nivel, como 
 interactuar directamente con su sistema operativo, o incluso escribir su 
@@ -116,7 +116,7 @@ let r1 = &num as *const i32;
 let r2 = &mut num as *mut i32;
 ```
 
-<span class="caption">Listing 19-1: Crear indicadores crudos a partir de referencias</span>
+<span class="caption">Listing 19-1: Crear indicadores brutos a partir de referencias</span>
 
 <!-- ¿Entonces creamos un indicador sin formato usando el operador de desreferencia? 
 ¿Es el mismo operador? ¿Vale la pena tocar, por qué? -> <! - No es el operador de 
@@ -152,7 +152,7 @@ let r = address as *const i32;
 
 <span class="caption">Listing 19-2: Crear un indicador sin formato a una dirección arbitraria de memoria</span>
 
-Recuerde que dijimos que puede crear indicadores crudos en 
+Recuerde que dijimos que puede crear indicadores brutos en 
 código seguro, pero no puede * desreferenciar * punteros sin 
 indicadores y leer los datos que se apuntan. Lo haremos ahora
 utilizando el operador de desreferencia, `*`, en un indicador 
@@ -211,7 +211,7 @@ de mantener la función de contratos nosotros mismos.
 unsafe function? -->
 <!-- Tried to clarify /Carol -->
 
-Aquí hay una función insegura llamada `dangerous` que no hace nada en su cuerpo:
+Aquí hay una función insegura llamada `peligrosa` que no hace nada en su cuerpo:
 
 ```rust
 unsafe fn dangerous() {}
@@ -234,7 +234,7 @@ error[E0133]: call to unsafe function requires unsafe function or block
 ```
 
 Al insertar el bloque `unsafe` alrededor de nuestra llamada a `dangerous`, 
-estamos afirmandoa Rust que hemos leído la documentación para esta función, 
+estamos afirmando a Rust que hemos leído la documentación para esta función, 
 entendemos cómo usarlo correctamente, y hemos verificado que todo este correcto.
 
 
@@ -249,7 +249,7 @@ El hecho de que una función contenga un código inseguro no significa que toda 
 debe marcarse como insegura. De hecho, envolver un código inseguro en una función segura
 es una abstracción común. Como, por ejemplo, vamos a ver una función de la
 biblioteca estándar, `split_at_mut`, que requiere un código inseguro y explorar
-cómo podríamos implementarlo. Este método seguro se define en rebanadas mutables:
+cómo podríamos implementarlo. Este método seguro se define en trozos mutables:
 toma una porción y la divide en dos, en el índice dado
 como un argumento Usando `split_at_mut` se muestra en el Listado 19-4:
 
@@ -294,7 +294,7 @@ mayor que la porción que dividimos, la función entrará en pánico antes
 intentar usar ese índice.
 
 
-Luego devolvemos dos rebanadas mutables en una tupla: 
+Luego devolvemos dos trozos mutables en una tupla: 
 una desde el comienzo de la rebanada original en el índice `mid`, 
 y otra desde `mid` hasta el final de la rebanada. 
 
@@ -316,7 +316,7 @@ El inspector de préstamos de Rust no puede entender que estamos
 tomando prestadas diferentes partes de la rebanada; solo sabe que 
 tomamos prestado de la misma porción dos veces. Pedir prestado 
 diferentes partes de una rebanada está fundamentalmente bien porque 
-nuestras dos rebanadas no se superponen, pero Rust no es lo suficientemente
+nuestras dos trozos no se superponen, pero Rust no es lo suficientemente
 inteligente como para saber esto. Cuando nosotros sabemos que algo está bien, 
 pero Rust no, es hora de buscar un código inseguro.
 
@@ -404,7 +404,7 @@ and use of a *Foreign Function Interface* (FFI). A Foreign Function Interface
 is a way for a programming language to define functions and enable a different
 (foreign) programming language to call those functions.
 
-<!-- Can you give a definition for FFI? -->
+<!-- ¿Can you give a definition for FFI? -->
 <!-- Done /Carol -->
 
 Listing 19-8 demonstrates how to set up an integration with the `abs` function
