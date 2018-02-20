@@ -404,11 +404,11 @@ generic, it’s now possible that the `list` parameter could have types in it
 that don’t implement the `Copy` trait, which means we wouldn’t be able to move
 the value out of `list[0]` and into the `largest` variable.
 
-If we only want to be able to call this code with types that are `Copy`, we can
-add `Copy` to the trait bounds of `T`! Listing 10-16 shows the complete code of
-a generic `largest` function that will compile as long as the types of the
-values in the slice that we pass into `largest` implement both the `PartialOrd`
-and `Copy` traits, like `i32` and `char`:
+Si sólo queremos poder llamar este código con tipos que son `Copy`, podemos
+añadir `Copy` a los límites de rasgo de `T`! La lista 10-16 muestra el código completo de
+una función genérica `largest` que se compilará siempre que los tipos de
+valores en la parte que pasamos a `largest` implementen tanto los `PartialOrd`
+y los `Copy` rasgos, como `i32` y `char`:
 
 <span class="filename">Filename: src/main.rs</span>
 
@@ -438,30 +438,30 @@ fn main() {
 }
 ```
 
-<span class="caption">Listing 10-16: A working definition of the `largest`
-function that works on any generic type that implements the `PartialOrd` and
-`Copy` traits</span>
+<span class="caption">Lista 10-16: Una definición de la función `largest`
+que funciona en cualquier tipo genérico que implemente los rasgos `PartialOrd` y
+ `Copy`</span>
 
-If we don’t want to restrict our `largest` function to only types that
-implement the `Copy` trait, we could specify that `T` has the trait bound
-`Clone` instead of `Copy` and clone each value in the slice when we want the
-`largest` function to have ownership. Using the `clone` function means we’re
-potentially making more heap allocations, though, and heap allocations can be
-slow if we’re working with large amounts of data. Another way we could
-implement `largest` is for the function to return a reference to a `T` value in
-the slice. If we change the return type to be `&T` instead of `T` and change
-the body of the function to return a reference, we wouldn’t need either the
-`Clone` or `Copy` trait bounds and we wouldn’t be doing any heap allocations.
-Try implementing these alternate solutions on your own!
+Si no queremos restringir nuestra función `largest` a sólo tipos que
+implementen el rasgo `Copy`, podemos especificar que `T` tiene el límite de rasgo
+`Clone` en lugar de `Copy` y clona cada valor en la parte cuando queremos que
+la función `largest` tenga propiedad. Usar la función `clone` significa que estamos
+potencialmente haciendo más asigaciones de montón, sin embargo, las asigaciones de montón pueden ser
+lentas si estamos trabajando con grandes cantidades de información. Otra manera en la que podemos
+implementar `largest` es para que la función devuelva una referencia a un valor `T` en
+la parte. Si cambiamos el tipo de retorno para que sea `&T` en lugar de  `T` y cambiamos
+el cuerpo de la función para regresar a la referencia, no necesitariamos los límites de rasgo
+`Clone` o `Copy` y no estaríamos haciendo asignaciones de montón.
+¡Intenta implementar estas soluciones alternativas por tu cuenta!
 
-### Using Trait Bounds to Conditionally Implement Methods
+### Usar límites de rasgo para implementar métodos potencialmente
 
-By using a trait bound with an `impl` block that uses generic type parameters,
-we can conditionally implement methods only for types that implement the
-specified traits. For example, the type `Pair<T>` in listing 10-17 always
-implements the `new` method, but `Pair<T>` only implements the `cmp_display` if
-its inner type `T` implements the `PartialOrd` trait that enables comparison
-and the `Display` trait that enables printing:
+Al usar un límite de rasgo con un bloque `impl` que usa tipos de parámetros genéricos,
+podemos implementar métodos potencialmente sólo para tipos que implementen los 
+rasgos especificados. Por ejemplo, el tipo `Pair<T>` en la lista 10-17 siempre
+implementa el método `new`, pero `Pair<T>` sólo implementa el `cmp_display` si
+su tipo interno `T` implementa el rasgo `PartialOrd` que  permite la comparación
+y del rasgo `Display` que permite imprimir:
 
 ```rust
 use std::fmt::Display;
@@ -491,15 +491,15 @@ impl<T: Display + PartialOrd> Pair<T> {
 }
 ```
 
-<span class="caption">Listing 10-17: Conditionally implement methods on a
-generic type depending on trait bounds</span>
+<span class="caption">Lista 10-17: implementar métodos potencialmente en un
+tipo genérico dependiendo del límite de rasgo</span>
 
-We can also conditionally implement a trait for any type that implements a
-trait. Implementations of a trait on any type that satisfies the trait bounds
-are called *blanket implementations*, and are extensively used in the Rust
-standard library. For example, the standard library implements the `ToString`
-trait on any type that implements the `Display` trait. This `impl` block looks
-similar to this code:
+También podemos implementar potencialmente un rasgo para cualquier tipo que implemente un
+rasgo. La implementaciones de un rasgo en cualquier tipo que satisfaga los límites de rasgo
+son llamados *blanket implementations*, y son ampliamente usados en la biblioteca
+estándar de Rust. Por ejemplo, la biblioteca estándar implementa el rasgo `ToString`
+en cualquier tipo que implemente el rasgo `Display`. Este bloque `impl` se parece
+a este código:
 
 ```rust,ignore
 impl<T: Display> ToString for T {
@@ -507,31 +507,31 @@ impl<T: Display> ToString for T {
 }
 ```
 
-Because the standard library has this blanket implementation, we can call the
-`to_string` method defined by the `ToString` trait on any type that implements
-the `Display` trait. For example, we can turn integers into their corresponding
-`String` values like this since integers implement `Display`:
+Ya que la biblioteca estándar tiene esta implementación general, podemos llamar al método
+`to_string` definido por el rasgo `ToString` en cualquier tipo que implemente el 
+rasgo `Display`. Por ejemplo, podemos convertir números enteros en sus correspondientes valores 
+`String` como este, ya que los números enteros implementan `Display`:
 
 ```rust
 let s = 3.to_string();
 ```
 
-Blanket implementations appear in the documentation for the trait in the
-“Implementors” section.
+Las implementaciones generales aparecen en la documentación para el rasgo en la
+sección “Implementors”.
 
-Traits and trait bounds let us write code that uses generic type parameters in
-order to reduce duplication, but still specify to the compiler exactly what
-behavior our code needs the generic type to have. Because we’ve given the trait
-bound information to the compiler, it can check that all the concrete types
-used with our code provide the right behavior. In dynamically typed languages,
-if we tried to call a method on a type that the type didn’t implement, we’d get
-an error at runtime. Rust moves these errors to compile time so that we’re
-forced to fix the problems before our code is even able to run. Additionally,
-we don’t have to write code that checks for behavior at runtime since we’ve
-already checked at compile time, which improves performance compared to other
-languages without having to give up the flexibility of generics.
+Los rasgos y los límites de rasgos nos permiten escribir código que usa tipos genéricos de parámetros para
+reducir la duplicación, pero aún especifica al compilador exactamente qué
+comportamiento nuestro código necesita que tenga el tipo genérico. Porque le hemos dado al límite de
+rasgo información del compilador, puede comprobar que todos los tipos concretos
+usados con nuestro código proporcionen el comportamiento correcto. En lengauajes dinamicamente tipeados,
+si tratamos de llamar un método a un tipo que el tipo no implementó, tendríamos
+un error al tiempo de ejecución. Rust mueve estos errores para compilar tiempo, así estamos
+obligados a reparar los problemas antes que nuestro código sea capaz de ejecutarse. Adicionalmente,
+no tenemos que escribir un código que compruebe el comportamiento al tiempode ejecución ya que hemos
+verificado al tiempo de compilación, lo que mejora el rendimiento en comparación a otros
+idiomas, sin tener que renunciar a la flexibilidad de los genéricos.
 
-There’s another kind of generics that we’ve been using without even realizing
-it called *lifetimes*. Rather than helping us ensure that a type has the
-behavior we need it to have, lifetimes help us ensure that references are valid
-as long as we need them to be. Let’s learn how lifetimes do that.
+Hay otra clase de genéricos que hemos estado usando sin realmente darnos cuenta
+llamados *lifetimes*. En lugar de ayudarnos a garantizar que un tipo tiene el
+comportamiento que necesitamos que tenga, las vidas nos ayuda a asegurarnos que las referencias son validas
+siempre que las necesitemos. Aprendamos como las vidas lo hacen.
