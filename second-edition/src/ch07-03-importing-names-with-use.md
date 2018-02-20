@@ -225,7 +225,8 @@ lo cual sería tedioso.
 
 También sería molesto tener que escribir `super::` en cada prueba, pero ya has
 visto la herramienta para esa solución: `use`! La funcionalidad `super::`
-cambia la ruta que le das a `use` para que sea relativa al módulo padre en lugar del módulo raíz.
+cambia la ruta que le das a `use` para que sea relativa al módulo
+padre en lugar del módulo raíz.
 
 Por estas razones, en el módulo de `pruebas` especialmente, `use super::something` es
 generalmente la mejor solución. Así que ahora nuestra prueba se ve así:
