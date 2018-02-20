@@ -1,9 +1,10 @@
-## Concise Control Flow with `if let`
+## Flujo de control conciso con `if let`
 
-The `if let` syntax lets you combine `if` and `let` into a less verbose way to
-handle values that match one pattern and ignore the rest. Consider the program
-in Listing 6-6 that matches on an `Option<u8>` value but only wants to execute
-code if the value is three:
+La sintaxis `if let` te permite combinar `if` y `let` de una manera menos detallada
+para manejar valores que coinciden con un patrón e ignora el resto. Considera el programa
+en el Listado 6-6 que coincide con un valor `Option<u8>` pero solo quiere ejecutar
+código si el valor es tres:
+
 
 ```rust
 let some_u8_value = Some(0u8);
@@ -13,16 +14,17 @@ match some_u8_value {
 }
 ```
 
-<span class="caption">Listing 6-6: A `match` that only cares about executing
-code when the value is `Some(3)`</span>
 
-We want to do something with the `Some(3)` match but do nothing with any other
-`Some<u8>` value or the `None` value. To satisfy the `match` expression, we
-have to add `_ => ()` after processing just one variant, which is a lot of
-boilerplate code to add.
+<span class="caption">Listado 6.6: Un `match` que solo se preocupa de ejecutar
+código cuando el valor es `Some(3)`</span>
 
-Instead, we could write this in a shorter way using `if let`. The following
-code behaves the same as the `match` in Listing 6-6:
+Queremos hacer algo con la coincidencia `Some(3)` pero no hacemos nada con ningún
+otro valor `Some<u8>` o el valor `None`. Para satisfacer la expresión `match`, tenemos
+que agregar `_ => ()` después de procesar solo una variante, que es mucho código
+para agregar.
+
+En su lugar, podemos escribir esto de una manera más corta usando `if let`. El siguiente
+código se comporta igual que el `match` en el Listado 6-6:
 
 ```rust
 # let some_u8_value = Some(0u8);
@@ -31,26 +33,26 @@ if let Some(3) = some_u8_value {
 }
 ```
 
-`if let` takes a pattern and an expression separated by an `=`. It works the
-same way as a `match`, where the expression is given to the `match` and the
-pattern is its first arm.
+`if let` toma un patrón y una expresión separada por un `=`. Esto trabaja de la
+manera que un `match`, donde la expresión se asigna al `match` y el patrón
+es su primer brazo.
 
-Using `if let` means you have less to type, less indentation, and less
-boilerplate code. However, we’ve lost the exhaustive checking that `match`
-enforces. Choosing between `match` and `if let` depends on what you’re doing in
-your particular situation and if gaining conciseness is an appropriate
-trade-off for losing exhaustive checking.
+El uso de `if let` significa que tienes menos para escribir, menos indexáción, y
+menos código repetido. Sin embargo, hemos perdido la comprobación exhaustiva que `match`
+ejecuta. Eligiendo entre `match` e `if let` depende de que estes haciendo en
+tu situación particular y si gana precisión es un intercambio por perder una 
+comprobación exhaustiva.
 
-In other words, you can think of `if let` as syntax sugar for a `match` that
-runs code when the value matches one pattern and then ignores all other values.
+En otras palabras, puedes pensar en `if let` como sintaxis dulce para un `match` que
+ejecuta código cuanto el valor coincide con un patrón y luego ignora todos los otros valores.
 
-We can include an `else` with an `if let`. The block of code that goes with the
-`else` is the same as the block of code that would go with the `_` case in the
-`match` expression that is equivalent to the `if let` and `else`. Recall the
-`Coin` enum definition in Listing 6-4, where the `Quarter` variant also held a
-`UsState` value. If we wanted to count all non-quarter coins we see while also
-announcing the state of the quarters, we could do that with a `match`
-expression like this:
+Podemos incluir un `else` con un `if let`. El código de bloque que va con el
+`else` es el mismo bloque de código que podría ir con el caso `_` en la expresión
+`match` que es equivalente al `if let` y `else`. Recuerda la definición de enumeración
+`Coin` en el Listado 6-4, donde la variante `Quarter` también tenía un valor
+`UsState`. Si quisieramos contar todas las monedas que no son cuartos vemos también
+mientras anunciamos el estado de los cuartos, podríamos hacer eso con una expresión `match`
+como esta:
 
 ```rust
 # #[derive(Debug)]
@@ -73,7 +75,7 @@ match coin {
 }
 ```
 
-Or we could use an `if let` and `else` expression like this:
+O podríamos usar una expresión `if let` y `else` como esta:
 
 ```rust
 # #[derive(Debug)]
@@ -97,22 +99,23 @@ if let Coin::Quarter(state) = coin {
 }
 ```
 
-If you have a situation in which your program has logic that is too verbose to
-express using a `match`, remember that `if let` is in your Rust toolbox as well.
+Si tienes una situación en la cual tu programa tiene una lógica que es muy detallada 
+para expresar usando un `match`, recuerda que `if let` está en tu caja de herramientas
+Rust también.
 
-## Summary
+## Resúmen
 
-We’ve now covered how to use enums to create custom types that can be one of a
-set of enumerated values. We’ve shown how the standard library’s `Option<T>`
-type helps you use the type system to prevent errors. When enum values have
-data inside them, you can use `match` or `if let` to extract and use those
-values, depending on how many cases you need to handle.
+Ahora hemos cubierto como usar enumeraciones para crear tipos personalizados
+que pueden ser uno de un conjunto de valores enumerados. Hemos mostrado como el tipo
+de biblioteca estándar `Option<T>` te ayuda el sistema de tipos para prevenir errores. Cuando
+los valoesr de enumeración tiene datos dentro de ellos, puedes usar `match` o `if let` para extraer
+y usar esos valores, dependiendo de cuantos casos necesites manejar.
 
-Your Rust programs can now express concepts in your domain using structs and
-enums. Creating custom types to use in your API ensures type safety: the
-compiler will make certain your functions only get values of the type each
-function expects.
+Tus programas de Rust pueden expresar conceptos ahora en tu dominio usando estructuras y
+enumeraciones. Creando tipos personalizados para usar en tu API garantiza la seguridad del
+equipo: el compilador se asegurará de que tus funciones solo obtengan valores del tipo que cada
+función espera.
 
-In order to provide a well-organized API to your users that is straightforward
-to use and only exposes exactly what your users will need, let’s now turn to
-Rust’s modules.
+Con el fin de proveer una API bien organizada a tus usuarios que sea clara
+para usar y solo muestre exactamente lo que tus usuarios necesitarán, vayamos ahora
+a los módulos de Rust.
