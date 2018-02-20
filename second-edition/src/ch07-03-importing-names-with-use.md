@@ -1,10 +1,10 @@
-## Referring to Names in Different Modules
+## Referencia a Nombres en Módulos Diferentes
 
-We’ve covered how to call functions defined within a module using the module
-name as part of the call, as in the call to the `nested_modules` function shown
-here in Listing 7-7:
+Hemos explicado cómo llamar a las funciones definidas dentro de un módulo
+utilizando el nombre del módulo como parte de la llamada, como en la llamada a la 
+función `nested_modules` mostrada aquí en el Listado 7-7:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre de archivo: src/main.rs</span>
 
 ```rust
 pub mod a {
@@ -20,19 +20,19 @@ fn main() {
 }
 ```
 
-<span class="caption">Listing 7-7: Calling a function by fully specifying its
-enclosing module’s path</span>
+<span class="caption">Listado 7-7: Llamada a una función especificando completamente
+la trayectoria de su módulo adjunto</span>
 
-As you can see, referring to the fully qualified name can get quite lengthy.
-Fortunately, Rust has a keyword to make these calls more concise.
+Como puedes ver, al referirse a un nombre totalmente calificado puede llegar a ser bastante largo.
+Afortunadamente, Rust tiene una palabra clave para hacer estas llamadas más concisas.
 
-### Bringing Names into Scope with the `use` Keyword
+### Cómo llevar los nombres al alcance de aplicación con la palabra clave `use`
 
-Rust’s `use` keyword shortens lengthy function calls by bringing the modules of
-the function you want to call into scope. Here’s an example of bringing the
-`a::series::of` module into a binary crate’s root scope:
+La palabra clave `use` de Rust acorta las largas llamadas de función al traer los módulos de
+la función que deseas llamar al alcance. Aquí un ejemplo de cómo llevar el módulo 
+`a::series::of` al alcance de la raíz de un crate binario:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre de archivo: src/main.rs</span>
 
 ```rust
 pub mod a {
@@ -50,16 +50,17 @@ fn main() {
 }
 ```
 
-The line `use a::series::of;` means that rather than using the full
-`a::series::of` path wherever we want to refer to the `of` module, we can use
+La línea `use a::series::of; ` significa que en lugar de usar la ruta completa
+`a::series::of` donde queramos referirnos al módulo `of`, podemos usar
 `of`.
 
-The `use` keyword brings only what we’ve specified into scope: it does not
-bring children of modules into scope. That’s why we still have to use
-`of::nested_modules` when we want to call the `nested_modules` function.
+La palabra clave `use` sólo aporta lo que hemos especificado en el alcance: no 
+lleva a los módulos niño a scope. Por eso todavía tenemos que usar 
+`of::nested_modules` cuando queremos llamar a la función `nested_modules`.
 
-We could have chosen to bring the function into scope by instead specifying the
-function in the `use` as follows:
+Podríamos haber optado por incluir la función en scope en lugar de especificar 
+la función en `use` como se indica a continuación:
+
 
 ```rust
 pub mod a {
@@ -77,13 +78,13 @@ fn main() {
 }
 ```
 
-Doing so allows us to exclude all the modules and reference the function
-directly.
+Esto nos permite excluir todos los módulos y referirnos directamente a la 
+función.
 
-Because enums also form a sort of namespace like modules, we can bring an
-enum’s variants into scope with `use` as well. For any kind of `use` statement,
-if you’re bringing multiple items from one namespace into scope, you can list
-them using curly brackets and commas in the last position, like so:
+Debido a que los enums también forman una especie de espacio de nombres como módulos, también podemos
+poner las variantes de una lista en scope con `use`. Para cualquier tipo de declaración `use`,
+si estás trayendo varios elementos de un espacio de nombres a scope, puedes listarlos
+usando llaves y comas en la última posición, así:
 
 ```rust
 enum TrafficLight {
@@ -101,12 +102,13 @@ fn main() {
 }
 ```
 
-We’re still specifying the `TrafficLight` namespace for the `Green` variant
-because we didn’t include `Green` in the `use` statement.
+Todavía estamos especificando el espacio de nombres `TrafficLight` para la variante `Green`
+porque no incluimos `Green` en la declaración de `use`.
 
-### Bringing All Names into Scope with a Glob
 
-To bring all the items in a namespace into scope at once, we can use the `*`  syntax, which is called the *glob operator*. This example brings all the variants of an enum into scope without having to list each specifically:
+### Llevando Todos los Nombres al Scope con Glob
+
+Para poner todos los ítems en un espacio de nombres y a la vez en scope, podemos usar la sintaxis `*`, que se llama *el operador glob*. Este ejemplo pone todas las variantes de una enumeración en el scope sin tener que enumerar cada una específicamente:
 
 ```rust
 enum TrafficLight {
@@ -124,17 +126,17 @@ fn main() {
 }
 ```
 
-The `*` will bring into scope all the visible items in the `TrafficLight`
-namespace. You should use globs sparingly: they are convenient, but this might
-also pull in more items than you expected and cause naming conflicts.
+El `*` llevará a scope todos los elementos visibles en el espacio de nombres 
+`TrafficLight`. Tu debes usar los globs con moderación: son convenientes, pero esto también
+podría atraer más elementos de lo que esperabas y causar conflictos de nombres.
 
-### Using `super` to Access a Parent Module
+### Usando `super` para Acceder a un Módulo Padre
 
-As we saw at the beginning of this chapter, when you create a library crate,
-Cargo makes a `tests` module for you. Let’s go into more detail about that now.
-In your `communicator` project, open *src/lib.rs*:
+Como vimos al principio de este capítulo, cuando creas un crate de biblioteca,
+Cargo hace un módulo de `tests` para ti. Vamos a entrar en más detalles sobre eso ahora. 
+En tu proyecto `communicator`, abre *src/lib.rs*:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust,ignore
 pub mod client;
@@ -150,11 +152,11 @@ mod tests {
 }
 ```
 
-Chapter 11 explains more about testing, but parts of this example should make
-sense now: we have a module named `tests` that lives next to our other modules
-and contains one function named `it_works`. Even though there are special
-annotations, the `tests` module is just another module! So our module hierarchy
-looks like this:
+El capítulo 11 explica más sobre las pruebas, pero partes de este ejemplo deben tener
+sentido ahora: tenemos un módulo llamado `tests` que vive al lado de nuestros otros módulos
+y contiene una función llamada `it_works`. A pesar de que hay anotaciones especiales,
+el módulo `tests` es sólo otro módulo más! Así que nuestra jerarquía de módulos
+se ve así:
 
 ```text
 communicator
@@ -164,11 +166,11 @@ communicator
  └── tests
 ```
 
-Tests are for exercising the code within our library, so let’s try to call our
-`client::connect` function from this `it_works` function, even though we won’t
-be checking any functionality right now. This won’t work yet:
+Las pruebas son para ejercitar el código dentro de nuestra biblioteca, así que tratemos de llamar
+a nuestra función `client::connect` desde esta función `it_works`, aunque ahora mismo no vamos
+a comprobar ninguna funcionalidad. Esto no funcionará todavía:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 #[cfg(test)]
@@ -180,7 +182,7 @@ mod tests {
 }
 ```
 
-Run the tests by invoking the `cargo test` command:
+Ejecuta las pruebas invocando el comando `cargo test`:
 
 ```text
 $ cargo test
@@ -192,46 +194,45 @@ error[E0433]: failed to resolve. Use of undeclared type or module `client`
   |         ^^^^^^ Use of undeclared type or module `client`
 ```
 
-The compilation failed, but why? We don’t need to place `communicator::` in
-front of the function like we did in *src/main.rs* because we are definitely
-within the `communicator` library crate here. The reason is that paths are
-always relative to the current module, which here is `tests`. The only
-exception is in a `use` statement, where paths are relative to the crate root
-by default. Our `tests` module needs the `client` module in its scope!
+La compilación falló, pero ¿por qué? No necesitamos colocar `communicator::` 
+delante de la función como hicimos en *src/main.rs* porque aquí estamos definitivamente
+dentro del crate de la biblioteca de `communicator`. La razón es que las rutas son 
+siempre relativas al módulo actual, que aquí es `tests`. La única 
+excepción es en una declaración `use`, donde las rutas son por defecto relativas a la 
+raíz del crate. Nuestro módulo `tests` necesita el módulo `client` en su scope!
 
-So how do we get back up one module in the module hierarchy to call the
-`client::connect` function in the `tests` module? In the `tests` module, we can
-either use leading colons to let Rust know that we want to start from the root
-and list the whole path, like this:
+Entonces, ¿cómo se puede recuperar un módulo de la jerarquía de módulos para llamar la 
+función `client::connect` en el módulo `tests`? En el módulo `tests`, podemos usar
+los dos puntos principales para hacerle saber a Rust que queremos empezar desde la raíz
+y listar toda la ruta, así:
 
 ```rust,ignore
 ::client::connect();
 ```
 
-Or, we can use `super` to move up one module in the hierarchy from our current
-module, like this:
+O, podemos usar `super` para subir un módulo en la jerarquía de nuestro 
+módulo actual, así:
 
 ```rust,ignore
 super::client::connect();
 ```
 
-These two options don’t look that different in this example, but if you’re
-deeper in a module hierarchy, starting from the root every time would make your
-code lengthy. In those cases, using `super` to get from the current module to
-sibling modules is a good shortcut. Plus, if you’ve specified the path from the
-root in many places in your code and then you rearrange your modules by moving
-a subtree to another place, you’d end up needing to update the path in several
-places, which would be tedious.
+Estas dos opciones no parecen tan diferentes en este ejemplo, pero si eres
+más profundo en la jerarquía de un módulo, empezando desde la raíz cada vez, hará que
+tu código sea más largo. En esos casos, usar `super` para pasar del módulo actual a 
+los módulos hermanos es un buen atajo. Además, si has especificado la ruta desde la 
+raíz en muchos lugares de tu código y luego has reordenado los módulos moviendo un
+subárbol a otro lugar, tendrías que actualizar la ruta en varios lugares, 
+lo cual sería tedioso.
 
-It would also be annoying to have to type `super::` in each test, but you’ve
-already seen the tool for that solution: `use`! The `super::` functionality
-changes the path you give to `use` so it is relative to the parent module
-instead of to the root module.
+También sería molesto tener que escribir `super::` en cada prueba, pero ya has
+visto la herramienta para esa solución: `use`! La funcionalidad `super::`
+cambia la ruta que le das a `use` para que sea relativa al módulo padre en lugar del módulo raíz.
 
-For these reasons, in the `tests` module especially, `use super::something` is
-usually the best solution. So now our test looks like this:
+Por estas razones, en el módulo de `pruebas` especialmente, `use super::something` es
+generalmente la mejor solución. Así que ahora nuestra prueba se ve así:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 #[cfg(test)]
@@ -245,8 +246,8 @@ mod tests {
 }
 ```
 
-When we run `cargo test` again, the test will pass and the first part of the
-test result output will be the following:
+Cuando volvamos a ejecutar `cargo test`, la prueba pasará y la primera parte de la
+salida del resultado de la prueba será la siguiente:
 
 ```text
 $ cargo test
@@ -259,12 +260,11 @@ test tests::it_works ... ok
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-## Summary
+## Resumen
 
-Now you know some new techniques for organizing your code! Use these techniques
-to group related functionality together, keep files from becoming too long, and
-present a tidy public API to your library users.
+Ahora conoces algunas nuevas técnicas para organizar tu código! Utilizae estas técnicas
+para agrupar las funciones relacionadas, evitar que los archivos se alarguen demasiado y 
+presentar una API pública ordenada a los usuarios de la biblioteca.
 
-Next, we’ll look at some collection data structures in the standard library
-that you can use in your nice, neat code!
-
+A continuación, veremos algunas estructuras de recopilación de datos en la biblioteca estándar
+que puedes utilizar en su genial y ordenado código!
