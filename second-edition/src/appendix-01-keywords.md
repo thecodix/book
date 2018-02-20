@@ -1,55 +1,51 @@
-## Appendix A: Keywords
+## Lampiran A: Kata kunci
 
-The following keywords are reserved by the Rust language and may not be used as
-identifiers such as names of functions, variables, parameters, struct fields,
-modules, crates, constants, macros, static values, attributes, types, traits,
-or lifetimes.
+Kata kunci berikut dicadangkan oleh bahasa Rust dan mungkin tidak digunakan sebagai pengidentifikasi seperti nama fungsi, variabel, parameter, bidang struct, modul, crate, konstanta, makro, nilai statis, atribut, jenis, sifat, atau lifetime.
 
-### Keywords Currently in Use
+### Kata Kunci yang digunakan Saat ini
 
-* `as` - primitive casting, disambiguating the specific trait containing an
-  item, or renaming items in `use` and `extern crate` statements
-* `break` - exit a loop immediately
-* `const` - constant items and constant raw pointers
-* `continue` - continue to the next loop iteration
-* `crate` - external crate linkage or a macro variable representing the crate
-  in which the macro is defined
-* `else` - fallback for `if` and `if let` control flow constructs
-* `enum` - defining an enumeration
-* `extern` - external crate, function, and variable linkage
-* `false` - Boolean false literal
-* `fn` - function definition and function pointer type
-* `for` - iterator loop, part of trait impl syntax, and higher-ranked lifetime
-  syntax
-* `if` - conditional branching
-* `impl` - inherent and trait implementation block
-* `in` - part of `for` loop syntax
-* `let` - variable binding
-* `loop` - unconditional, infinite loop
-* `match` - pattern matching
-* `mod` - module declaration
-* `move` - makes a closure take ownership of all its captures
-* `mut` - denotes mutability in references, raw pointers, and pattern bindings
-* `pub` - denotes public visibility in struct fields, `impl` blocks, and modules
-* `ref` - by-reference binding
-* `return` - return from function
-* `Self` - type alias for the type implementing a trait
-* `self` - method subject or current module
-* `static` - global variable or lifetime lasting the entire program execution
-* `struct` - structure definition
-* `super` - parent module of the current module
-* `trait` - trait definition
-* `true` - Boolean true literal
-* `type` - type alias and associated type definition
-* `unsafe` - denotes unsafe code, functions, traits, and implementations
-* `use` - import symbols into scope
-* `where` - type constraint clauses
-* `while` - conditional loop
+* `as` - casting primitif, disambiguasi sifat spesifik yang mengandung item, atau mengganti nama item pada pernyataan `use` dan `extern crate`
+* `break` - keluar dari pengulangan segera
+* `const` - item konstan dan pointer mentah konstan
+* `continue` - lanjutkan ke iterasi pengulangan berikutnya
+* `crate` - keterkaitan crate eksternal atau variabel makro mewakili crate
+  dimana makro didefinisikan
+* `else` - posisi mundur untuk aliran kontrol konstruksi `if` dan `if let`
+* `enum` - mendefinisikan sebuah enumerasi
+* `extern` - eksternal crate, fungsi, dan keterkaitan variabel
+* `false` - literal false Boolean
+* `fn` - definisi fungsi dan tipe fungsi pointer
+* `for` - iterasi pengulangan, bagian dari sifat sintaks impl, dan rangking tertinggi 
+  sintaks lifetime
+* `if` - percabangan bersyarat
+* `impl` - implementasi blok inheren dan sifat
+* `in` - bagian dari sintaks pengulangan `for`
+* `let` - variabel terikat
+* `loop` - Pengulangan tak bersyarat, tanpa batas
+* `match` - pencocokan pola
+* `mod` - deklarasi modul
+* `move` - membuat penutupan untuk mengambil alih kepemilikan semua tangkapannya
+* `mut` - menunjukkan mutabilitas dalam referensi, pointer mentah, dan pola terikat
+* `pub` - menunjukkan visibilitas publik di bidang struct, blok `impl`, dan modul
+* `ref` - dengan referensi mengikat
+* `return` - kembali ke fungsi
+* `Self` - tipe alias untuk tipe yang menerapkan suatu sifat
+* `self` - metode subjek atau modul saat ini
+* `static` - variable umum or lifetime yang berlangsung sepanjang eksekusi program
+* `struct` - definisi stuktur
+* `super` - modul induk dari modul saat ini
+* `trait` - definisi sifat
+* `true` - literal true Boolean
+* `type` - tipe alias dan tipe definisi yang terkait
+* `unsafe` - menunjukkan kode, fungsi, sifat, dan implementasi yang tidak aman
+* `use` - mengimpor simbol ke dalam bidang
+* `where` - jenis kendala klausa
+* `while` - pengulangan bersyarat
 
-### Keywords Reserved for Future Use
+### Kata kunci yang Dicadangkan untuk Penggunaan Masa Depan
 
-These keywords do not have any functionality, but are reserved by Rust for
-potential future use.
+Kata kunci ini tidak mempunyai fungsi apapun, namun dicadangkan oleh Rust untuk
+penggunaan masa depan yang potensial.
 
 * `abstract`
 * `alignof`
