@@ -1,14 +1,15 @@
-## Recoverable Errors with `Result`
+## Errores recuperables con 'result'
 
-Most errors aren’t serious enough to require the program to stop entirely.
-Sometimes, when a function fails, it’s for a reason that we can easily
-interpret and respond to. For example, if we try to open a file and that
-operation fails because the file doesn’t exist, we might want to create the
-file instead of terminating the process.
+La mayoría de los errores no son lo suficientemente graves como para requerir
+que el programa se detenga por completo. A veces, cuando una función falla, es
+por una razón que podemos interpretar y responder fácilmente. Por ejemplo, si 
+tratamos de abrir un archivo y esa operación falla porque el archivo no existe,
+es posible que deseemos crear el archivo en lugar de terminar el proceso.
 
-Recall from “[Handling Potential Failure with the `Result`
-Type][handle_failure]<!-- ignore -->” in Chapter 2 that the `Result` enum is
-defined as having two variants, `Ok` and `Err`, as follows:
+Recordar de “[Handling Potential Failure with the `Result`
+Type][handle_failure]<!-- ignore -->” en el Capítulo 2, que la enumeración
+`Result` se define como que tiene dos variantes,` Ok` y `Err`, de la siguiente 
+manera:
 
 [handle_failure]: ch02-00-guessing-game-tutorial.html#handling-potential-failure-with-the-result-type
 
@@ -19,19 +20,19 @@ enum Result<T, E> {
 }
 ```
 
-The `T` and `E` are generic type parameters: we’ll discuss generics in more
-detail in Chapter 10. What you need to know right now is that `T` represents
-the type of the value that will be returned in a success case within the `Ok`
-variant, and `E` represents the type of the error that will be returned in a
-failure case within the `Err` variant. Because `Result` has these generic type
-parameters, we can use the `Result` type and the functions that the standard
-library has defined on it in many different situations where the successful
-value and error value we want to return may differ.
+El `T` y` E` son parámetros de tipo genérico: discutiremos los genéricos con 
+más detalle en el Capítulo 10. Lo que necesita saber ahora es que `T` 
+representa el tipo del valor que se devolverá en un éxito caso dentro de la 
+variante `Ok`, y` E` representa el tipo del error que se devolverá en un caso 
+de falla dentro de la variante `Err`. Como `Result` tiene estos parámetros de 
+tipo genérico, podemos utilizar el tipo `Result` y las funciones que la
+biblioteca estándar ha definido en él en muchas situaciones diferentes en las 
+que el valor correcto y el valor de error que queremos devolver pueden diferir.
 
-Let’s call a function that returns a `Result` value because the function could
-fail: in Listing 9-3 we try to open a file:
+Llamemos a una función que devuelve un valor `Result` porque la función podría 
+fallar: en el Listado 9-3 intentamos abrir un archivo:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust
 use std::fs::File;
@@ -41,21 +42,21 @@ fn main() {
 }
 ```
 
-<span class="caption">Listing 9-3: Opening a file</span>
+<span class="caption">Listado 9-3: Apertura de un archivo</span>
 
-How do we know `File::open` returns a `Result`? We could look at the standard
-library API documentation, or we could ask the compiler! If we give `f` a type
-annotation of a type that we know the return type of the function is *not* and
-then we try to compile the code, the compiler will tell us that the types don’t
-match. The error message will then tell us what the type of `f` *is*. Let’s try
-it: we know that the return type of `File::open` isn’t of type `u32`, so let’s
-change the `let f` statement to this:
+¿Cómo sabemos que `File::open` devuelve un` Result`? ¡Podríamos mirar la 
+documentación estándar de la API de la biblioteca, o podríamos preguntarle al 
+compilador! Si le damos a `f` una anotación de tipo de un tipo que sabemos que 
+el tipo de retorno de la función *no* es y luego tratamos de compilar el código,
+el compilador nos dirá que los tipos no coinciden. El mensaje de error nos dirá
+qué tipo de `f` *es*. Probémoslo: sabemos que el tipo de devolución de `File::open`
+no es del tipo` u32`, así que cambiemos la declaración `let f` a esto:
 
 ```rust,ignore
 let f: u32 = File::open("hello.txt");
 ```
 
-Attempting to compile now gives us the following output:
+Intentar compilar ahora nos da el siguiente resultado:
 
 ```text
 error[E0308]: mismatched types
@@ -69,28 +70,28 @@ error[E0308]: mismatched types
              found type `std::result::Result<std::fs::File, std::io::Error>`
 ```
 
-This tells us the return type of the `File::open` function is a `Result<T, E>`.
-The generic parameter `T` has been filled in here with the type of the success
-value, `std::fs::File`, which is a file handle. The type of `E` used in the
-error value is `std::io::Error`.
+Esto nos dice que el tipo de retorno de la función `File::open` es `Result<T,E>`.
+El parámetro genérico `T` se ha rellenado aquí con el tipo de valor de éxito, 
+`std::fs::File`, que es un manejador de archivo. El tipo de `E` utilizado en el 
+valor de error es `std::io::Error`.
 
-This return type means the call to `File::open` might succeed and return to us
-a file handle that we can read from or write to. The function call also might
-fail: for example, the file might not exist or we might not have permission to
-access the file. The `File::open` function needs to have a way to tell us
-whether it succeeded or failed and at the same time give us either the file
-handle or error information. This information is exactly what the `Result` enum
-conveys.
+Este tipo de devolución significa que la llamada a `File::open` puede tener 
+éxito y nos devuelve un manejador de archivo desde el que podemos leer o escribir.
+La llamada a la función también puede fallar: por ejemplo, es posible que el 
+archivo no exista o que no tengamos permiso para acceder al archivo. La función 
+`File::open` necesita tener una forma de decirnos si tuvo éxito o no, y al mismo
+tiempo proporcionarnos el identificador del archivo o la información del error. 
+Esta información es exactamente lo que transmite el enum de `Results`.
 
-In the case where `File::open` succeeds, the value we will have in the variable
-`f` will be an instance of `Ok` that contains a file handle. In the case where
-it fails, the value in `f` will be an instance of `Err` that contains more
-information about the kind of error that happened.
+En el caso de que `File::open` tenga éxito, el valor que tendremos en la 
+variable `f` será una instancia de `Ok` que contiene un manejador de archivo. En
+el caso donde falla, el valor en `f` será una instancia de` Err` que contiene más
+información sobre el tipo de error que ocurrió.
 
-We need to add to the code in Listing 9-3 to take different actions depending
-on the value `File::open` returned. Listing 9-4 shows one way to handle the
-`Result` using a basic tool: the `match` expression that we discussed in
-Chapter 6.
+Necesitamos agregar al código en el Listado 9-3 para tomar diferentes acciones 
+dependiendo del valor `File::open` devuelto. El Listado 9-4 muestra una forma de
+manejar el `Result` utilizando una herramienta básica: la expresión` match` que 
+analizamos en el Capítulo 6.
 
 <span class="filename">Filename: src/main.rs</span>
 
@@ -109,22 +110,23 @@ fn main() {
 }
 ```
 
-<span class="caption">Listing 9-4: Using a `match` expression to handle the
-`Result` variants we might have</span>
+<span class="caption">Listado 9-4: Usando una expresión `match` para manejar las
+variantes` Result` podríamos tener</span>
 
-Note that, like the `Option` enum, the `Result` enum and its variants have been
-imported in the prelude, so we don’t need to specify `Result::` before the `Ok`
-and `Err` variants in the `match` arms.
+Tenga en cuenta que, al igual que la enumeración `Option`, el enum `Result` y 
+sus variantes se han importado en el preludio, por lo que no es necesario que
+especifique `Result::` antes de las variantes` Ok` y `Err` en el `emparejar` los 
+brazos.
 
-Here we tell Rust that when the result is `Ok`, return the inner `file` value
-out of the `Ok` variant, and we then assign that file handle value to the
-variable `f`. After the `match`, we can then use the file handle for reading or
-writing.
+Aquí le decimos a Rust que cuando el resultado es `Ok`, devuelve el valor `file`
+interno de la variante `Ok`, y luego asignamos ese valor de manejo de archivo a
+la variable `f`. Después del `match`, podemos usar el manejador del archivo para
+leer o escribir.
 
-The other arm of the `match` handles the case where we get an `Err` value from
-`File::open`. In this example, we’ve chosen to call the `panic!` macro. If
-there’s no file named *hello.txt* in our current directory and we run this
-code, we’ll see the following output from the `panic!` macro:
+El otro brazo del `match` maneja el caso donde obtenemos un valor `Err` de 
+`File::open`. En este ejemplo, hemos elegido llamar a la macro `panic!`. Si no 
+hay un archivo llamado *hello.txt* en nuestro directorio actual y ejecutamos 
+este código, veremos el siguiente resultado de la macro `panic!`:
 
 ```text
 thread 'main' panicked at 'There was a problem opening the file: Error { repr:
