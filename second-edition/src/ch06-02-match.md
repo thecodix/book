@@ -190,55 +190,57 @@ let five = Some(5);
 let six = plus_one(five);
 let none = plus_one(None);
 ```
+<span class="caption">Listado 6-5: Una función que usa una expresión `match` en
+una `Option<i32>`</span>
 
-<span class="caption">Listing 6-5: A function that uses a `match` expression on
-an `Option<i32>`</span>
+#### Emparejando `Some(T)`
 
-#### Matching `Some(T)`
+Examinaremos la primera ejecución de `plus_one` en más detalles. Cuando llamamos
+`plus_one(five)`, la variable `x` en el cuerpo de `plus_one` tendrá el valor
+`Some(5)`. Luego lo comparamos contra cada brazo de coincidencia.
 
-Let’s examine the first execution of `plus_one` in more detail. When we call
-`plus_one(five)`, the variable `x` in the body of `plus_one` will have the
-value `Some(5)`. We then compare that against each match arm.
 
 ```rust,ignore
 None => None,
 ```
 
-The `Some(5)` value doesn’t match the pattern `None`, so we continue to the
-next arm.
+El valor `Some(5)` no coincide con el patrón `None`, entonces continuamos al siguiente
+brazo.
 
 ```rust,ignore
 Some(i) => Some(i + 1),
 ```
 
-Does `Some(5)` match `Some(i)`? Well yes it does! We have the same variant.
-The `i` binds to the value contained in `Some`, so `i` takes the value `5`. The
-code in the match arm is then executed, so we add one to the value of `i` and
-create a new `Some` value with our total `6` inside.
+¿Coincide `Some(5)` con `Some(i)`? Si, lo hace! Tenemos la misma variante.
+La `i` se une al valor contenido en `Some`, entonces `i` toma el valor `5`. El
+código en el brazo de coincidencia es entonces ejecutado, asique agregamos uno
+al valor de `i` y creamos un nuevo valor `Some` con nuestro total `6` adentro.
 
-#### Matching `None`
+#### Emparejando `None`
 
-Now let’s consider the second call of `plus_one` in Listing 6-5 where `x` is
-`None`. We enter the `match` and compare to the first arm.
+Ahora consideremos la segunda llamda de `plus_one` en el Listado 6-5 donde `x` es
+`None`. Ingresamos el valor `match` y lo comparamos al primer brazo.
+
 
 ```rust,ignore
 None => None,
 ```
 
-It matches! There’s no value to add to, so the program stops and returns the
-`None` value on the right side of `=>`. Because the first arm matched, no other
-arms are compared.
+Coincide! No hay valor para agregar, entonces el programa se detiene y devuelve el valor
+`None` en el lado derecho de `=>`. Debido a que el primer brazo coincide, no se 
+comparan otros brazos.
 
-Combining `match` and enums is useful in many situations. You’ll see this
-pattern a lot in Rust code: `match` against an enum, bind a variable to the
-data inside, and then execute code based on it. It’s a bit tricky at first, but
-once you get used to it, you’ll wish you had it in all languages. It’s
-consistently a user favorite.
+Combinar `match` y enumeraciones es útil en muchas situaciones. Verás mucho este patrón
+en el código Rust: `match` contra una enumeración, junta una variable con los
+datos adentro, y entonces ejecuta código basado en él. Es un poco díficil al principio, pero
+una vez que lo usas, querrás tenerlo en todos los lenguajes. Es
+una de las funciones favoritas de los usuarios.
 
-### Matches Are Exhaustive
+### Los emparejamientos son exhaustivos
 
-There’s one other aspect of `match` we need to discuss. Consider this version
-of our `plus_one` function:
+Hay otro aspecto de `match` que debemos discutir. Considera esta versión
+de nuestra función `plus_one`:
+
 
 ```rust,ignore
 fn plus_one(x: Option<i32>) -> Option<i32> {
@@ -248,8 +250,8 @@ fn plus_one(x: Option<i32>) -> Option<i32> {
 }
 ```
 
-We didn’t handle the `None` case, so this code will cause a bug. Luckily, it’s
-a bug Rust knows how to catch. If we try to compile this code, we’ll get this
+No manejamos el caso `None`, entonces este código causará un bug. Por suerte, es un bug
+que Rust sabe como atrapar. Si intentamos compilar este código, obtendremos este
 error:
 
 ```text
@@ -260,20 +262,21 @@ error[E0004]: non-exhaustive patterns: `None` not covered
   |               ^ pattern `None` not covered
 ```
 
-Rust knows that we didn’t cover every possible case and even knows which
-pattern we forgot! Matches in Rust are *exhaustive*: we must exhaust every last
-possibility in order for the code to be valid. Especially in the case of
-`Option<T>`, when Rust prevents us from forgetting to explicitly handle the
-`None` case, it protects us from assuming that we have a value when we might
-have null, thus making the billion dollar mistake discussed earlier.
 
-### The `_` Placeholder
+Rust sabe que no cubrimos cada caso posible every possible e incluso sabe que patrón
+olvidamos! Las coincidencias en Rust son *agotadores*: debemos usar hasta la última 
+posibilidad para que el código sea válido. Especialmente en el caso de
+`Option<T>`, cuanto Rust previene olvidarnos de manejar explicitamente el caso
+`None`, esto nos protege de asumir que tenemos un valor cuando podríamos tener
+nulo, asi como el erro billón de dolares discutido anteriormente.
 
-Rust also has a pattern we can use in situations when we don’t want to list all
-possible values. For example, a `u8` can have valid values of 0 through 255. If
-we only care about the values 1, 3, 5, and 7, we don’t want to have to list out
-0, 2, 4, 6, 8, 9 all the way up to 255. Fortunately, we don’t have to: we can
-use the special pattern `_` instead:
+### El `_` Marcador de posición
+
+Rust también tiene un patrón que podemos usar en situaciones cuando no queremos listar
+todos los posibles valores. Por ejemplo, un `u8` puede tener valores válidos de 0 a 255. Si
+si solo nos importan los valores 1, 3, 5 y 7, no queremos tener uqe listar
+0, 2, 4, 6, 8, 9, todos hasta 255 . Por suerte, no tenemos que hacerlo: podemos
+usar un patrón especial `_` en vez de:
 
 ```rust
 let some_u8_value = 0u8;
@@ -286,11 +289,11 @@ match some_u8_value {
 }
 ```
 
-The `_` pattern will match any value. By putting it after our other arms, the
-`_` will match all the possible cases that aren’t specified before it. The `()`
-is just the unit value, so nothing will happen in the `_` case. As a result, we
-can say that we want to do nothing for all the possible values that we don’t
-list before the `_` placeholder.
+El patrón `_` concidirá cualquier valor. Poniéndolo después de nuestros otros brazos, el
+`_` coincidierá con todos los casos posibles que no fueron especificados antes. El `()`
+es solo la unidad de valor, por lo que nada pasará en el caso  `_`. Como resultado, podemos 
+decir que no queremos hacer nada para todos los valores posibles que no listamos
+antes del marcador de posición `_` .
 
-However, the `match` expression can be a bit wordy in a situation in which we
-only care about *one* of the cases. For this situation, Rust provides `if let`.
+Sin embargo, la expresión `match` puede ser un poco tediosa en una situación en que solo
+nos importa *uno* de los casos. Para esta situacuión, Rust provee `if let`.
