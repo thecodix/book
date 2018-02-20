@@ -104,7 +104,6 @@ fn main() {
 Todavía estamos especificando el espacio de nombres `TrafficLight` para la variante `Green`
 porque no incluimos `Green` en la declaración de `use`.
 
-
 ### Llevando Todos los Nombres al Scope con Glob
 
 Para poner todos los ítems en un espacio de nombres y a la vez en scope, podemos usar la sintaxis `*`, que se llama *el operador glob*. Este ejemplo pone todas las variantes de una enumeración en el scope sin tener que enumerar cada una específicamente:
