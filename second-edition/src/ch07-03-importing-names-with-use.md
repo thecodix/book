@@ -61,7 +61,6 @@ lleva a los módulos niño a scope. Por eso todavía tenemos que usar
 Podríamos haber optado por incluir la función en scope en lugar de especificar 
 la función en `use` como se indica a continuación:
 
-
 ```rust
 pub mod a {
     pub mod series {
