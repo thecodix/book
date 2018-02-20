@@ -116,7 +116,7 @@ pub mod client;
 mod network;
 ```
 
-The `pub` keyword is placed right before `mod`. Let’s try building again:
+La palabra clave `pub` se coloca justo antes de `mod`. Intentemos construir de nuevo:
 
 ```text
 error[E0603]: function `connect` is private
@@ -126,9 +126,9 @@ error[E0603]: function `connect` is private
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ```
 
-Hooray! We have a different error! Yes, different error messages are a cause
-for celebration. The new error shows `` function `connect` is private ``, so
-let’s edit *src/client.rs* to make `client::connect` public too:
+¡Hurra! Tenemos un error diferente! Sí, diferentes mensajes de error son motivo
+de celebración. El nuevo error muestra que ``función `connect` is private``, así 
+que editemos *src/client.rs* para hacer que `client::connect` también sea público:
 
 <span class="filename">Filename: src/client.rs</span>
 
@@ -137,7 +137,7 @@ pub fn connect() {
 }
 ```
 
-Now run `cargo build` again:
+Ahora vuelve a ejecutar `cargo build`:
 
 ```text
 warning: function is never used: `connect`
@@ -157,21 +157,21 @@ warning: function is never used: `connect`
   | |_^
 ```
 
-The code compiled, and the warning about `client::connect` not being used is
-gone!
+El código ha compilado, y la advertencia de `client::connect` que no se está usando
+ha desaparecido!
 
-Unused code warnings don’t always indicate that an item in your code needs to
-be made public: if you *didn’t* want these functions to be part of your public
-API, unused code warnings could be alerting you to code you no longer need that
-you can safely delete. They could also be alerting you to a bug if you had just
-accidentally removed all places within your library where this function is
-called.
+Las advertencias de código no utilizado no siempre indican que un elemento de tu código debe
+hacerse público: si tu *no* deseas que estas funciones formen parte de tu API
+pública, las advertencias de código no utilizadas podrían estar alertándote sobre el código que ya no necesitas
+para poder eliminarlo de forma segura. También podrían estar alertándote de un error si acabas
+de eliminar accidentalmente todos los lugares de tu biblioteca donde se llama 
+esta función.
 
-But in this case, we *do* want the other two functions to be part of our
-crate’s public API, so let’s mark them as `pub` as well to get rid of the
-remaining warnings. Modify *src/network/mod.rs* to look like the following:
+Pero en este caso, *queremos* que las otras dos funciones formen parte de la
+API pública de nuestro cajón, así que marquémoslas como `pub` y deshagámonos de las 
+advertencias restantes. Modifica *src/network/mod.rs* para que luzca de la siguiente forma:
 
-<span class="filename">Filename: src/network/mod.rs</span>
+<span class="filename">Nombre del archivo: src/network/mod.rs</span>
 
 ```rust,ignore
 pub fn connect() {
@@ -180,7 +180,7 @@ pub fn connect() {
 mod server;
 ```
 
-Then compile the code:
+Luego compila el código:
 
 ```text
 warning: function is never used: `connect`
@@ -200,14 +200,14 @@ warning: function is never used: `connect`
   | |_^
 ```
 
-Hmmm, we’re still getting an unused function warning, even though
-`network::connect` is set to `pub`. The reason is that the function is public
-within the module, but the `network` module that the function resides in is not
-public. We’re working from the interior of the library out this time, whereas
-with `client::connect` we worked from the outside in. We need to change
-*src/lib.rs* to make `network` public too, like so:
+Hmmm, todavía estamos recibiendo una advertencia de función no utilizada, aunque
+`network::connect` está configurada en `pub`. La razón es que la función es pública
+dentro del módulo, pero el módulo de `network` en el que reside la función no es
+público. Estamos trabajando desde el interior de la biblioteca esta vez, mientras que
+con `client::connect` trabajamos desde el exterior. Necesitamos cambiar
+*src/lib.rs* para hacer también a `network` pública, así:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust,ignore
 pub mod client;
@@ -215,7 +215,7 @@ pub mod client;
 pub mod network;
 ```
 
-Now when we compile, that warning is gone:
+Ahora cuando compilamos, esa advertencia desaparece:
 
 ```text
 warning: function is never used: `connect`
@@ -228,23 +228,23 @@ warning: function is never used: `connect`
   = note: #[warn(dead_code)] on by default
 ```
 
-Only one warning is left! Try to fix this one on your own!
+Sólo queda una advertencia! ¡Intenta arreglar esto por tu cuenta!
 
-### Privacy Rules
+### Reglas de Privacidad
 
-Overall, these are the rules for item visibility:
+En general, estas son las reglas para la visibilidad de los artículos:
 
-1. If an item is public, it can be accessed through any of its parent modules.
-2. If an item is private, it can be accessed only by its immediate parent
-   module and any of the parent’s child modules.
+1. Si un elemento es público, se puede acceder a él a través de cualquiera de sus módulos padre.
+2. Si un elemento es privado, sólo puede ser accedido por su módulo padre inmediato
+y por cualquiera de los módulos hijo del padre.
 
-### Privacy Examples
+### Ejemplos de Privacidad
 
-Let’s look at a few more privacy examples to get some practice. Create a new
-library project and enter the code in Listing 7-6 into your new project’s
-*src/lib.rs*:
+Veamos algunos ejemplos más de privacidad para tener un poco de práctica. Crea un nuevo
+proyecto de biblioteca e introduce el código en el Listado 7-6 en el archivo *src/lib.rs*
+de tu nuevo proyecto:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust,ignore
 mod outermost {
@@ -267,48 +267,48 @@ fn try_me() {
 }
 ```
 
-<span class="caption">Listing 7-6: Examples of private and public functions,
-some of which are incorrect</span>
+<span class="caption">Listado 7-6: Ejemplos de funciones privadas y públicas,
+algunas de las cuales son incorrectas</span>
 
-Before you try to compile this code, make a guess about which lines in the
-`try_me` function will have errors. Then, try compiling the code to see whether
-you were right, and read on for the discussion of the errors!
+Antes de intentar compilar este código, adivina qué líneas de la función
+`try_me` tendrán errores. Luego, intenta compilar el código para ver si
+tenías razón, y sigue leyendo para la discusión de los errores!
 
-#### Looking at the Errors
+#### Analizando los Errores
 
-The `try_me` function is in the root module of our project. The module named
-`outermost` is private, but the second privacy rule states that the `try_me`
-function is allowed to access the `outermost` module because `outermost` is in
-the current (root) module, as is `try_me`.
+La función `try_me` está en el módulo raíz de nuestro proyecto. El módulo llamado
+`outermost` es privado, pero la segunda regla de privacidad establece que la función
+`try_me` permite el acceso al módulo `outermost` porque `outermost` está en
+el módulo (raíz) actual, como es `try_me`.
 
-The call to `outermost::middle_function` will work because `middle_function` is
-public, and `try_me` is accessing `middle_function` through its parent module
-`outermost`. We determined in the previous paragraph that this module is
-accessible.
+La llamada a `outermost::middle_function` funcionará porque `middle_function` es 
+pública, y `try_me` está accediendo a `middle_function` a través de su módulo
+padre `outermost`. Hemos determinado en el párrafo anterior que este módulo
+es accesible.
 
-The call to `outermost::middle_secret_function` will cause a compilation error.
-`middle_secret_function` is private, so the second rule applies. The root
-module is neither the current module of `middle_secret_function` (`outermost`
-is), nor is it a child module of the current module of `middle_secret_function`.
+La llamada a la función `outermost::middle_secret_function` causará un error de compilación.
+`middle_secret_function` es privada, por lo que se aplica la segunda regla. El módulo 
+raíz no es ni el módulo actual de la función `middle_secret_function` (es `outermost`),
+ni es un módulo hijo del módulo actual de la función `middle_secret_function`.
 
-The module named `inside` is private and has no child modules, so it can only
-be accessed by its current module `outermost`. That means the `try_me` function
-is not allowed to call `outermost::inside::inner_function` or
+El módulo llamado `inside` es privado y no tiene módulos hijo, por lo que sólo
+se puede acceder al módulo actual `outermost`. Esto significa que la función `try_me`
+no puede llamar a la función `outermost::inside::inner_function` o 
 `outermost::inside::secret_function`.
 
-#### Fixing the Errors
+#### Corrección de los Errores
 
-Here are some suggestions for changing the code in an attempt to fix the
-errors. Before you try each one, make a guess as to whether it will fix the
-errors, and then compile the code to see whether or not you’re right, using the
-privacy rules to understand why.
+Aquí están algunas sugerencias para cambiar el código en un intento de corregir los
+errores. Antes de probar cada una de ellas, adivina si corregirá los 
+errores y luego compila el código para ver si tienes razón o no, usando las
+reglas de privacidad para entender por qué.
 
-* What if the `inside` module was public?
-* What if `outermost` was public and `inside` was private?
-* What if, in the body of `inner_function`, you called
-  `::outermost::middle_secret_function()`? (The two colons at the beginning mean
-  that we want to refer to the modules starting from the root module.)
+* ¿Y si el módulo `inside` fuera público?
+* ¿Qué pasaría si `outermost` fuera público e `inside` fuera privado?
+* ¿Qué pasa si, en el cuerpo de `inner_function`, llamaste a
+  `::outermost::middle_secret_function()`? (Los dos puntos al principio significan
+  que queremos referirnos a los módulos empezando por el módulo raíz.)
 
-Feel free to design more experiments and try them out!
+Siéntete libre de diseñar más experimentos y probarlos!
 
-Next, let’s talk about bringing items into scope with the `use` keyword.
+A continuación, hablemos de poner los artículos en scope con la palabra clave `use`.
