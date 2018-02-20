@@ -3,7 +3,7 @@ si es así, donde --- la única solución que pude encontrar fue dividirlo en
 cinco temas principales: Inseguro, Vidas, Rasgos, Tipos, Funciones y
 Cierres Sin embargo, no estoy convencido de que sea ideal, así que pensé que podríamos
 incluir un ToC en la parte superior de este capítulo para que el lector pueda usarlo como
-referencia cuando encuentren algo que no puedan descifrar. Qué es lo que tú
+referencia cuando encuentren algo que no puedan descifrar. ¿Qué es lo que tú
 piensas? ->
 <! - Un ToC para hacer que este capítulo sea más fácil de usar como referencia
 suena bien, Sin embargo, ¿sería redundante el ToC este al comienzo de todo el libro?
