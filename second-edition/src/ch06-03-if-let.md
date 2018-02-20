@@ -1,7 +1,7 @@
 ## Flujo de control conciso con `if let`
 
-La sintaxis `if let` te permite combinar `if` y `let` de una manera menos verbosa
-para manejar valores que coincide con un patrón e ignora el resto. Considera el programa
+La sintaxis `if let` te permite combinar `if` y `let` de una manera menos detallada
+para manejar valores que coinciden con un patrón e ignora el resto. Considera el programa
 en el Listado 6-6 que coincide con un valor `Option<u8>` pero solo quiere ejecutar
 código si el valor es tres:
 
@@ -21,7 +21,7 @@ código cuando el valor es `Some(3)`</span>
 Queremos hacer algo con la coincidencia `Some(3)` pero no hacemos nada con ningún
 otro valor `Some<u8>` o el valor `None`. Para satisfacer la expresión `match`, tenemos
 que agregar `_ => ()` después de procesar solo una variante, que es mucho código
-repetitivo para agregar.
+para agregar.
 
 En su lugar, podemos escribir esto de una manera más corta usando `if let`. El siguiente
 código se comporta igual que el `match` en el Listado 6-6:
@@ -40,7 +40,7 @@ es su primer brazo.
 El uso de `if let` significa que tienes menos para escribir, menos indexáción, y
 menos código repetido. Sin embargo, hemos perdido la comprobación exhaustiva que `match`
 ejecuta. Eligiendo entre `match` e `if let` depende de que estes haciendo en
-tu situación particular y si gana concisidad es un intercambio por perder una 
+tu situación particular y si gana precisión es un intercambio por perder una 
 comprobación exhaustiva.
 
 En otras palabras, puedes pensar en `if let` como sintaxis dulce para un `match` que
@@ -51,7 +51,7 @@ Podemos incluir un `else` con un `if let`. El código de bloque que va con el
 `match` que es equivalente al `if let` y `else`. Recuerda la definición de enumeración
 `Coin` en el Listado 6-4, donde la variante `Quarter` también tenía un valor
 `UsState`. Si quisieramos contar todas las monedas que no son cuartos vemos también
-mientras anuncioamos el estado de los cuartos, podríamos hacer eso con una expresión `match`
+mientras anunciamos el estado de los cuartos, podríamos hacer eso con una expresión `match`
 como esta:
 
 ```rust
