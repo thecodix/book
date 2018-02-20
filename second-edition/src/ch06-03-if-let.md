@@ -99,7 +99,7 @@ if let Coin::Quarter(state) = coin {
 }
 ```
 
-Si tienes una situación en la cual tu programa tiene una lógica que es muy verbosa 
+Si tienes una situación en la cual tu programa tiene una lógica que es muy detallada 
 para expresar usando un `match`, recuerda que `if let` está en tu caja de herramientas
 Rust también.
 
