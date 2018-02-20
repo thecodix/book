@@ -21,7 +21,7 @@ How public, like a frog
 To tell your name the livelong day
 To an admiring bog!
 ```
- 
+
 <span class="caption">Listado 12-3: Un poema de Emily Dickinson será un buen
 caso de prueba.</span>
 
