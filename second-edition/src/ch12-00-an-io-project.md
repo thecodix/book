@@ -1,38 +1,38 @@
-# An I/O Project: Building a Command Line Program
+# Un proyecto de E/S: Construcción de un programa de línea de comandos
 
-This chapter is a recap of the many skills you’ve learned so far and an
-exploration of a few more standard library features. We’ll build a command line
-tool that interacts with file and command line input/output to practice some of
-the Rust concepts you now have under your belt.
+Este capítulo es una recapitulación de las muchas habilidades que ha aprendido hasta ahora y 
+una exploración de algunas características más de la biblioteca estándar. Construiremos una herramienta
+de línea de comandos que interactúa con la entrada/salida de la línea de comandos y archivos para practicar
+algunos de los conceptos de Rust que ahora tienes bajo tu cinturón.
 
-Rust’s speed, safety, *single binary* output, and cross-platform support make
-it an ideal language for creating command line tools, so for our project, we’ll
-make our own version of the classic command line tool `grep` (**g**lobally
-search a **r**egular **e**xpression and **p**rint). In the simplest use case,
-`grep` searches a specified file for a specified string. To do so, `grep` takes
-as its arguments a filename and a string, and then reads the file and finds
-lines in that file that contain the string argument. It then prints those lines.
+La velocidad de Rust, la seguridad, la salida *single binary* y el soporte multiplataforma lo convierten 
+en un lenguaje ideal para crear herramientas de línea de comandos, por lo que para nuestro proyecto, crearemos
+nuestra propia versión de la clásica herramienta de línea de comandos `grep` (**g**lobally 
+search a **r**egular **e**xpression and **p**rint) (buscar globalmente una expresión regular e imprimir). En el caso
+de uso más sencillo, `grep` busca un archivo especificado para una cadena específica. Para ello, `grep` toma 
+como argumentos un nombre de archivo y una cadena, y luego lee el archivo y busca las líneas
+en ese archivo que contienen el argumento de la cadena. Luego imprime esas líneas.
 
-Along the way, we’ll show how to make our command line tool use features of the
-terminal that many command line tools use. We’ll read the value of an
-environment variable to allow the user to configure the behavior of our tool.
-We’ll also print to the standard error console stream (`stderr`) instead of
-standard output (`stdout`), so, for example, the user can redirect successful
-output to a file while still seeing error messages onscreen.
+A lo largo del camino, mostraremos cómo hacer que nuestra herramienta de línea de comandos utilice 
+las características de la terminal que muchas herramientas de línea de comandos utilizan. Leeremos el valor
+de una variable de entorno para permitir al usuario configurar el comportamiento de nuestra herramienta.
+También imprimiremos en la consola de errores estándar (`stderr`) en lugar de la salida 
+estándar (`stdout`), de modo que, por ejemplo, el usuario puede redirigir la salida correcta
+a un archivo mientras sigue viendo mensajes de error en pantalla.
 
-One Rust community member, Andrew Gallant, has already created a fully
-featured, very fast version of `grep`, called `ripgrep`. By comparison, our
-version of `grep` will be fairly simple, but this chapter will give you some of
-the background knowledge you need to understand a real-world project like
+Un miembro de la comunidad de Rust, Andrew Gallant, ya ha creado una versión completa
+y muy rápida de `grep`, llamada `ripgrep`. En comparación, nuestra versión 
+de `grep` será bastante simple, pero este capítulo te dará algunos de los 
+conocimientos básicos que necesitas para entender un proyecto del mundo real como
 `ripgrep`.
 
-Our `grep` project will combine a number of concepts you’ve learned so far:
+Nuestro proyecto `grep` combinará una serie de conceptos que has aprendido hasta ahora:
 
-* Organizing code (using what you learned in modules, Chapter 7)
-* Using vectors and strings (collections, Chapter 8)
-* Handling errors (Chapter 9)
-* Using traits and lifetimes where appropriate (Chapter 10)
-* Writing tests (Chapter 11)
+* Código de organización (utilizando lo aprendido en los módulos, Capítulo 7)
+* Usando vectores y cadenas (colecciones, Capítulo 8)
+* Manejo de errores (Capítulo 9)
+* Utilizar rasgos y vidas útiles cuando sea apropiado (Capítulo 10)
+* Pruebas de escritura (Capítulo 11)
 
-We’ll also briefly introduce closures, iterators, and trait objects, which
-Chapters 13 and 17 will cover in detail.
+También presentaremos brevemente los cierres, iteradores y objetos característicos, que
+en los capítulos 13 y 17 se tratarán en detalle.
