@@ -1,31 +1,31 @@
-## Errores irrecuperables con `panic!`
+## Unrecoverable Errors with `panic!`
 
-Algunas veces suceden cosas malas en su código, y no hay nada que pueda hacer
-al respecto. En estos casos, Rust tiene la macro `panic!`. Cuando se ejecuta la
-macro `panic!`, Su programa imprimirá un mensaje de error, desenrollará y 
-limpiará la pila, y luego saldrá. La situación más común en la que ocurre esto
-es cuando se detecta un error de algún  tipo, y el programador no tiene claro 
-cómo manejar el error.
+Sometimes, bad things happen in your code, and there’s nothing you can do about
+it. In these cases, Rust has the `panic!` macro. When the `panic!` macro
+executes, your program will print a failure message, unwind and clean up the
+stack, and then quit. The most common situation this occurs in is when a bug of
+some kind has been detected, and it’s not clear to the programmer how to handle
+the error.
 
-> ### ¡Desenrollar la pila o abortar en respuesta a un `panic!`
+> ### Unwinding the Stack or Aborting in Response to a `panic!`
 >
-> De forma predeterminada, cuando se produce un `panic!`, el programa comienza
-> *desenrollarse*, lo que significa que Rust vuelve a subir la pila y limpia los
-> datos de cada función que encuentra. Pero este caminar de regreso y limpiar
-> es mucho trabajo. La alternativa es *abort* inmediatamente, que finaliza el 
-> programa sin limpiar. La memoria que el  programa estaba usando tendrá que 
-> ser limpiada por el sistema operativo. Si en su proyecto necesita hacer que el
-> binario resultante sea lo más pequeño posible, puede cambiar de desenrollar a
-> abortar en pánico agregando `panic='abort'` a las secciones apropiadas 
-> `[profile]` en su *Cargo.toml* archivo. Por ejemplo, si desea cancelar en   
-> pánico en el modo de lanzamiento, agregue esto:
+> By default, when a `panic!` occurs, the program starts *unwinding*, which
+> means Rust walks back up the stack and cleans up the data from each function
+> it encounters. But this walking back and cleanup is a lot of work. The
+> alternative is to immediately *abort*, which ends the program without
+> cleaning up. Memory that the program was using will then need to be cleaned
+> up by the operating system. If in your project you need to make the resulting
+> binary as small as possible, you can switch from unwinding to aborting on
+> panic by adding `panic = 'abort'` to the appropriate `[profile]` sections in
+> your *Cargo.toml* file. For example, if you want to abort on panic in release
+> mode, add this:
 >
 > ```toml
 > [profile.release]
 > panic = 'abort'
 > ```
 
-Tratemos de llamar "panic!" En un programa simple:
+Let’s try calling `panic!` in a simple program:
 
 <span class="filename">Filename: src/main.rs</span>
 
@@ -35,7 +35,7 @@ fn main() {
 }
 ```
 
-Cuando ejecutas el programa, verás algo como esto:
+When you run the program, you’ll see something like this:
 
 ```text
 $ cargo run
@@ -46,27 +46,26 @@ thread 'main' panicked at 'crash and burn', src/main.rs:2:4
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
 ```
 
-La llamada a `pánic!` Causa el mensaje de error contenido en las últimas tres 
-líneas. La primera línea muestra nuestro mensaje de pánico y el lugar en 
-nuestro código fuente donde ocurrió el pánico: *src/main.rs:2:4* indica que es
-el segundo carácter de la segunda línea de nuestro archivo *src/main.rs*.
+The call to `panic!` causes the error message contained in the last three
+lines. The first line shows our panic message and the place in our source code
+where the panic occurred: *src/main.rs:2:4* indicates that it’s the second
+line, fourth character of our *src/main.rs* file.
 
-En este caso, la línea indicada es parte de nuestro código, y si vamos a esa 
-línea, vemos la llamada a macro `panic!`. En otros casos, la llamada `panic!`
-Podría estar en el código que llama nuestro código. El nombre de archivo y el
-número de línea informados por el mensaje de error serán el código de otra 
-persona donde se llama a la macro `panic!`, No la línea de nuestro código que
-finalmente condujo a la llamada `panic!`. Podemos usar la traza inversa de las
-funciones de las que salió la llamada `panic!` Para descubrir la parte de 
-nuestro código que está causando el problema. Discutiremos lo que es una traza
-inversa en más detalle a continuación.
+In this case, the line indicated is part of our code, and if we go to that
+line, we see the `panic!` macro call. In other cases, the `panic!` call might
+be in code that our code calls. The filename and line number reported by the
+error message will be someone else’s code where the `panic!` macro is called,
+not the line of our code that eventually led to the `panic!` call. We can use
+the backtrace of the functions the `panic!` call came from to figure out the
+part of our code that is causing the problem. We’ll discuss what a backtrace is
+in more detail next.
 
-### Usando un `panic!` Backtrace
+### Using a `panic!` Backtrace
 
-Veamos otro ejemplo para ver cómo es cuando una llamada `panic!`Viene de una
-biblioteca debido a un error en nuestro código en lugar de a un código que 
-llama directamente a la macro. El listado 9-1 tiene algún código que intenta 
-acceder a un elemento por índice en un vector:
+Let’s look at another example to see what it’s like when a `panic!` call comes
+from a library because of a bug in our code instead of from our code calling
+the macro directly. Listing 9-1 has some code that attempts to access an
+element by index in a vector:
 
 <span class="filename">Filename: src/main.rs</span>
 
@@ -78,25 +77,26 @@ fn main() {
 }
 ```
 
-<span class="caption">Listado 9-1: Intentando acceder a un elemento más allá 
-del final de un vector, lo que provocará un `panic!``</span>
+<span class="caption">Listing 9-1: Attempting to access an element beyond the
+end of a vector, which will cause a `panic!`</span>
 
-Aquí, estamos intentando acceder al centésimo elemento de nuestro vector (que
-está en el índice 99 porque la indexación comienza en cero), pero solo tiene 
-tres elementos. En esta situación, Rust entrará en pánico. Se supone que el uso
-de  `[]` devuelve un elemento, pero si pasa un índice inválido, no hay ningún 
-elemento que Rust pueda devolver aquí que sea  correcto.
+Here, we’re attempting to access the hundredth element of our vector (which is
+at index 99 because indexing starts at zero), but it has only three elements.
+In this situation, Rust will panic. Using `[]` is supposed to return an
+element, but if you pass an invalid index, there’s no element that Rust could
+return here that would be correct.
 
-Otros idiomas, como C, intentarán darte exactamente lo que pediste en esta 
-situación, aunque no sea lo que quieres: obtendrás lo que esté en la ubicación
-en la memoria que correspondería a ese elemento en el vector , aunque la memoria
-no pertenece al vector. Esto se conoce como *overread* de búfer y puede generar
-vulnerabilidades de seguridad si un atacante puede manipular el índice de forma
-que pueda leer datos que no deberían almacenarse después de la matriz.
+Other languages, like C, will attempt to give you exactly what you asked for in
+this situation, even though it isn’t what you want: you’ll get whatever is at
+the location in memory that would correspond to that element in the vector,
+even though the memory doesn’t belong to the vector. This is called a *buffer
+overread* and can lead to security vulnerabilities if an attacker is able to
+manipulate the index in such a way as to read data they shouldn’t be allowed to
+that is stored after the array.
 
-Para proteger su programa de este tipo de vulnerabilidad, si intenta leer un 
-elemento en un índice que no existe, Rust detendrá la ejecución y se negará a 
-continuar. Probemos y veamos:
+To protect your program from this sort of vulnerability, if you try to read an
+element at an index that doesn’t exist, Rust will stop execution and refuse to
+continue. Let’s try it and see:
 
 ```text
 $ cargo run
