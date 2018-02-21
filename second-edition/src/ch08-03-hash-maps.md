@@ -181,22 +181,22 @@ scores.insert(String::from("Blue"), 25);
 println!("{:?}", scores);
 ```
 
-<span class="caption">Listado 8-24: Reemplazar un valor almacenado con una clave
-particular</span>
+<span class="caption">Listing 8-24: Replacing a value stored with a particular
+key</span>
 
-Este código pondrá `{"Blue": 25}`. El valor original de `10` ha sido
-reescrito.
+This code will print `{"Blue": 25}`. The original value of `10` has been
+overwritten.
 
-#### Solo inserte si la clave no tiene valor
+#### Only Insert If the Key Has No Value
 
-Es común comprobar si una clave en particular tiene un valor, y si no lo hace,
-inserta un valor para eso. Los mapas Hash tienen una API especial para esto llamado`entry`
-eso toma la clave que queremos verificar como parámetro. El valor de retorno del
-`entry` función es una enumeración llamado `Entry`eso representa un valor que podría
-o podría no existir. Digamos que queremos comprobar si la clave para el equipo
-amarillo tiene un valor asociado con eso. Si no es así, queremos insertar el valor
-50, y lo mismo para el equipo azul. Utilizando el `entry` API, el código se ve como
-Listado 8-25:
+It’s common to check whether a particular key has a value, and if it doesn’t,
+insert a value for it. Hash maps have a special API for this called `entry`
+that takes the key we want to check as a parameter. The return value of the
+`entry` function is an enum called `Entry` that represents a value that might
+or might not exist. Let’s say we want to check whether the key for the Yellow
+team has a value associated with it. If it doesn’t, we want to insert the value
+50, and the same for the Blue team. Using the `entry` API, the code looks like
+Listing 8-25:
 
 ```rust
 use std::collections::HashMap;
@@ -210,29 +210,29 @@ scores.entry(String::from("Blue")).or_insert(50);
 println!("{:?}", scores);
 ```
 
-<span class="caption">Listado 8-25: Usando el método `entry` para insertar solo si
-la clave aún no tiene un valor</span>
+<span class="caption">Listing 8-25: Using the `entry` method to only insert if
+the key does not already have a value</span>
 
-EL `or_insert` método en `Entry` se define para devolver el valor para la
-correspondiente llave `Entry` si esa clave existe, y si no, inserta el parámetro
-como el nuevo valor de esta clave y devuelve la modificación `Entry`. Esta tecnica
-es mucho más limpia que escribir la lógica nosotros mismos, y además, hace mejor
-el trabajo con el prestamista.
+The `or_insert` method on `Entry` is defined to return the value for the
+corresponding `Entry` key if that key exists, and if not, inserts the parameter
+as the new value for this key and returns the modified `Entry`. This technique
+is much cleaner than writing the logic ourselves, and in addition, plays more
+nicely with the borrow checker.
 
-Se imprimirá el código en el Listado 8-25. `{"Yellow": 50, "Blue": 10}`. La
-primera llamada al `entry` insertará la clave para el equipo amarillo con el valor
-`50`porque el equipo amarillo ya no tiene un valor. La segunda llamada a
-`entry` no cambiará el mapa hash porque el equipo azul ya tiene el
-valor `10`.
+Running the code in Listing 8-25 will print `{"Yellow": 50, "Blue": 10}`. The
+first call to `entry` will insert the key for the Yellow team with the value
+`50` because the Yellow team doesn’t have a value already. The second call to
+`entry` will not change the hash map because the Blue team already has the
+value `10`.
 
-#### Actualización de un valor basado en el valor anterior
+#### Updating a Value Based on the Old Value
 
-Otro caso de uso común para los mapas hash es buscar el valor de una clave y luego
-actualizarlo en base al valor anterior. Por ejemplo, el Listado 8-26 muestra un código que
-cuenta cuántas veces aparece cada palabra en algún texto. Usamos un mapa hash con
-las palabras como claves e incrementar el valor para realizar un seguimiento de cuántas veces hemos
-visto esa palabra. Si es la primera vez que vemos una palabra, primero la insertaremos
-con el valor de `0`:
+Another common use case for hash maps is to look up a key’s value and then
+update it based on the old value. For instance, Listing 8-26 shows code that
+counts how many times each word appears in some text. We use a hash map with
+the words as keys and increment the value to keep track of how many times we’ve
+seen that word. If it’s the first time we’ve seen a word, we’ll first insert
+the value `0`:
 
 ```rust
 use std::collections::HashMap;
@@ -249,51 +249,51 @@ for word in text.split_whitespace() {
 println!("{:?}", map);
 ```
 
-<span class="caption">Listado 8-26: Recuento de ocurrencias de palabras usando un hash
-map que almacena palabras y las cuenta</span>
+<span class="caption">Listing 8-26: Counting occurrences of words using a hash
+map that stores words and counts</span>
 
-este código pondrá `{"world": 2, "hello": 1, "wonderful": 1}`. El
-método `or_insert` de hecho devuelve una referencia mutable (`&mut V`) al valor
-para esta clave. Aquí almacenamos esa referencia mutable en la variable `count`, de manera que
-para asignar a ese valor primero debemos eliminar la referencia `count` usando el
-asterisco (`*`). La referencia mutable sale del alcance al final de la vuelta
-`for`,entonces todos estos cambios son seguros y están permitidos por las reglas de préstamo.
+This code will print `{"world": 2, "hello": 1, "wonderful": 1}`. The
+`or_insert` method actually returns a mutable reference (`&mut V`) to the value
+for this key. Here we store that mutable reference in the `count` variable, so
+in order to assign to that value we must first dereference `count` using the
+asterisk (`*`). The mutable reference goes out of scope at the end of the `for`
+loop, so all of these changes are safe and allowed by the borrowing rules.
 
-### Función Hashing
+### Hashing Function
 
-Por defecto, `HashMap` utiliza una función hashing criptográficamente segura que puede
-proporcionar resistencia a los ataques de denegación de servicio (DoS). Este no es el más rápido
-algoritmo hashing disponible, pero la compensación para una mejor seguridad que viene
-con la caída en el rendimiento, lo vale. Si perfila su código y encuentra
-que la función hash predeterminada es demasiado lenta para sus propósitos, puede cambiar a
-otra función especificando un * hasher * diferente. Un hasher es un tipo que
-implementa el rasgo `BuildHasher`. Hablaremos sobre los rasgos y cómo
-implementarlos en el Capítulo 10. No necesariamente tiene que implementar su propio
-hasher desde cero; [crates.io](https://crates.io) tiene bibliotecas compartidas por
-otros usuarios de Rust que proporcionan hashers implementando muchos algoritmos 
-hash comúnes.
+By default, `HashMap` uses a cryptographically secure hashing function that can
+provide resistance to Denial of Service (DoS) attacks. This is not the fastest
+hashing algorithm available, but the trade-off for better security that comes
+with the drop in performance is worth it. If you profile your code and find
+that the default hash function is too slow for your purposes, you can switch to
+another function by specifying a different *hasher*. A hasher is a type that
+implements the `BuildHasher` trait. We’ll talk about traits and how to
+implement them in Chapter 10. You don’t necessarily have to implement your own
+hasher from scratch; [crates.io](https://crates.io) has libraries shared by
+other Rust users that provide hashers implementing many common hashing
+algorithms.
 
-## Resúmen
+## Summary
 
-Los vectores, cadenas y mapas hash proporcionarán una gran cantidad de funcionalidades
-que necesita en programas donde necesita almacenar, acceder y modificar datos.
-Aquí hay algunos ejercicios que ahora debes estar preparado para resolver:
+Vectors, strings, and hash maps will provide a large amount of functionality
+that you need in programs where you need to store, access, and modify data.
+Here are some exercises you should now be equipped to solve:
 
-* Dada una lista de enteros, usa un vector y devuelve la media (promedio), mediana
- (cuando está ordenado, el valor en la posición media) y modo (el valor que
-  ocurre más a menudo; un mapa hash será útil aquí) de la lista.
-* Convierte cadenas para cerdo latino. La primera consonante de cada palabra se mueve a
-  se agrega el final de la palabra y "ay", por lo que "primero" se convierte en "irst-fay". Palabras
-  que comienzan con una vocal tienen "hay" agregado al final en su lugar ("apple" se convierte
-  “apple-hay”). ¡Tenga en cuenta los detalles sobre la codificación UTF-8!
-* Usando un mapa hash y vectores, crea una interfaz de texto para permitir que un usuario agregue
-  nombres de empleados a un departamento en una empresa. Por ejemplo, "Agregar a Sally a
-  Ingeniería "o" Agregar Amir a Ventas ". Luego, deje que el usuario recupere una lista de todas las
-  personas en un departamento o todas las personas en la empresa por departamento, ordenadas
-  alfabeticamente.
+* Given a list of integers, use a vector and return the mean (average), median
+  (when sorted, the value in the middle position), and mode (the value that
+  occurs most often; a hash map will be helpful here) of the list.
+* Convert strings to pig latin. The first consonant of each word is moved to
+  the end of the word and “ay” is added, so “first” becomes “irst-fay.” Words
+  that start with a vowel have “hay” added to the end instead (“apple” becomes
+  “apple-hay”). Keep in mind the details about UTF-8 encoding!
+* Using a hash map and vectors, create a text interface to allow a user to add
+  employee names to a department in a company. For example, “Add Sally to
+  Engineering” or “Add Amir to Sales.” Then let the user retrieve a list of all
+  people in a department or all people in the company by department, sorted
+  alphabetically.
 
-La documentación estándar de la API de la biblioteca describe métodos que vectorizan, cadenas,
-y hash maps, ¡que serán útiles para estos ejercicios!
+The standard library API documentation describes methods that vectors, strings,
+and hash maps have that will be helpful for these exercises!
 
-Estamos entrando en programas más complejos en los que las operaciones pueden fallar; entonces, es
-¡un momento perfecto para discutir el manejo de errores a continuación!
+We’re getting into more complex programs in which operations can fail; so, it’s
+a perfect time to discuss error handling next!
