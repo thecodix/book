@@ -213,41 +213,44 @@ de la estructura `Parser` especifica que la duración de la referencia a
 lo mismo.
 
 
-The problem is that the `parse_context` function returns the value returned
-from `parse`, so the lifetime of the return value of `parse_context` is tied to
-the lifetime of the `Parser` as well. But the `Parser` instance created in the
-`parse_context` function won’t live past the end of the function (it’s
-temporary), and `context` will go out of scope at the end of the function
-(`parse_context` takes ownership of it).
+El problema es que la función `parse_context` devuelve el valor devuelto
+por `parse`, por lo que el tiempo de vida del valor de retorno de` parse_context` está vinculado a
+la vida útil del `Parser` también. Pero la instancia `Parser` creada en
+La función `parse_context` no sobrevivirá al final de la función (es
+temporal), y `context` saldrá del alcance al final de la función
+(`parse_context` se apropia de él).
 
-Rust thinks we’re trying to return a reference to a value that goes out of
-scope at the end of the function, because we annotated all the lifetimes with
-the same lifetime parameter. That told Rust the lifetime of the string slice
-that `Context` holds is the same as that of the lifetime of the reference to
-`Context` that `Parser` holds.
 
-The `parse_context` function can’t see that within the `parse` function, the
-string slice returned will outlive both `Context` and `Parser`, and that the
-reference `parse_context` returns refers to the string slice, not to `Context`
-or `Parser`.
+Rust piensa que estamos tratando de devolver una referencia a un valor
+que sale de alcance al final de la función, porque anotamos todas las 
+vidas con el mismo parámetro, Eso le dijo a Rust que la duración del 
+segmento de cadena que contiene `Context` es la misma que la duración 
+de la referencia al `Context` que contiene el `Parser`.
 
-By knowing what the implementation of `parse` does, we know that the only
-reason the return value of `parse` is tied to the `Parser` is because it’s
-referencing the `Parser`’s `Context`, which is referencing the string slice, so
-it’s really the lifetime of the string slice that `parse_context` needs to care
-about. We need a way to tell Rust that the string slice in `Context` and the
-reference to the `Context` in `Parser` have different lifetimes and that the
-return value of `parse_context` is tied to the lifetime of the string slice in
-`Context`.
+La función `parse_context` no puede ver eso dentro de la función` parse`,
+El segmento de cadena devuelto sobrevivirá a `Context` y` Parser`, y que el
+la referencia `parse_context` returns se refiere al segmento de cadena, no a` Context`
+o `Parser`.
 
-First we’ll try giving `Parser` and `Context` different lifetime parameters as
-shown in Listing 19-15. We’ll use `'s` and `'c` as lifetime parameter names to
-be clear about which lifetime goes with the string slice in `Context` and which
-goes with the reference to `Context` in `Parser`. Note that this won’t
-completely fix the problem, but it’s a start and we’ll look at why this isn’t
-sufficient when we try to compile.
+Al saber qué hace la implementación de `parse`, sabemos que el único
+razón por la cual el valor de retorno de `parse` está vinculado al `Parser` 
+es porque está haciendo referencia al `Context` del` Parser`, que hace 
+referencia al segmento de cadena, por lo es realmente el tiempo de vida 
+del segmento de cadena que `parse_context` necesita cuidar. Necesitamos una
+manera de decirle a Rust que el corte de la cadena en `Context` y la referencia 
+al `Context` en` Parser` tiene diferentes tiempos de vida y que el valor de
+retorno de `parse_context` está vinculado al tiempo de vida del segmento de 
+cadena en `Context`.
 
-<span class="filename">Filename: src/lib.rs</span>
+
+Primero trataremos de darle a `Parser` y` Context` diferentes parámetros
+de por vida como se muestra en el listado 19-15. Usaremos `'s` y` 'c` como
+nombres de parámetros de por vida para tener claro qué vida va con el 
+segmento de cadena en `Context` y cuál va con la referencia a `Context` en `Parser`.
+Tenga en cuenta que esto no soluciona completamente el problema, 
+pero es un comienzo y veremos por qué esto no es suficiente cuando intentamos compilar.
+
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust,ignore
 struct Context<'s>(&'s str);
@@ -267,16 +270,17 @@ fn parse_context(context: Context) -> Result<(), &str> {
 }
 ```
 
-<span class="caption">Listing 19-15: Specifying different lifetime parameters
-for the references to the string slice and to `Context`</span>
+<span class="caption">> Listado 19-15: Especificación de diferentes parámetros 
+    de vida útil para las referencias al segmento de cadena y al `Context`</span>
 
-We’ve annotated the lifetimes of the references in all the same places that we
-annotated them in Listing 19-13, but used different parameters depending on
-whether the reference goes with the string slice or with `Context`. We’ve also
-added an annotation to the string slice part of the return value of `parse` to
-indicate that it goes with the lifetime of the string slice in `Context`.
+Hemos anotado las vidas de las referencias en todos los lugares que
+se anotaron en el listado 19-13, pero usaron diferentes parámetros dependiendo de
+si la referencia va con el segmento de cadena o con `Context`. Nosotros también
+agregamos una anotación a la parte del corte de cadena del valor de retorno de `parse` 
+e indica que va con el tiempo de vida del segmento de cadena en `Context`.
 
-The following is the error we get now when we try to compile:
+
+El siguiente es el error que obtenemos ahora cuando intentamos compilar:
 
 ```text
 error[E0491]: in type `&'c Context<'s>`, reference has a longer lifetime than the data it references
@@ -301,25 +305,24 @@ note: but the referenced data is only valid for the lifetime 's as defined on th
   | |_^
 ```
 
-Rust doesn’t know of any relationship between `'c` and `'s`. In order to be
-valid, the referenced data in `Context` with lifetime `'s` needs to be
-constrained, to guarantee that it lives longer than the reference with lifetime
-`'c`. If `'s` is not longer than `'c`, the reference to `Context` might not be
-valid.
+Rust no sabe de ninguna relación entre `'c` y`' s`. Con el fin de ser
+válido, los datos a los que se hace referencia en `Context` con `s` de por vida deben ser
+restringidos, para garantizar que viva más tiempo que la referencia con tiempo de vida
+`'c`. Si `'s` no es más largo que`' c`, la referencia a `Context` podría no ser
+válida.
 
-Which gets us to the point of this section: the Rust feature *lifetime
-subtyping* is a way to specify that one lifetime parameter lives at least as
-long as another one. In the angle brackets where we declare lifetime
-parameters, we can declare a lifetime `'a` as usual, and declare a lifetime
-`'b` that lives at least as long as `'a` by declaring `'b` with the syntax `'b:
-'a`.
+Lo que nos lleva al punto de esta sección: la función Rust *lifetime subtyping* 
+es una forma de especificar que un parámetro de por vida vive al menos como siempre
+y cuando sea otro. En los corchetes angulares donde declaramos la vida de los 
+parámetros, podemos declarar una vida `'a` como de costumbre, y declarar una vida
+`'b` que vive al menos tanto como`'a` al declarar `'b` con la sintaxis`' b: 'a'.
 
 In our definition of `Parser`, in order to say that `'s` (the lifetime of the
 string slice) is guaranteed to live at least as long as `'c` (the lifetime of
 the reference to `Context`), we change the lifetime declarations to look like
 this:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo:: src/lib.rs</span>
 
 ```rust
 # struct Context<'a>(&'a str);
@@ -329,44 +332,49 @@ struct Parser<'c, 's: 'c> {
 }
 ```
 
-Now, the reference to `Context` in the `Parser` and the reference to the string
-slice in the `Context` have different lifetimes, and we’ve ensured that the
-lifetime of the string slice is longer than the reference to the `Context`.
+Ahora, la referencia a `Context` en` Parser` y la referencia a la cadena
+cortada en el `Context` tienen diferentes tiempos de vida, y nos hemos asegurado de que
+la vida útil del segmento de la cadena es más larga que la referencia al `Context`.
 
-That was a very long-winded example, but as we mentioned at the start of this
-chapter, these features are pretty niche. You won’t often need this syntax, but
-it can come up in situations like this one, where you need to refer to
-something you have a reference to.
 
-### Lifetime Bounds on References to Generic Types
 
-In the “Trait Bounds” section of Chapter 10, we discussed using trait bounds on
-generic types. We can also add lifetime parameters as constraints on generic
-types, and these are called *lifetime bounds*. Lifetime bounds help Rust verify
-that references in generic types won’t outlive the data they’re referencing.
+Ese fue un ejemplo muy largo, pero como mencionamos al comienzo de este capítulo, 
+estas características son bastante nicho. A menudo no necesitarás esta sintaxis, 
+pero puede aparecer en situaciones como esta, donde necesita consultar 
+algo a lo que tienes una referencia.
+
+
+### Límites de por vida en las referencias a los tipos genéricos
+
+En la sección "Trait Bounds" del Capítulo 10, discutimos el uso de límites de rasgos en
+tipos genéricos, También podemos agregar parámetros de por vida como restricciones en tipos 
+genéricos, y estos se llaman *límites de por vida*. Los límites de por vida ayudan a Rust a verificar
+las referencias en tipos genéricos que no sobrevivirán a los datos a los que hacen referencia.
+
 
 <!-- Can you say up front why/when we use these? -->
 <!-- Done -->
 
-For an example, consider a type that is a wrapper over references. Recall the
-`RefCell<T>` type from the “`RefCell<T>` and the Interior Mutability Pattern”
-section of Chapter 15: its `borrow` and `borrow_mut` methods return the types
-`Ref` and `RefMut`, respectively. These types are wrappers over references that
-keep track of the borrowing rules at runtime. The definition of the `Ref`
-struct is shown in Listing 19-16, without lifetime bounds for now:
+Por ejemplo, considere un tipo que sea un contenedor de referencias. 
+Recuerda el `RefCell <T>` escriba desde "` RefCell <T> `y el Patrón 
+de Mutabilidad Interior" sección del Capítulo 15: sus métodos `borrow` y` borrow_mut` 
+devuelven los tipos `Ref` y` RefMut`, respectivamente. Estos tipos 
+son envoltorios sobre referencias que Mantengan un registro de las 
+reglas de endeudamiento en tiempo de ejecución. La definición de `Ref` 
+struct se muestra en el listado 19-16, sin límites de por vida por ahora:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust,ignore
 struct Ref<'a, T>(&'a T);
 ```
 
-<span class="caption">Listing 19-16: Defining a struct to wrap a reference to a
-generic type; without lifetime bounds to start</span>
+<span class="caption">Listado 19-16: Definición de una estructura para envolver 
+    una referencia a un tipo genérico; sin límites de por vida para comenzar</span>
 
-Without explicitly constraining the lifetime `'a` in relation to the generic
-parameter `T`, Rust will error because it doesn’t know how long the generic
-type `T` will live:
+Sin restringir explícitamente el tiempo de vida `a` en relación con el 
+genérico parámetro `T`, Rust dara un error porque no sabe por cuánto 
+tiempo el genérico tipo `T` va a vivir:
 
 ```text
 error[E0309]: the parameter type `T` may not live long enough
@@ -383,53 +391,55 @@ note: ...so that the reference type `&'a T` does not outlive the data it points 
   |                   ^^^^^^
 ```
 
-Because `T` can be any type, `T` could itself be a reference or a type that
-holds one or more references, each of which could have their own lifetimes.
-Rust can’t be sure `T` will live as long as `'a`.
+Debido a que `T` puede ser de cualquier tipo,` T` podría ser una referencia 
+o un tipo que contiene una o más referencias, cada una de las cuales podría 
+tener sus propias vidas. Rust no puede estar seguro de que `T` viva tanto tiempo como `'a`.
 
-Fortunately, that error gave us helpful advice on how to specify the lifetime
-bound in this case:
+Afortunadamente, ese error nos brindó consejos útiles sobre 
+cómo especificar el tiempo de vida obligado en este caso:
+
 
 ```text
 consider adding an explicit lifetime bound `T: 'a` so that the reference type
 `&'a T` does not outlive the data it points at
 ```
 
-Listing 19-17 shows how to apply this advice by specifying the lifetime bound
-when we declare the generic type `T`.
+El listado 19-17 muestra cómo aplicar este consejo especificando el 
+límite de por vida cuando declaramos el tipo genérico `T`.
 
 ```rust
 struct Ref<'a, T: 'a>(&'a T);
 ```
 
-<span class="caption">Listing 19-17: Adding lifetime bounds on `T` to specify
-that any references in `T` live at least as long as `'a`</span>
+<span class="caption">Listado 19-17: Agregar límites de por vida en `T` 
+    para especificar que cualquier referencia en `T` viva al menos tanto como `'a`</span>
 
-This code now compiles because the `T: 'a` syntax specifies that `T` can be any
-type, but if it contains any references, the references must live at least as
-long as `'a`.
+Este código ahora se compila porque la sintaxis `T: 'a` 
+especifica que `T` puede ser cualquier tipo, pero si contiene 
+alguna referencia, las referencias deben vivir al menos como `'a`.
 
-We could solve this in a different way, shown in the definition of a
-`StaticRef` struct in Listing 19-18, by adding the `'static` lifetime bound on
-`T`. This means if `T` contains any references, they must have the `'static`
-lifetime:
+
+
+Podríamos resolver esto de una manera diferente, que se muestra en la 
+definición de `StaticRef`en el listado 19-18, agregando el límite de
+tiempo de vida `'static` enlazando `T`. Esto significa que si `T` 
+contiene referencias, deben tener el `'static` toda la vida:
 
 ```rust
 struct StaticRef<T: 'static>(&'static T);
 ```
 
-<span class="caption">Listing 19-18: Adding a `'static` lifetime bound to `T`
-to constrain `T` to types that have only `'static` references or no
-references</span>
+<span class="caption">Listado 19-18: Agregar una vida útil `'static` ligada a
+    `T` restringir `T` a tipos que tienen solo referencias `'static` o no tengan referencias</span>
 
-Because `'static` means the reference must live as long as the entire program,
-a type that contains no references meets the criteria of all references living
-as long as the entire program (because there are no references). For the borrow
-checker concerned about references living long enough, there’s no real
-distinction between a type that has no references and a type that has
-references that live forever; both of them are the same for the purpose of
-determining whether or not a reference has a shorter lifetime than what it
-refers to.
+
+Porque `'static` significa que la referencia debe vivir tanto como todo el programa,
+un tipo que no contiene referencias cumple los criterios de todas las referencias que viven
+siempre y durante todo el programa (porque no hay referencias). no hay real
+distinción entre un tipo que no tiene referencias y un tipo que tiene
+referencias que viven para siempre; ambos son iguales para el propósito de
+determinar si una referencia tiene o no una vida más corta que la que tiene.
+
 
 ### Inference of Trait Object Lifetimes
 
