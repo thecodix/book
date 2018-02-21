@@ -1,4 +1,4 @@
-## Cómo escribir pruebas
+## Cómo Escribir Pruebas
 
 Las pruebas son funciones de Rust que verifican que el codigo que no está usando funcione
 de la manera esperada. Los cuerpos de las funciones de prueba realizan tipicamente estas tres
@@ -12,7 +12,7 @@ Miremos las caracteristicas que nos provee Rust específicamente para escribir p
 engloben estas acciones, las cuales incluyen el atributo `test` , unos cuantos macros, y el
 atributo `should_panic` .
 
-### La anatomía de una función de pruebas
+### La Anatomía de una Función de Prueba
 
 De la manera más simple, una prueba en Rust es una función que está anotada con el atributo `test`.
 Los atributos son datos metas sobre piezas del código Rust; un ejemplo es
@@ -145,7 +145,7 @@ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 
 Añadamos otra prueba, ¡pero esta vez haremos una que falle! Ellas fallan
 cuando algo dentro de la función de prueba entra en pánico. Cada una es ejecutada en un nuevo hilo,
-y cuando el hilo principal ve que un hilo de prueba ha muerto, el la prueba es marcada 
+y cuando el hilo principal se da cuenta de que un hilo de prueba ha muerto, la prueba es marcada 
 como fallida. Hablamos sobre la manera más simple para causar pánico en el capítulo 9,
 la cual es llamar al macro `panic!`. Ingresa en la nueva prueba, `another`, para que tu archivo
 *src/lib.rs* se parezca al del listado 11-3:
