@@ -199,20 +199,20 @@ impl Post {
 }
 ```
 
-<span class="caption">Listing 17-14: Adding a placeholder implementation for
-the `content` method on `Post` that always returns an empty string slice</span>
+<span class="caption">Listado 17-14: Añadiendo una implementación de marcador para
+el método `content` en `Post` que siempre devuelva un pedazo de hilo vacío</span>
 
-With this added `content` method, everything in Listing 17-11 up to line 8
-works as we intend.
+Con este método `content` añadido, todo en el listado 17-11 hasta la línea 8
+trabaja como lo hemos previsto.
 
-### Requesting a Review of the Post Changes its State
+### Solicitar una revisión la publicación cambia su estado
 
-Next up we need to add functionality to request a review of a post, which
-should change its state from `Draft` to `PendingReview`. We want to give `Post`
-a public method named `request_review` that will take a mutable reference to
-`self`. Then we’re going to call an internal `request_review` method on the
-current state of `Post`, and this second `request_review` method will consume
-the current state and return a new state. Listing 17-15 shows this code:
+A continuación necesitamos añadir funcionalidad para solicitar una revisión de un estado, lo que
+debería cambiar su estado de `Draft` a `PendingReview`. Queremos darle a `Post`
+un método público llamado `request_review` que llevará referencias mutables a
+`self`. Entonces vamos a llamar un método interno `request_review`  en el
+estado actual de `Post`, y este segundo método `request_review` consumirá
+el estado actual y devolverá un nuevo estado. El listado 17-15 muestra este código:
 
 <!-- NOTE TO DE/AU: We might want to move this explanation to after the code if
 you want to add wingdings, we can see once we transfer it to Word -->
@@ -220,7 +220,7 @@ you want to add wingdings, we can see once we transfer it to Word -->
 and because we got some questions about this example that I wanted to expand
 upon /Carol -->
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 # pub struct Post {
@@ -258,57 +258,57 @@ impl State for PendingReview {
 }
 ```
 
-<span class="caption">Listing 17-15: Implementing `request_review` methods on
-`Post` and the `State` trait</span>
+<span class="caption">Listado 17-15: Implementando métodos `request_review` en
+los rasgos `Post` y `State`</span>
 
-We’ve added the `request_review` method to the `State` trait; all types that
-implement the trait will now need to implement the `request_review` method.
-Note that rather than having `self`, `&self`, or `&mut self` as the first
-parameter of the method, we have `self: Box<Self>`. This syntax means the
-method is only valid when called on a `Box` holding the type. This syntax takes
-ownership of `Box<Self>`, invalidating the old state so that the state value of
-the `Post` can transform itself into a new state.
+Hemos añadido el método `request_review` al rasgo `State`; todos los tipos
+que implementen el rasgo ahora necesitarán implementar el método`request_review`.
+Nota que en vez de tener a `self`, `&self`, o `&mut self` como el primer
+parámetro del método, tenemos a `self: Box<Self>`. Ésta sintáxis significa que
+método sólo es válido cuando se le llama en un `Box` que albergue el tipo. Ésta sintáxis toma 
+posesión de `Box<Self>`, invalidando el estado viejo para que así el valor de estado de
+`Post` pueda transformarse él mismo en un nuevo estado.
 
 <!-- Above -- so Post can transform, or so Draft can transform? -->
 <!-- Technically it's so the Draft value can transform into another value,
 which changes the state of Post-- I've tried to clarify. /Carol -->
 
-To consume the old state, the `request_review` method needs to take ownership
-of the state value. This is where the `Option` in the `state` field of `Post`
-comes in: we call the `take` method to take the `Some` value out of the `state`
-field and leave a `None` in its place, since Rust doesn’t let us have
-unpopulated fields in structs. This lets us move the `state` value out of
-`Post` rather than borrowing it. Then we’ll set the post’s `state` value to the
-result of this operation.
+Para consumir el viejo estado, el método `request_review` necesita tomar posesión
+del valor de estado. Aquí es donde el `Option` en el campo `state` de `Post`
+entra: llamamos el método `take` para tomar el valor `Some` del campo `state`
+y dejar un `None` en su lugar, ya que Rust no nos permite tener
+campos sin poblar en estructura. Esto nos deja mover el valor `state` del
+`Post` en vez de tomarlo prestado. Entonces asignaremos el valor `state` de la publicación al
+resultado de esta operación.
 
-We need to set `state` to `None` temporarily, rather than code like `self.state
-= self.state.request_review();` that would set the `state` field directly, to
-get ownership of the `state` value. This ensures `Post` can’t use the old
-`state` value after we’ve transformed it into a new state.
+Necesitamos asignar `state` a `None` temporalmente, en vez de usar un código como `self.state
+= self.state.request_review();` que asignaría el campo `state` directamente, para
+tomar posesión del valor `state`. Ésto asegura que `Post` no pueda usar el viejo
+valor `state` después de que lo hayamos transformado en un nuevo estado.
 
-The `request_review` method on `Draft` needs to return a new, boxed instance of
-a new `PendingReview` struct, which represents the state when a post is waiting
-for a review. The `PendingReview` struct also implements the `request_review`
-method, but doesn’t do any transformations. Rather, it returns itself, since
-when we request a review on a post already in the `PendingReview` state, it
-should stay in the `PendingReview` state.
+El método `request_review` en `Draft` necesita devolver una nueva instancia en una caja de
+una nueva estructura `PendingReview`, lo que representa el estado en el que una publicación está esperando
+por una revisión. La estructura `PendingReview` también implementa el método `request_review`,
+pero no hace ninguna transformación. En cambio, se devuelve a sí mismo, ya que
+cuando solicitamos una revisión en una publicación que ya está en el estado `PendingReview`,
+se debería quedar en el estado `PendingReview`.
 
-Now we can start seeing the advantages of the state pattern: the
-`request_review` method on `Post` is the same no matter its `state` value. Each
-state is responsible for its own rules.
+Ahora podemos empezar a ver las ventajas del patrón de estado: el
+método `request_review` en `Post` es el mismo sin importar su valor `state`. Cada
+estado es responsable de sus propias reglas.
 
-We’re going to leave the `content` method on `Post` as it is, returning an
-empty string slice. We can now have a `Post` in the `PendingReview` state as
-well as the `Draft` state, but we want the same behavior in the `PendingReview`
-state. Listing 17-11 now works up until line 11!
+Vamos a dejar el método `content` en `Post` como está, devolviendo un 
+pedazo de hilo vacío. Ahora podemos tener un `Post` en el estado `PendingReview` así como
+en el estado `Draft`, pero queremos el mismo comportamiento en el estado `PendingReview`.
+¡El listado 17-11 ahora funciona hasta la linea 11! 
 
-### Adding the `approve` Method that Changes the Behavior of `content`
+### Añadiendo el método `approve` que cambia el comportamiento de `content`
 
-The `approve` method will be similar to the `request_review` method: it will
-set `state` to the value that the current state says it should have when that
-state is approved, shown in Listing 17-16.
+El método `approve` será similar al método `request_review`: se
+ajustará `state` al valor que el estado actual diga que debe tener cuando ese
+estado sea aprobado, como se muestra en el listado 17-16.
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 # pub struct Post {
@@ -369,24 +369,24 @@ impl State for Published {
 }
 ```
 
-<span class="caption">Listing 17-16: Implementing the `approve` method on
-`Post` and the `State` trait</span>
+<span class="caption">Listado 17-16: Implementando el método `approve` en
+los rasgos `Post` y `State`</span>
 
-We add the `approve` method to the `State` trait, and add a new struct that
-implements `State`, the `Published` state.
+Añadimos el método `approve` al rasgo `State`, y añadimos una nueva estructura que
+implemente `State`, el estado `Published`.
 
-Similar to `request_review`, if we call the `approve` method on a `Draft`, it
-will have no effect since it will return `self`. When we call `approve` on
-`PendingReview`, it returns a new, boxed instance of the `Published` struct.
-The `Published` struct implements the `State` trait, and for both the
-`request_review` method and the `approve` method, it returns itself, since the
-post should stay in the `Published` state in those cases.
+Similar a `request_review`, si llamamos el método `approve` en `Draft`, no
+tendrá efecto ya que devolverá `self`. Cuando llamamos `approve` en
+`PendingReview`, devuelve una nueva instancia en caja de la estructura `Published`.
+La estructura `Published` implementará el rasgo `State`, y para ambos el 
+método `request_review` y el método `approve`, se devuelve a sí mismo, ya que la
+publicación debe permanecer en el estado `Published` en esos casos.
 
-Now to update the `content` method on `Post`: if the state is `Published` we
-want to return the value in the post’s `content` field; otherwise we want to
-return an empty string slice, as shown in Listing 17-17:
+Ahora para actualizar el método `content` en `Post`: Si el estado es `Published` vamos a
+querer devolver el valor en el campo `content` de la publicación; de otra manera vamos 
+a querer que devuelva un pedazo de hilo vacío, como se muestra en el listado 17-17:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 # trait State {
@@ -406,35 +406,35 @@ impl Post {
 }
 ```
 
-<span class="caption">Listing 17-17: Updating the `content` method on `Post` to
-delegate to a `content` method on `State`</span>
+<span class="caption">Listado 17-17: Actualizando el método `content` en `Post` para
+delegarlo a un método `content` en `State`</span>
 
-Because the goal is to keep all these rules inside the structs that implement
-`State`, we call a `content` method on the value in `state` and pass the post
-instance (that is, `self`) as an argument. Then we return the value that’s
-returned from using the `content` method on the `state` value.
+Ya que la meta es manetener todas estas reglas dentro de las estructuras que implementen
+`State`, llamamos un método `content` sobre el valor en `state` y pasamos la instancia de 
+la publicación (que es, `self`) como un argumento. Entonces regresamos el valor que es
+retornado al usar el método `content` en el valor `state`.
 
-We call the `as_ref` method on the `Option` because we want a reference to the
-value inside the `Option` rather than ownership of it. Because `state` is an
-`Option<Box<State>>`, calling `as_ref` returns an `Option<&Box<State>>`. If we
-didn’t call `as_ref`, we’d get an error because we can’t move `state` out of
-the borrowed `&self` of the function parameter.
+Llamamos el método  `as_ref` en `Option` porque queremos una referencia al
+valor dentro de `Option` en vez de tener posesión del mismo. Ya que `state` es un
+`Option<Box<State>>`, el llamar `as_ref` devuelve un `Option<&Box<State>>`. Si 
+no hubieramos llamado `as_ref`, obtendríamos un error porque no podemos mover `state` fuera 
+del prestado `&self` del parámetro de la función.
 
-We’re then calling the `unwrap` method, which we know will never panic, because
-we know the methods on `Post` ensure that `state` will always contain a `Some`
-value when those methods are done. This is one of the cases we talked about in
-Chapter 12 when we know that a `None` value is never possible, even though the
-compiler isn’t able to understand that.
+Entonces estamos llamado el método `unwrap`, el que sabemos que nunca entrará en pánico, ya que
+sabemos que los métodos en `Post` aseguran que `state` siempre contendrá un valor `Some`
+cuando esos métodos terminen. Este es uno de los casos de los que hablamos en el
+capítulo 12 cuando sabemos que un valor `None` nunca es posible, incluso si el
+compilador es incapaz de entender eso.
 
-So then we have a `&Box<State>`, and when we call the `content` on it, deref
-coercion will take effect on the `&` and the `Box` so that the `content` method
-will ultimately be called on the type that implements the `State` trait.
+Así que tenemos un `&Box<State>`, y entonces llamamos al `content` en el, la coerción
+deref tendrá efecto en el `&` y el `Box` y así el método `content`
+será llamado en el tipo que implemente el rasgo `State`.
 
-That means we need to add `content` to the `State` trait definition, and that’s
-where we’ll put the logic for what content to return depending on which state
-we have, as shown in Listing 17-18:
+Eso significa que necesitamos añadir `content` a la definición del rasgo `State` y allí es
+donde pondremos la lógica para decidir qué contenido devuelva dependiendo de qué estado
+tengamos, como lo muestra el listado 17-18:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 # pub struct Post {
@@ -458,27 +458,27 @@ impl State for Published {
 }
 ```
 
-<span class="caption">Listing 17-18: Adding the `content` method to the `State`
-trait</span>
+<span class="caption">Listado 17-18: Añadiendo el método `content` al rasgo `State`
+</span>
 
-We add a default implementation for the `content` method that returns an empty
-string slice. That means we don’t need to implement `content` on the `Draft`
-and `PendingReview` structs. The `Published` struct will override the `content`
-method and return the value in `post.content`.
+Añadimos una implementación por defecto para el método `content` que devuelva un pedazo
+vacío de hilo. Eso significa que no necesitamos implementar `content` en las estructuras `Draft`
+y `PendingReview`. La estructura `Published` entonces anulará el método `content`
+y devolverá el valor en `post.content`.
 
-Note that we need lifetime annotations on this method, like we discussed in
-Chapter 10. We’re taking a reference to a `post` as an argument, and returning
-a reference to part of that `post`, so the lifetime of the returned reference
-is related to the lifetime of the `post` argument.
+Nota que necesitamos anotaciones de tiempo de vida en este método, como discutimos en el 
+Capítulo 10. Estamos tomando una referencia a un `post` como un argumento, y devolviendo 
+una referencia para partir desde ese `post`, para que así el tiempo de vida de la referencia devuelta
+esté relacionado con el tiempo de vida del argumento`post`.
 
 <!-- Is this it finished, without the touch up we make to get rid of the empty
 string? That's pretty awesome coding, maybe give it some ceremony here. Does
 all of 17-11 now work? -->
 <!-- Yep! Good point, so added! /Carol -->
 
-And we’re done-- all of Listing 17-11 now works! We’ve implemented the state
-pattern with the rules of the blog post workflow. The logic around the rules
-lives in the state objects rather than scattered throughout `Post`.
+Y hemos terminado-- ¡Todo el listado 17-11 funciona! Hemos implementado el patrón
+de estado con las reglas del ritmo de trabajo de la publicación en el blog. La lógica que gira alrededor de las reglas
+vive en los objetos de estados en vez de estar dispersas por todo el `Post`.
 
 ### Tradeoffs of the State Pattern
 
