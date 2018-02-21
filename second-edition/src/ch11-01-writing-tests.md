@@ -221,8 +221,8 @@ El comando macro `assert!` llama al otro comando macro `panic!` , lo que causa q
 El usar el comando macro `assert!` nos ayuda a chequear que nuestro código sea funcional de la
 manera que queremos que sea.
 
-En el capítulo 5, en el listado 5-15, usamos una estructura `Rectangle` y un método `can_hold`,
-los que se repiten también en el listado 11-5. Pongamos este código en el 
+En el Capítulo 5, en el Listado 5-15, usamos una estructura `Rectangle` y un método `can_hold`,
+los que se repiten también en el Listado 11-5. Pongamos este código en el 
 archivo *src/lib.rs* y escribamos algunas pruebas para el mismo código usando el macro `assert!`.
 
 <span class="filename">Nombre del Archivo: src/lib.rs</span>
@@ -245,7 +245,7 @@ impl Rectangle {
 método `can_hold` en el capítulo 5</span>
 
 El método `can_hold` da un binomio, lo que significa que es un caso de uso perfecto
-para el comando macro `assert!`. En el listado 11-6, ya escribimos una prueba que pone a prueba el
+para el comando macro `assert!`. En el Listado 11-6, ya escribimos una prueba que pone a prueba el
 método `can_hold` al crear una instancia `Rectangle` que tiene una longitud de 8 y
 un ancho de 7, y afirma que puede albergar otra instancia `Rectangle` que 
 tiene una longitud de 5 y un ancho de 1:
@@ -272,7 +272,7 @@ rectángulo más grande puede albergar dentro de sí un rectángulo más pequeñ
 
 Date cuenta de que hemos añadido una nueva linea dentro del módulo `tests`: la linea de comando `use super::*;`.
 El módulo `tests` es un módulo rectangular que sigue las reglas usuales de la
-visibilidad que cubrimos en el capítulo 7 en la sección de las “Reglas de privacidad”. Ya que
+visibilidad que cubrimos en el Capítulo 7 en la sección de las “Reglas de privacidad”. Ya que
 el módulo `tests` es un módulo interno, necesitamos traer el código bajo prueba en el
 módulo exterior dentro del perímetro del módulo interno. Aquí usamos un comando global para que
 cualquier cosa que definamos en el módulo externo sea disponible para éste modulo `tests`.
@@ -383,7 +383,7 @@ falla, lo que hace más fácil el ver *por qué* la prueba falló; En cambio, el
 macro `assert!` sólo indica que tiene un valor `false` para la expresión `==`,
 no los valores que llevan al valor `false`.
 
-En el listado 11-7, escribimos una función llamada `add_two` que añada `2` a su
+En el Listado 11-7, escribimos una función llamada `add_two` que añada `2` a su
 parámetro y devuelva el resultado. Entonces probamos esta función usando el
 macro`assert_eq!`.
 
