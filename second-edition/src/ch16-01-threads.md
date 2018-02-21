@@ -1,72 +1,72 @@
-## Using Threads to Run Code Simultaneously
+## Usando Threads Ejecutar Código Simultáneamente
 
-In most current operating systems, an executed program’s code is run in a
-*process*, and the operating system manages multiple processes at once. Within
-your program, you can also have independent parts that run simultaneously. The
-feature that runs these independent parts is called *threads*.
+En la mayoría de los sistemas operativos actuales, el código de un programa se ejecuta en 
+un *proceso*, y el sistema operativo gestiona varios procesos a la vez. Dentro de 
+tu programa, también puedes tener partes independientes que se ejecutan simultáneamente. La 
+característica que ejecuta estas partes independientes se llama *threads*.
 
-Splitting the computation in your program into multiple threads can improve
-performance because the program does multiple tasks at the same time, but it
-also adds complexity. Because threads can run simultaneously, there’s no
-inherent guarantee about the order in which parts of your code on different
-threads will run. This can lead to problems, such as:
+Dividir el cálculo de tu programa en varios subprocesos puede mejorar el rendimiento
+porque el programa realiza varias tareas al mismo tiempo, pero también añade
+complejidad. Debido a que los threads pueden funcionar simultáneamente, no hay garantía
+inherente sobre el orden en el que se ejecutarán las partes de tu código en diferentes
+threads. Esto puede llevar a problemas, como:
 
-* Race conditions, where threads are accessing data or resources in an
-  inconsistent order
-* Deadlocks, where two threads are waiting for each other to finish using a
-  resource the other thread has, preventing both threads from continuing
-* Bugs that only happen in certain situations and are hard to reproduce and fix
-  reliably
+* Condiciones de carrera, donde los threads están accediendo a datos o recursos en un
+  orden inconsistente.
+* Bloqueos, donde dos threads se están esperando unos a otros para terminar usando un 
+  recurso que tiene el otro thread, impidiendo que ambos threads continúen.
+* Bugs que sólo ocurren en ciertas situaciones y son difíciles de reproducir y arreglar
+  con seguridad.
 
-Rust attempts to mitigate the negative effects of using threads. Programming in
-a multithreaded context still takes careful thought and requires a code
-structure that is different from programs that run in a single thread.
+Rust intenta mitigar los efectos negativos del uso de threads. La programación en
+un contexto multithreaded todavía toma un pensamiento cuidadoso y requiere una estructura
+de código que es diferente de los programas que funcionan en un solo thread.
 
-Programming languages implement threads in a few different ways. Many operating
-systems provide an API for creating new threads. This model where a language
-calls the operating system APIs to create threads is sometimes called *1:1*,
-one operating system thread per one language thread.
+Los lenguajes de programación implementan los thread de forma diferente. Muchos sistemas
+operativos proporcionan una API para crear nuevos threads de texto. Este modelo, en el que un
+lenguaje llama a las API del sistema operativo para crear threads, a veces es llamado *1:1*,
+un thread del sistema operativo por thread de un lenguaje.
 
-Many programming languages provide their own special implementation of threads.
-Programming language-provided threads are known as *green* threads, and
-languages that use these green threads will execute them in the context of a
-different number of operating system threads. For this reason, the green
-threaded model is called the *M:N* model: `M` green threads per `N` operating
-system threads, where `M` and `N` are not necessarily the same number.
+Muchos lenguajes de programación proporcionan su propia implementación especial de threads.
+Los threads proporcionados por el lenguaje de programación se conocen como threads *verdes*, y
+los lenguajes que usan estos threads verdes los ejecutarán en el contexto de un número
+diferente de threads del sistema operativo. Por esta razón, el modelo verde subprocesado
+se denomina modelo *M:N*: `M` threads verdes por cada uno de los threads del sistema operativo
+`N`, donde `M` y `N` no son necesariamente el mismo número.
 
-Each model has its own advantages and trade-offs, and the trade-off most
-important to Rust is runtime support. Runtime is a confusing term and can have
-different meanings in different contexts.
+Cada modelo tiene sus propias ventajas y compensaciones, y la compensación más
+importante para Rust es el soporte en Tiempo de ejecución (Runtime). Tiempo de ejecución es un 
+término confuso y puede tener diferentes significados en diferentes contextos.
 
-In this context, by *runtime* we mean code that is included by the language in
-every binary. This code can be large or small depending on the language, but
-every non-assembly language will have some amount of runtime code. For that
-reason, colloquially when people say a language has “no runtime,” they often
-mean “small runtime.” Smaller runtimes have fewer features but have the
-advantage of resulting in smaller binaries, which make it easier to combine the
-language with other languages in more contexts. Although many languages are
-okay with increasing the runtime size in exchange for more features, Rust needs
-to have nearly no runtime and cannot compromise on being able to call into C to
-maintain performance.
+En este contexto, por *tiempo de ejecución* nos referimos al código que está incluido por el lenguaje
+en cada binario. Este código puede ser grande o pequeño dependiendo del idioma, pero
+cada lenguaje no ensamblado tendrá una cierta cantidad de código de tiempo de ejecución. Por esa razón,
+coloquialmente cuando la gente dice que un lenguaje no tiene "tiempo de ejecución", a menudo se 
+refiere a "poco tiempo de ejecución". Los tiempos de ejecución más pequeños tienen menos funciones pero 
+tienen la ventaja de resultar en binarios más pequeños, lo que facilita la combinación del
+lenguaje con otros lenguajes en más contextos. Aunque muchos lenguajes están de acuerdo
+con aumentar el tamaño del tiempo de ejecución a cambio de más características, Rust necesita
+tener casi ningún tiempo de ejecución y no puede comprometerse en poder llamar a C para
+mantener el rendimiento.
 
-The green threading M:N model requires a larger language runtime to manage
-threads. As such, the Rust standard library only provides an implementation of
-1:1 threading. Because Rust is such a low-level language, there are crates that
-implement M:N threading if you would rather trade overhead for aspects such as
-more control over which threads run when and lower costs of context switching,
-for example.
+El modelo verde subprocesado M:N requiere un mayor tiempo de ejecución del lenguaje para gestionar
+los threads. Como tal, la biblioteca estándar de Rust sólo proporciona una implementación de 
+subprocesado 1:1. Debido a que Rust es un lenguaje de tan bajo nivel, hay crates que 
+implementan el subprocesado M:N si tu prefiere cambiar los gastos generales por aspectos tales
+como un mayor control sobre qué threads corren cuando y menores costos de cambio de contexto,
+por ejemplo.
 
-Now that we’ve defined threads in Rust, let’s explore how to use the
-thread-related API provided by the standard library.
+Ahora que hemos definido los threads en Rust, vamos a explorar cómo utilizar la
+API relacionada con los threads que proporciona la biblioteca estándar.
 
-### Creating a New Thread with `spawn`
+### Creando un Nuevo Thread con `spawn`
 
-To create a new thread, we call the `thread::spawn` function and pass it a
-closure (we talked about closures in Chapter 13) containing the code we want to
-run in the new thread. The example in Listing 16-1 prints some text from a main
-thread and other text from a new thread:
+Para crear un nuevo thread, llamamos a la función `thread::spawn` y le pasamos un
+cierre (hemos hablado de cierres en el capítulo 13) que contiene el código que queremos 
+ejecutar en el nuevo thread. El ejemplo en el Listado 16-1 imprime un texto de un thread
+principal y otro de un nuevo thread:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust
 use std::thread;
@@ -75,66 +75,66 @@ use std::time::Duration;
 fn main() {
     thread::spawn(|| {
         for i in 1..10 {
-            println!("hi number {} from the spawned thread!", i);
+            println!("¡hola número {} del thread engendrado!", i);
             thread::sleep(Duration::from_millis(1));
         }
     });
 
     for i in 1..5 {
-        println!("hi number {} from the main thread!", i);
+        println!("¡hola numero {} del thread principal!", i);
         thread::sleep(Duration::from_millis(1));
     }
 }
 ```
 
-<span class="caption">Listing 16-1: Creating a new thread to print one thing
-while the main thread prints something else</span>
+<span class="caption">Listado 16-1: Creando un nuevo thread para imprimir una cosa 
+mientras que el thread principal imprime otra cosa.</span>
 
-Note that with this function, the new thread will be stopped when the main
-thread ends, whether or not it has finished running. The output from this
-program might be a little different every time, but it will look similar to the
-following:
+Ten en cuenta que con esta función, el nuevo thread se detendrá cuando termine el 
+thread principal, haya terminado o no de ejecutarse. La salida de este programa
+puede ser algo poco diferente cada vez, pero se verá similar a la 
+siguiente:
 
 ```text
-hi number 1 from the main thread!
-hi number 1 from the spawned thread!
-hi number 2 from the main thread!
-hi number 2 from the spawned thread!
-hi number 3 from the main thread!
-hi number 3 from the spawned thread!
-hi number 4 from the main thread!
-hi number 4 from the spawned thread!
-hi number 5 from the spawned thread!
+¡Hola número 1 del thread principal!
+¡Hola número 1 del thread engendrado!
+¡Hola número 2 del thread principal!
+¡Hola número 2 del thread engendrado!
+¡Hola número 3 del thread principal!
+¡Hola número 3 del thread engendrado!
+¡Hola número 4 del thread principal!
+¡Hola número 4 del thread engendrado!
+¡Hola número 5 del thread engendrado!
 ```
 
-The calls to `thread::sleep` force a thread to stop its execution for a short
-duration, which allows a different thread to run. The threads will probably
-take turns, but that isn’t guaranteed: it depends on how your operating system
-schedules the threads. In this run, the main thread printed first, even though
-the print statement from the spawned thread appears first in the code. And even
-though we told the spawned thread to print until `i` is 9, it only got to 5
-before the main thread shut down.
+Las llamadas a `thread::sleep` fuerzan a un thread a detener su ejecución por un corto
+periodo de tiempo, lo que permite que un thread diferente corra. Los thread probablemente
+se turnarán, pero eso no está garantizado: depende de cómo tu sistema operativo los
+programe. En esta ejecución, el thread principal se imprime primero, aunque la
+declaración de impresión del thread engendrado aparezca primero en el código. Y aunque
+le dijimos al thread engendrado que imprimiera hasta que `i` fuera 9, sólo llegó a 5 
+antes de que el thread principal se apagara.
+ 
+Si ejecutas este código y sólo ves la salida del hilo principal, o no ve ningún 
+solapamiento, intenta aumentar los números en los rangos para crear más oportunidades
+para que el sistema operativo cambie entre los threads.
 
-If you run this code and only see output from the main thread, or don’t see any
-overlap, try increasing the numbers in the ranges to create more opportunities
-for the operating system to switch between the threads.
+### Esperando a que Todos los Threads Terminen con los Handles `join`
 
-### Waiting for All Threads to Finish Using `join` Handles
+El código en el Listado 16-1 no sólo detiene el thread engendrado prematuramente la mayor
+parte del tiempo debido a la terminación del thread principal, sino que no hay garantía de que
+el thread engendrado vaya a funcionar en absoluto. La razón es que ¡no hay garantía en el
+orden de ejecución de los threads!
 
-The code in Listing 16-1 not only stops the spawned thread prematurely most of
-the time due to the main thread ending, but there is no guarantee that the
-spawned thread will get to run at all. The reason is that there is no guarantee
-on the order in which threads run!
+Podemos arreglar el problema del thread engendrado no consiguiendo correr, o no 
+consiguiendo correr completamente, guardando el valor de retorno de `thread::spawn` en una
+variable. El tipo de retorno de `thread::spawn` es `JoinHandle`. Un `JoinHandle` es un valor
+propio que, cuando llamamos el método `join` en él, esperará a que termine su thread.
+El Listado 16-2 muestra cómo usar el `JoinHandle` del thread que creamos en el Listado 16-1
+y llamar a `join` para asegurarse de que el thread engendrado termine antes de las salidas
+`main`:
 
-We can fix the problem of the spawned thread not getting to run, or not getting
-to run completely, by saving the return value of `thread::spawn` in a variable.
-The return type of `thread::spawn` is `JoinHandle`. A `JoinHandle` is an owned
-value that, when we call the `join` method on it, will wait for its thread to
-finish. Listing 16-2 shows how to use the `JoinHandle` of the thread we created
-in Listing 16-1 and call `join` to make sure the spawned thread finishes before
-`main` exits:
-
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust
 use std::thread;
@@ -149,7 +149,7 @@ fn main() {
     });
 
     for i in 1..5 {
-        println!("hi number {} from the main thread!", i);
+        println!("hola número {} del thread principal!", i);
         thread::sleep(Duration::from_millis(1));
     }
 
@@ -157,29 +157,29 @@ fn main() {
 }
 ```
 
-<span class="caption">Listing 16-2: Saving a `JoinHandle` from `thread::spawn`
-to guarantee the thread is run to completion</span>
+<span class="caption">Listado 16-2: Guardando un `JoinHandle` de `thread::spawn`
+para garantizar que el thread se ejecuta hasta completarse</span>
 
-Calling `join` on the handle blocks the thread currently running until the
-thread represented by the handle terminates. *Blocking* a thread means that
-thread is prevented from performing work or exiting. Because we’ve put the call
-to `join` after the main thread’s `for` loop, running Listing 16-2 should
-produce output similar to this:
+Llamando `join` en los handle blocks se bloquea el thread que se está ejecutando hasta
+que finaliza el thread representado por el handle. *Bloquear* un thread significa que
+el thread no puede trabajar o salir del mismo. Debido a que hemos puesto la llamada a
+`join` después del loop `for` del thread principal, la ejecución del Listado 16-2 debería
+producir una salida similar a esta:
 
 ```text
-hi number 1 from the main thread!
-hi number 2 from the main thread!
-hi number 1 from the spawned thread!
-hi number 3 from the main thread!
-hi number 2 from the spawned thread!
-hi number 4 from the main thread!
-hi number 3 from the spawned thread!
-hi number 4 from the spawned thread!
-hi number 5 from the spawned thread!
-hi number 6 from the spawned thread!
-hi number 7 from the spawned thread!
-hi number 8 from the spawned thread!
-hi number 9 from the spawned thread!
+¡hola número 1 del thread principal!
+¡hola número 2 del thread principal!
+hola número 1 del thread engendrado!
+¡hola número 3 del hilo principal!
+hola número 2 del thread engendrado!
+¡hola número 4 del hilo principal!
+hola número 3 del thread engendrado!
+hola número 4 del thread engendrado!
+hola número 5 del thread engendrado!
+hola número 6 del thread engendrado!
+hola número 7 del thread engendrado!
+hola número 8 del thread engendrado!
+hola número 9 del thread engendrado!
 ```
 
 The two threads continue alternating, but the main thread waits because of the
