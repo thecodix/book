@@ -1,32 +1,35 @@
-## Advanced Lifetimes
+## Vida útil avanzada
 
-Back in Chapter 10 in the “Validating References with Lifetimes” section, we
-learned how to annotate references with lifetime parameters to tell Rust how
-lifetimes of different references relate. We saw how every reference has a
-lifetime but, most of the time, Rust will let you elide lifetimes. Here we’ll
-look at three advanced features of lifetimes that we haven’t covered yet:
+De vuelta en el Capítulo 10 en la sección "Validación de referencias con tiempos de vida",
+Aprendí a anotar referencias con parámetros de por vida para decirle a Rust cómo
+vidas de diferentes referencias se relacionan. Vimos cómo cada referencia puede durar
+de por vida, pero, la mayoría de las veces, Rust te permitirá olvidarlas. Aquí vamos a
+mira tres características avanzadas de vidas que aún no hemos cubierto:
 
-* Lifetime subtyping, a way to ensure that one lifetime outlives another
-  lifetime
-* Lifetime bounds, to specify a lifetime for a reference to a generic type
-* Trait object lifetimes, how they’re inferred, and when they need to be
-  specified
 
-<!-- maybe add a small summary of each here? That would let us launch straight
-into examples in the next section -->
-<!-- I've switched to bullets and added a small summary /Carol -->
+* Subtipo de por vida, una forma de asegurar que una vida sobreviva a otra para siempre.
+* Límites de por vida, para especificar un tiempo de vida para una referencia a un tipo genérico.
+* Duración de vida de los objetos, cómo se infieren y cuándo deben ser  especificados
 
-### Lifetime Subtyping Ensures One Lifetime Outlives Another
 
-Lifetime subtyping is a way to specify that one lifetime should outlive another
-lifetime. To explore lifetime subtyping, imagine we want to write a parser.
-We’ll have a structure called `Context` that holds a reference to the string
-we’re parsing. We’ll write a parser that will parse this string and return
-success or failure. The parser will need to borrow the context to do the
-parsing. Implementing this would look like the code in Listing 19-12, except
-this code doesn’t have the required lifetime annotations so it won’t compile:
+<!-- ¿debería agregar un pequeño resumen de cada uno aquí? 
+Eso nos permitiría aclarar directamente en ejemplos en la 
+siguiente sección -> <! - He cambiado a viñetas y agregué un 
+pequeño resumen / Carol -->
 
-<span class="filename">Filename: src/lib.rs</span>
+### La subtipificación de por vida garantiza que una vida sobrevive a otra
+
+El subtipado de por vida es una forma de especificar que una vida 
+debe sobrevivir a otra de por vida. Para explorar la subtipificación 
+de por vida, imagina que queremos escribir un analizador sintáctico. 
+Tendremos una estructura llamada `Context` que contiene una referencia
+a la cadena que estamos analizando, Escribiremos un analizador que 
+analizará esta cadena y devolverá éxito o fracaso. El analizador 
+necesitará tomar prestado el contexto para hacer el analizando. 
+Implementar esto se vería como el código en el listado 19-12, excepto
+que este código no tiene las anotaciones de vida requeridas para que no se compile:
+
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust,ignore
 struct Context(&str);
@@ -42,45 +45,48 @@ impl Parser {
 }
 ```
 
-<span class="caption">Listing 19-12: Defining a parser without lifetime
-annotations</span>
+<span class="caption">Listing 19-12: Definiendo anotacines de un analizador 
+  sin tiempo de vida</span>
 
-Compiling the code results in errors saying that Rust expected lifetime
-parameters on the string slice in `Context` and the reference to a `Context` in
-`Parser`.
+La compilación del código da como resultado errores que indican que 
+Rust espera una vida útil con parámetros en el segmento de cadena en  
+`Context` y la referencia a `Context` en `Parser`.
 
-<!-- What will the compile time error be here? I think it'd be worth showing
-that to the reader -->
-<!-- The errors just say "expected lifetime parameter", they're pretty boring.
-We've shown error messages like that before so I've explained in words instead.
-/Carol -->
+<!-- ¿Cuál será el error de tiempo de compilación aquí? Creo que valdría la pena mostrar
+eso para el lector ->
+<! - Los errores solo dicen "parámetro de por vida esperado", son bastante aburridos.
+Hemos mostrado mensajes de error como ese anteriormente, así que lo he explicado en palabras.
+/ Carol -->
 
-For simplicity’s sake, our `parse` function returns a `Result<(), &str>`. That
-is, it will do nothing on success, and on failure will return the part of the
-string slice that didn’t parse correctly. A real implementation would have more
-error information than that, and would actually return something when parsing
-succeeds, but we’ll leave those off because they aren’t relevant to the
-lifetimes part of this example.
 
-To keep this code simple, we’re not going to actually write any parsing logic.
-It’s very likely that somewhere in parsing logic we’d handle invalid input by
-returning an error that references the part of the input that’s invalid, and
-this reference is what makes the code example interesting with regards to
-lifetimes. So we’re going to pretend that the logic of our parser is that the
-input is invalid after the first byte. Note that this code may panic if the
-first byte is not on a valid character boundary; again, we’re simplifying the
-example in order to concentrate on the lifetimes involved.
+En aras de la simplicidad, nuestra función `parse` devuelve un
+`Result <(), & str> `. Este, no hará nada en el éxito, y en el 
+fracaso devolverá la parte de la segmento de cadena que no se 
+analizó correctamente. Una implementación real tendría más información
+de error que eso, y realmente devolvería algo al analizar si tiene éxito,
+pero los dejaremos porque no son relevantes para el vidas que forman parte de este ejemplo.
 
-<!-- why do we want to always error after the first byte? -->
-<!-- For simplicity of the example to avoid cluttering up the code with actual
-parsing logic, which isn't the point. I've explained a bit more above /Carol -->
+Para mantener este código simple, no vamos a escribir ninguna lógica de análisis.
+Es muy probable que en algún lugar de la lógica de análisis manejemos la entrada no válida por
+devolver un error que hace referencia a la parte de la entrada que no es válida, y
+esta referencia es lo que hace que el ejemplo de código sea interesante con respecto a las
+vidas, Entonces vamos a pretender que la lógica de nuestro analizador es que
+la entrada no es válida después del primer byte. Tenga en cuenta que este 
+código puede entrar en pánico si el primer byte no está en un límite de 
+caracteres válidos; de nuevo, estamos simplificando
+ejemplo para concentrarse en las vidas involucradas.
 
-To get this code compiling, we need to fill in the lifetime parameters for the
-string slice in `Context` and the reference to the `Context` in `Parser`. The
-most straightforward way to do this is to use the same lifetime everywhere, as
-shown in Listing 19-13:
 
-<span class="filename">Filename: src/lib.rs</span>
+<!-- ¿Por qué queremos siempre error después del primer byte? ->
+<! - Por simplicidad del ejemplo para evitar saturar el código 
+real Analizando la lógica, que no es el punto. He explicado un poco más arriba / Carol ->
+
+Para obtener este código compilando, necesitamos completar los
+parámetros de vida para el string slice en `Context` y la referencia
+al` Context` en `Parser`. La forma más sencilla de hacer esto es usar
+la misma vida en todas partes, como se muestra en el listado 19-13:
+
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 struct Context<'a>(&'a str);
@@ -96,24 +102,24 @@ impl<'a> Parser<'a> {
 }
 ```
 
-<span class="caption">Listing 19-13: Annotating all references in `Context` and
-`Parser` with the same lifetime parameter</span>
+<span class="caption">Listado 19-13: Anotando todas las referencias en `Context` 
+  y `Parser` con el mismo parámetro de vida</span>
 
-This compiles fine, and tells Rust that a `Parser` holds a reference to a
-`Context` with lifetime `'a`, and that `Context` holds a string slice that also
-lives as long as the reference to the `Context` in `Parser`. Rust’s compiler
-error message said lifetime parameters were required for these references, and
-we have now added lifetime parameters.
+Esto compila bien y le dice a Rust que un `Parser` contiene una referencia 
+a un `Context` con lifetime `a`, y que `Context` contiene un segmento de 
+cadena que también vive tanto tiempo como la referencia al `Context` en `Parser` 
+.El compilador de Rust envía un mensaje de error con dichos parámetros de por
+vida que fueron necesarios para estas referencias, y ahora hemos agregado parámetros de por vida.
 
-<!-- can you let the reader know they should be taking away from this previous
-example? I'm not totally clear on why adding lifetimes here saved the code -->
-<!-- Done -->
+<!-- ¿Puede dejar que el lector sepa que deberían estar tomando distancia 
+de este anterior ¿ejemplo? No tengo muy claro por qué agregar vidas aquí 
+guardado el código -> <! - Done -->
 
-Next, in Listing 19-14, let’s add a function that takes an instance of
-`Context`, uses a `Parser` to parse that context, and returns what `parse`
-returns. This won’t quite work:
+Luego, en el listado 19-14, agreguemos una función que toma una instancia
+de `Context`, usa un` Parser` para analizar ese contexto, y devuelve `parse`. 
+Esto no funcionará del todo:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust,ignore
 fn parse_context(context: Context) -> Result<(), &str> {
@@ -121,11 +127,11 @@ fn parse_context(context: Context) -> Result<(), &str> {
 }
 ```
 
-<span class="caption">Listing 19-14: An attempt to add a `parse_context`
-function that takes a `Context` and uses a `Parser`</span>
+<span class="caption">Listado 19-14: Un intento de agregar una funcion `parse_context` que 
+  toma un `Contexto` y utiliza un `Parser` </span>
 
-We get two quite verbose errors when we try to compile the code with the
-addition of the `parse_context` function:
+Obtenemos dos errores bastante detallados cuando tratamos de compilar el 
+código con el Además de la función `parse_context`:
 
 ```text
 error[E0597]: borrowed value does not live long enough
@@ -161,25 +167,28 @@ note: borrowed value must be valid for the anonymous lifetime #1 defined on the 
    | |_^
 ```
 
-These errors are saying that both the `Parser` instance that’s created and the
-`context` parameter live only from when the `Parser` is created until the end
-of the `parse_context` function, but they both need to live for the entire
-lifetime of the function.
+Estos errores dicen que tanto la instancia `Parser` que se creó como
+`context` parameter live only desde cuando se crea el` Parser` hasta el final
+de la función `parse_context`, necesitan vivir en su totalidad para la
+vida de la función.
 
-In other words, `Parser` and `context` need to *outlive* the entire function
-and be valid before the function starts as well as after it ends in order for
-all the references in this code to always be valid. Both the `Parser` we’re
-creating and the `context` parameter go out of scope at the end of the
-function, though (because `parse_context` takes ownership of `context`).
 
-<!-- Oh interesting, why do they need to outlive the function, simply to
-absolutely ensure they will live for as long as the function? -->
-<!-- Yes, which is what I think we've said in the first sentence of the
-previous paragraph. Is there something that's unclear? /Carol -->
+En otras palabras, `Parser` y` context` necesitan * sobrevivir * a la 
+función completa y ser válido antes de que la función comience tan bien 
+como después de que termine en orden para que todas las referencias en 
+este código siempre sean válidas. Tanto el `Parser` que estamos
+creando y el parámetro `context` sale fuera del alcance al final de
+función, sin embargo (porque `parse_context` toma posesión de` context`).
 
-To figure out why we’re getting these errors, let’s look at the definitions in
-Listing 19-13 again, specifically the references in the signature of the
-`parse` method:
+
+<!-- Oh interesante, ¿por qué necesitan sobrevivir a la función?, simplemente
+para aseguran absolutamente de que vivirán mientras dure la función --> 
+<!-- Sí, es lo que creo que hemos dicho en la primera frase del párrafo anterior.
+¿Hay algo que no está claro? / Carol -->
+
+Para descubrir por qué estamos recibiendo estos errores, veamos las 
+definiciones en Listado 19-13 nuevamente, específicamente 
+las referencias en la firma del Método `parse`:
 
 ```rust,ignore
     fn parse(&self) -> Result<(), &str> {
@@ -188,20 +197,21 @@ Listing 19-13 again, specifically the references in the signature of the
 <!-- What exactly is it the reader should be looking at in this signature? -->
 <!-- Added above /Carol -->
 
-Remember the elision rules? If we annotate the lifetimes of the references
-rather than eliding, the signature would be:
+¿Recuerdas las reglas de elision? Si anotamos las vidas de las 
+referencias en lugar de elidir, la firma sería:
 
 ```rust,ignore
     fn parse<'a>(&'a self) -> Result<(), &'a str> {
 ```
 
-That is, the error part of the return value of `parse` has a lifetime that is
-tied to the lifetime of the `Parser` instance (that of `&self` in the `parse`
-method signature). That makes sense: the returned string slice references the
-string slice in the `Context` instance held by the `Parser`, and the definition
-of the `Parser` struct specifies that the lifetime of the reference to
-`Context` and the lifetime of the string slice that `Context` holds should be
-the same.
+Es decir, la parte de error del valor de retorno de `parse` tiene una vida que esta
+atada a la vida de la instancia `Parser` (la de` & self` en `parse`
+firma del método). Eso tiene sentido: el segmento de cadena devuelto hace referencia a los
+segmento de cadena en la instancia `Context` sostenida por `Parser`, y la definición
+de la estructura `Parser` especifica que la duración de la referencia a
+`Context` y el tiempo de vida del segmento de cadena que contiene `Context` deben ser
+lo mismo.
+
 
 The problem is that the `parse_context` function returns the value returned
 from `parse`, so the lifetime of the return value of `parse_context` is tied to
