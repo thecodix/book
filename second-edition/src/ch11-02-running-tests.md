@@ -1,4 +1,4 @@
-## Controlando como las pruebas son ejecutadas
+## Controlando Cómo son Ejecutadas las Pruebas 
 
 Así como el `cargo run` compila tu código y luego ejecuta el sistema binario que resulta de la operación,
 `cargo test` compila tu código en modo de prueba y corre el sistema binario de prueba
@@ -15,7 +15,7 @@ van al binario a prueba. El correr `cargo test --help` muestra las opciones que 
 usar con `cargo test`, y el correr `cargo test -- --help` muestra las opciones
 que puedes usar luego de colocar el separador `--`.
 
-### Correr pruebas en paralelo o consecutivamente
+### Corriendo Pruebas en Paralelo o de Forma Consecutiva
 
 Cuando ejecutas multiples pruebas, estas se ejecutan en paralelo usando, por defecto, hilos.
 Esto significa que las pruebas se terminarán de ejecutar más velozmente para que tengas una retroalimentación más rápida
@@ -48,7 +48,7 @@ paralelismo en el. El correr las pruebas usando hilos tomará más tiempo que el
 en paralelo, pero así nos aseguraremos de que las mismas no interferiran entre sí si comparten
 estado.
 
-### Mostrando la función de salida
+### Mostrando la Función de Respuesta
 
 Por defecto, si una prueba es satisfactoria, la biblioteca de pruebas de Rust capturará cualquier cosa que sea emitida a
 una salida estandar. Por ejemplo, si llamamos `println!` en una prueba y la misma
@@ -56,7 +56,7 @@ es aprobada, no veremos la salida `println!` en el terminal: solamente veremos l
 linea que indica que la prueba aprobó. Si una prueba falla, veremos lo que haya sido
 emitido a la salida estandar con el resto del mensaje de fallo en ella.
 
-Como un ejemplo, el listado 11-10 tiene una función tonta que emite el valor de su
+Como un ejemplo, el Listado 11-10 tiene una función tonta que emite el valor de su
 parametro y devuelve 10, así como una prueba que es aprobada y otra que es fallida.
 
 <span class="filename">Nombre del archivo: src/lib.rs</span>
@@ -122,7 +122,7 @@ comportamiento de captura de la respuesta usando el marcador `--nocapture`:
 $ cargo test -- --nocapture
 ```
 
-Cuando ejecutamos la prueba del listado 11-10 de nuevo usando el marcador `--nocapture`,
+Cuando ejecutamos la prueba del Listado 11-10 de nuevo usando el marcador `--nocapture`,
 recibiremos la siguiente respuesta:
 
 ```text
@@ -149,7 +149,7 @@ razón para que esto ocurra es que las pruebas están ejecutandose, al mismo tie
 sección anterior. Intenta usando la opción `--test-threads=1` con el marcador `--nocapture`,
 ¡Y entonces ve cómo luce la respuesta!
 
-### Ejecutando un subconjunto de pruebas por nombre
+### Ejecutando un Subconjunto de Pruebas por su Nombre
 
 Algunas veces el correr un proceso de prueba puede tomar un largo tiempo. Si estás trabajando en un 
 código en un área en particular, querrás ejecutar sólo las pruebas que le pertenezcan únicamente a
@@ -157,7 +157,7 @@ ese código para ahorrar tiempo. Puedes escoger cuál prueba ejecutar al enviarl
 o nombres de la(s) prueba(s) que quieres ejecutar como argumento.
 
 Para demostrar cómo ejecutar un conjunto de pruebas, crearemos tres de ellas para nuestra
-función `add_two`, como se muestra en el listado 11-11, y escogeremos cuales ejecutar:
+función `add_two`, como se muestra en el Listado 11-11, y escogeremos cuales ejecutar:
 
 <span class="filename">Nombre del archivo: src/lib.rs</span>
 
@@ -202,7 +202,7 @@ test tests::one_hundred ... ok
 test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-#### Ejecutando pruebas en solitario
+#### Ejecutando Pruebas en Solitario
 
 Podemos enviar el nombre de cualquier función de prueba a `cargo test` para ejecutar sólo esa:
 
@@ -224,7 +224,7 @@ este comando ejecutó mostrando `2 filtered out` al final de la linea de resumen
 No podemos especificar de esta manera los nombres de multiples pruebas; solo el primer valor
 que se le da `cargo test` será usado. Pero sí hay una manera de ejecutar multiples pruebas.
 
-#### Filtrando para ejecutar multiples pruebas
+#### El Filtrat Para Ejecutar Multiples Pruebas
 
 Podemos especificar parte de un nombre de prueba y cualquier otra que coincida en ese valor
 será ejecutada. Por ejemplo, ya que dos de nuestras pruebas tienen nombres que contienen `add`, podemos
@@ -247,7 +247,7 @@ prueba llamada `one_hundred`. También date cuenta de que el módulo en el que e
 se hace parte del nombre de las mismas, así que podemos ejecutar todas las pruebas en un módulo al
 filtrar su nombre.
 
-### Ignorando unas pruebas a menos de que sean especificamente solicitadas
+### Ignorando unas Pruebas a Menos de que Sean Especificamente Solicitadas
 
 A veces unas pruebas específicas pueden consumir mucho tiempo al ejecutarse, así que
 podrás no querer hacerlas durante la mayoría de las ejecuciones de `cargo test`. En vez de
