@@ -213,17 +213,17 @@ let’s look at some macros other than `panic!` that are useful in tests.
 
 ### Chequear los resultados con el Macro `assert!` 
 
-El macro `assert!`, proporcionado por la biblioteca estándar, es bastante útil cuando quieres
-asegurarte que una condición valora a `true`. Le damos al
-macro `assert!` un argumento que valora a un Boolean. Si el valor es
-`true`, `assert!` hace nada y el test aprobada. Si el valor es `false`,
-El macro `assert!` llama al macro `panic!` , lo que causa que el test falle.
-Usar el macro `assert!` nos ayuda a chequear que nuestro código es funcional de la
-manera que queremos.
+El comando macro `assert!` que es proporcionado por la biblioteca estándar, es bastante útil cuando quieres
+asegurarte de que una condición valora al comando `true`. Le damos al
+comando macro `assert!` un argumento que valora un binomio. Si el valor es
+`true`, `assert!` no hace nada y la prueba es aprobada. Si el valor es `false`,
+El comando macro `assert!` llama al otro comando macro `panic!` , lo que causa que la prueba falle.
+El usar el comando macro `assert!` nos ayuda a chequear que nuestro código sea funcional de la
+manera que queremos que sea.
 
 En el capítulo 5, en el listado 5-15, usamos una estructura `Rectangle` y un método `can_hold`,
-los que se repiten aquí en el listado 11-5. Pongamos este código en el 
-archivo *src/lib.rs* y escribamos algunos tests para el mismo usando el macro `assert!`.
+los que se repiten también en el listado 11-5. Pongamos este código en el 
+archivo *src/lib.rs* y escribamos algunas pruebas para el mismo código usando el macro `assert!`.
 
 <span class="filename">Nombre del Archivo: src/lib.rs</span>
 
@@ -242,12 +242,12 @@ impl Rectangle {
 ```
 
 <span class="caption">Listado 11-5: Usando la estructura `Rectangle` y su
-método `can_hold` del capítulo 5</span>
+método `can_hold` en el capítulo 5</span>
 
-El método `can_hold` da un Boolean, lo que significa que es un caso de uso perfecto
-para el macro `assert!`. En el listado 11-6, escribimos un test que ejercita el
+El método `can_hold` da un binomio, lo que significa que es un caso de uso perfecto
+para el comando macro `assert!`. En el listado 11-6, ya escribimos una prueba que pone a prueba el
 método `can_hold` al crear una instancia `Rectangle` que tiene una longitud de 8 y
-un ancho de 7, y afirmar que puede albergar otra instancia `Rectangle` que 
+un ancho de 7, y afirma que puede albergar otra instancia `Rectangle` que 
 tiene una longitud de 5 y un ancho de 1:
 
 <span class="filename">Nombre del archivo: src/lib.rs</span>
@@ -267,20 +267,20 @@ mod tests {
 }
 ```
 
-<span class="caption">Listado 11-6: Un test para `can_hold` que chequea que un
-rectángulo más grande puede albergar un rectángulo más pequeño</span>
+<span class="caption">Listado 11-6: Una prueba para `can_hold` que chequea que un
+rectángulo más grande puede albergar dentro de sí un rectángulo más pequeño</span>
 
-Nota que hemos añadido una nueva linea dentro del módulo `tests`: la linea `use super::*;`.
+Date cuenta de que hemos añadido una nueva linea dentro del módulo `tests`: la linea de comando `use super::*;`.
 El módulo `tests` es un módulo rectangular que sigue las reglas usuales de la
 visibilidad que cubrimos en el capítulo 7 en la sección de las “Reglas de privacidad”. Ya que
 el módulo `tests` es un módulo interno, necesitamos traer el código bajo prueba en el
-módulo exterior dentro del perímetro del módulo interno. Usamos un comando global aquí para que
-cualquier cosa que definamos en el módulo externo esté disponible para éste modulo `tests`.
+módulo exterior dentro del perímetro del módulo interno. Aquí usamos un comando global para que
+cualquier cosa que definamos en el módulo externo sea disponible para éste modulo `tests`.
 
-Hemos nombrado a nuestro test `larger_can_hold_smaller`, y creamos las dos instancias
-`Rectangle` que necesitamos. Entonces llamamos al macro `assert!` y
-le pasó el resultado de llamar `larger.can_hold(&smaller)`. Ésta expresión
-supone que devolverá `true`, así que nuestro texto debería pasar. ¡Vamos a averiguarlo!
+Hemos nombrado a nuestra prueba `larger_can_hold_smaller`, y hemos creado las dos instancias
+`Rectangle` que necesitabamos. Entonces llamamos al macro `assert!` y
+le pasa el resultado de la acción de llamar a `larger.can_hold(&smaller)`. Ésta expresión
+supone que devolverá `true`, así que nuestro texto debería ser aprobado. ¡Vamos a averiguarlo!
 
 ```text
 running 1 test
@@ -289,7 +289,7 @@ test tests::larger_can_hold_smaller ... ok
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-¡Sí pasa! Agreguemos otro test, esta vez afirmando que un rectángulo
+¡Sí es aprobado! Agreguemos otra prueba, esta vez afirmando que un rectángulo
 más pequeño no puede albergar uno más grande:
 
 <span class="filename">Nombre del archivo: src/lib.rs</span>
@@ -314,9 +314,9 @@ mod tests {
 }
 ```
 
-Ya que el resultado correcto de la función `can_hold` en este caso es `false`,
-necesitamos negar ese resultado antes de que lo pasemos al macro `assert!` macro. Como
-resultado, nuestro test pasará si `can_hold` da `false`:
+Ya que el resultado correcto de la función `can_hold` es en este caso `false`,
+necesitamos negar ese resultado antes de que lo pasemos al macro `assert!`. Como
+resultado, nuestra prueba será aprobada solo si `can_hold` da como resultado `false`:
 
 ```text
 running 2 tests
@@ -326,9 +326,9 @@ test tests::larger_can_hold_smaller ... ok
 test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-¡Dos tests que pasan! Ahora veamos qué le pasa a nuestro resultado cuando
-introducimos un bug en nuestro código. Cambiemos la implementación del método `can_hold`
-reemplazando el símbolo más que con símbolo de menor que cuando
+¡Dos pruebas que pasan! Ahora veamos qué le pasa a nuestro resultado cuando
+introducimos un error intencional en nuestro código. Cambiemos la implementación del método `can_hold`
+reemplazando el símbolo mayor que con símbolo de menor que cuando el código
 compara las longitudes:
 
 ```rust
@@ -346,7 +346,7 @@ impl Rectangle {
 }
 ```
 
-El ejecutar las tests producirá lo siguiente:
+El ejecutar las pruebas producirá lo siguiente:
 
 ```text
 running 2 tests
@@ -366,20 +366,20 @@ failures:
 test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-¡Nuestros tests atraparon el bug! Ya que `larger.length` es 8 y `smaller.length` es
-5, la comparación de las longitudes en `can_hold` ahora da `false`: 8 no es
+¡Nuestras pruebas lograron encontrar el error! Ya que `larger.length` es 8 y `smaller.length` es
+5, la comparación de las longitudes en `can_hold` ahora da `false`: en resumen, 8 no es
 menor que 5.
 
 ### Probando la igualdad con los macros `assert_eq!` y `assert_ne!` 
 
-Una manera común de probar funcionalidad es compara el resultado del código bajo
-prueba al valor que esperamos que el código de para asegurarnos de que son iguales. 
-Podríamos hacer esto usando el macro `assert!` y pasarlo a una expresión usando el 
+Una manera común de probar funcionalidad es comparar el resultado del código bajo
+prueba al valor que esperamos de resultado para asegurarnos de que son iguales. 
+Podríamos hacer esto usando el macro `assert!` y al pasarlo a una expresión usando el 
 operador `==` . Sin embargo, Este test es tan común que la biblioteca estandar
 provee un par de macros —`assert_eq!` y `assert_ne!`— para realizar este test
 de una forma más conveniente. Estos macros comparan dos argumentos para igualidad o
-desigualdad, respectivamente. Ellos también emitirán los dos valores si la afirmación
-falla, lo que hace más fácil el ver *por qué* el test falló; En cambio, el
+desigualdad, respectivamente, y también emitirán los dos valores si la afirmación
+falla, lo que hace más fácil el ver *por qué* la prueba falló; En cambio, el
 macro `assert!` sólo indica que tiene un valor `false` para la expresión `==`,
 no los valores que llevan al valor `false`.
 
@@ -408,7 +408,7 @@ mod tests {
 <span class="caption">Listado 11-7: Probando la función `add_two` usando el
 macro `assert_eq!`</span>
 
-¡Chequeemos si pasa!
+¡Chequeemos si es aprobada!
 
 ```text
 running 1 test
@@ -418,10 +418,10 @@ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
 El primer argumento que le dimos al macro `assert_eq!`, `4`, es igual al 
-resultado de llamar `add_two(2)`. La linea para este test es `test
-tests::it_adds_two ... ok`, ¡y el texto `ok` indica que nuestro test ha pasado!
+resultado de llamar a `add_two(2)`. La linea de comando para esta prueba es `test
+tests::it_adds_two ... ok`, ¡y el texto `ok` indica que nuestra ha sido satisfactoria!
 
-Introduzcamos un bug en nuestro código para ver cómo luce cuando un test que
+Introduzcamos un error intencional en nuestro código para ver cómo luce cuando una prueba que
 usa `assert_eq!` falla. Cambia la implementación de la función `add_two` 
 a en cambio un `3`:
 
@@ -431,7 +431,7 @@ pub fn add_two(a: i32) -> i32 {
 }
 ```
 
-Ejecuta este test de nuevo:
+Ejecuta esta prueba de nuevo:
 
 ```text
 running 1 test
@@ -451,34 +451,34 @@ failures:
 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-¡Nuestro test encontró el bug! El test `it_adds_two` falló, mostrando el mensaje
-`` assertion failed: `(left == right)` `` y mostrando que `left` era `4` y
-`right` era `5`. Este mensaje es bastante útil y nos ayuda a comenzar a eliminar bugs; significa que
+¡Nuestra prueba encontró el error! La prueba llamada `it_adds_two` falló, mostrando el mensaje
+`` assertion failed: `(left == right)` `` y mostrando a su vez que `left` era `4` y
+`right` era `5`. Este mensaje es bastante útil y nos ayuda a comenzar a eliminar errores; significa que
 el argumento `left` para `assert_eq!` era `4`, pero el argumento `right`, donde 
 teníamos `add_two(2)`, era `5`.
 
-Nota que en algunos idiomas y estructuras de tests, los parámetros para la
-función que afirma que dos valores son iguales son llamados `expected` y `actual`,
-y el orden en el cual especificamos los argumentos importa. Sin embargo, en Rust,
+Nota que en algunos idiomas y estructuras de pruebas, los parámetros para la
+función que afirma que dos valores que son iguales son llamados `expected` y `actual`,
+y el orden en el cual especificamos los argumentos sí es importante. Sin embargo, en Rust,
 son llamados `left` y `right`, y el orden en el cual especificamos el valor
-que esperamos y el valor que que el código bajo prueba produce no importa.
+que esperamos y el valor que el código bajo prueba produce no importa.
 Podríamos escribir la afirmación en este test como `assert_eq!(add_two(2), 4)`, lo que
-resultaría en un mensaje de fallo que muestra `` assertion failed: `(left ==
+resultaría en un mensaje de afirmación fallida que muestra `` assertion failed: `(left ==
 right)` `` y que `left` era `5` y `right` era `4`.
 
 El macro `assert_ne!` pasará si los dos valores que le damos no son iguales
 y fallará si son iguales. Éste macro es más util para los casos en los que no estamos seguros
 cual *será* el valor, pero sabemos lo que el valor definitivamente no *será* si nuestro
 código está funcionando como lo habíamos previsto. Por ejemplo, si estamos probando una función que
-está garantizada para cambiar su entrada de alguna manera, pero la manera en la que la entrada
-es cambiada depende del día de la semana en el que ejecutemos nuestros tests, la mejor cosa
-para afirmar será que la salida de la función no es igual a la entrada.
+está garantizada a cambiar su respuesta de alguna manera, pero la manera en la que la respuesta
+cambia depende del día de la semana en el que ejecutemos nuestras pruebas, la mejor 
+afirmación será que la respuesta de la función no es igual a la entrada.
 
-Bajo la superficie, los macros `assert_eq!` y `assert_ne!` usan los operadores
+Bajo su superficie, los macros `assert_eq!` y `assert_ne!` usan los operadores
 `==` y `!=`, de forma respectiva. Cuando la afirmación falla, estos macros emiten sus
-argumentos usando un formateo de eliminación de bugs, lo que significa que los valores comparados deben
+argumentos usando un formateo de eliminación de errores, lo que significa que los valores comparados deben
 implementar los rasgos `PartialEq` y `Debug`. Todos los tipos primitivos y la mayoría
-de los tipos de la biblioteca estandar implementan estos rasgos. Para estructuras y enums
+de los mismos de la biblioteca estandar implementan estos rasgos. Para estructuras y enums
 that you define, you’ll need to implement `PartialEq` to assert that values of
 those types are equal or not equal. You’ll need to implement `Debug` to print
 out the values when the assertion fails. Because both traits are derivable
