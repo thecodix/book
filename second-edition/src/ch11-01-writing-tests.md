@@ -496,7 +496,7 @@ requeridos para `assert_eq!` y `assert_ne!` son enviados al
 macro `format!` (discutidos en el capitulo 8 en la sección “Concatenación con el operador `+`
 o el macro `format!`”), para que puedas pasar un cordel de formato que 
 contenga los marcadores `{}` y valores que vayan en esos marcadores. Los mensajes
-personalizados son útiles para documentar lo que una afirmación significa; cuando una prueba falla,
+personalizados son útiles para documentar lo que una afirmación significa; cuando un test falla,
 tendremos una mejor idea de cuál es el problema con el código.
 
 Por ejemplo, digamos que tenemos una función que salude a las personas por su nombre, y
@@ -523,21 +523,20 @@ mod tests {
 
 Los requerimientos para este programa no han sido aceptados, y 
 estamos bastante seguros que el texto `Hello` en el inicio del saludo cambiará.
-decidimos que no queremos tener que actualizar la prueba para el nombre cuando eso
+decidimos que no queremos tener que actualizar el test para el nombre cuando eso
 pase, así que en vez de chequear por la igualdad exacta al valor devuelto desde
 la función `greeting`, sólo afirmaremos que la salida contenga el texto de
 la entrada del parámetro.
 
 Introduzcamos un bug dentro de este código cambiando `greeting` para que no incluya
-`name` para ver como la prueba fallida luce: 
-
+`name` para ver como loce el test
 ```rust
 pub fn greeting(name: &str) -> String {
     String::from("Hello!")
 }
 ```
 
-El ejecutar esta prueba produce lo siguiente:
+El ejecutar este test produce lo siguiente:
 
 ```text
 running 1 test
@@ -556,7 +555,7 @@ failures:
 
 Este resultado solo indica que la afirmación falló y en cual línea
 está la afirmación. Un mensaje de fallo más util en este caso podría emitir
-el valor que obtuvimos de la función `greeting`. Cambiemos la función de prueba,
+el valor que obtuvimos de la función `greeting`. Cambiemos la función test,
 dándole un mensaje personalizado de fallo hecho por un formato de hilos con un marcador
 lleno con el valor que obtuvimos por la función `greeting`:
 
@@ -571,7 +570,7 @@ fn greeting_contains_name() {
 }
 ```
 
-Ahora cuando ejecutemos la prueba, obtendremos un mensaje de error más informativo:
+Ahora cuando ejecutemos el test, obtendremos un mensaje de error más informativo:
 
 ```text
 ---- tests::greeting_contains_name stdout ----
@@ -580,7 +579,7 @@ contain name, value was `Hello!`', src/lib.rs:12:8
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
 ```
 
-Podemos ver el valor que obtuvimos en la respuesta de la prueba, lo que nos ayudaría
+Podemos ver el valor que obtuvimos en la respuesta del test, lo que nos ayudaría
 a eliminar los errores de lo que pasó en vez de lo que esperamos que pase
 
 ### Chequeando por Panics con `should_panic`
@@ -589,15 +588,15 @@ En adición al chequear que nuestro código devuelva los valores correctos que e
 es importante el chequear que nuestro código maneje condiciones de error como nosotros
 esperamos. Por ejemplo, considera el tipo `Guess` que creamos en el capítulo 9,
 en el listado 9-9. Otro código que use `Guess` depende de la garantía de que las instancias `Guess`
-solo contengan valores entre 1 y 100. Podemos escribir una prueba que
+solo contengan valores entre 1 y 100. Podemos escribir un test que
 asegure que intentando crear una instancia `Guess` con un valor fuera del 
 rango entre en pánico.
 
-Hacemos esto añadiendo otro atributo, `should_panic`, a nuestra función de prueba.
-Este atributo hace que la prueba pase si el código dentro de la función entra en pánico; la
-prueba fallará si el código dentro de la función no entra en pánico.
+Hacemos esto añadiendo otro atributo, `should_panic`, a nuestra función test.
+Este atributo hace que el test pase si el código dentro de la función entra en pánico; el
+test fallará si el código dentro de la función no entra en pánico.
 
-Listado 11-8 muestra una prueba que chequea que las condiciones de error de `Guess::new`
+Listado 11-8 muestra un test que chequea que las condiciones de error de `Guess::new`
 pasan como lo hemos previsto:
 
 <span class="filename">Nombre del archivo: src/lib.rs</span>
@@ -635,7 +634,7 @@ mod tests {
 `panic!`</span>
 
 Colocamos el atributo `#[should_panic]` luego del atributo `#[test]` y
-antes de la función de prueba que le aplica. Miremos el resultado cuando esta prueba
+antes de la función test que le aplica. Miremos el resultado cuando esta test
 pasa:
 
 ```text
@@ -668,7 +667,7 @@ impl Guess {
 }
 ```
 
-Cuando ejecutamos la prueba en el listado 11-8, fallará:
+Cuando ejecutamos el test en el listado 11-8, fallará:
 
 ```text
 running 1 test
@@ -683,14 +682,14 @@ test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
 No recibimos un mensaje muy útil en este caso, pero cuando le echamos un vistazo a la función
-de prueba, vemos que está anotada con `#[should_panic]`. El fallo que obtuvimos
-significa que el código en la función de prueba no causo pánico.
+test, vemos que está anotada con `#[should_panic]`. El fallo que obtuvimos
+significa que el código en la función test no causo pánico.
 
-Pruebas que usan `should_panic` pueden no ser precisa porque ellas sólo indican que 
-código ha causado algún pánico. Una prueba `should_panic` pasaría si la
-prueba entra en pánico por una razón diferente que la que estabamos esperando que ocurriera. para
-hacer las pruebas `should_panic` más precisas, podemos añadir un parámetro `expected`
-opcional al atributo `should_panic`. El aprovechamiento de la prueba se asegurará que 
+Los tests que usan `should_panic` pueden no ser precisa porque ellas sólo indican que 
+código ha causado algún pánico. Un test `should_panic` pasaría si el
+test entra en pánico por una razón diferente que la que estabamos esperando que ocurriera. para
+hacer los tests `should_panic` más precisas, podemos añadir un parámetro `expected`
+opcional al atributo `should_panic`. El aprovechamiento del test se asegurará que 
 el mensaje de fallo contenga el texto provisto. Por ejemplo, considera el
 código modificado para `Guess` en el listado 11-9 donde la función  `new` entre en pánico con
 diferentes mensajes dependiendo de si el valor fue muy pequeño o muy grande:
@@ -735,17 +734,17 @@ mod tests {
 <span class="caption">Listado 11-9: Prueba de que una condición causará un
 `panic!` con un mensaje de pánico particular</span>
 
-Esta prueba pasará porque el valor que pusimos en el parámetro `should_panic` attribute’s
+Este test pasará porque el valor que pusimos en el parámetro `should_panic` attribute’s
 `expected` del atributo es un subhilo del mensaje con la que la función `Guess::new`
 entra en pánico. Podríamos haber especificado el mensaje de pánico entero que
 esperamos, el cual en este caso sería `Guess value must be less than or equal to
 100, got 200.` Lo que tú decidas especificar en el parámetro esperado para
 `should_panic` depende de qué tan dinámico o único el mensaje de pánico sea
-y qué tan precisa quieres que sea tu prueba. En este caso, un subhilo del 
-mensaje de pánico es suficiente para asegurar que el código en la función de prueba ejecute
+y qué tan precisa quieres que sea tu test. En este caso, un subhilo del 
+mensaje de pánico es suficiente para asegurar que el código en la función test ejecute
 el caso `else if value > 100`.
 
-Para ver lo que pasa cuando una prueba `should_panic` con un mensaje `expected` 
+Para ver lo que pasa cuando un test `should_panic` con un mensaje `expected` 
 falla, introduzcamos de nuevo un bug en nuestro código cambiando los cuerpos de
 los bloques`if value < 1` y `else if value > 100` :
 
@@ -778,12 +777,12 @@ failures:
 test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-El mensaje de fallo indica que esta prueba de hecho entró en pánico como nosotros esperabamos ,
+El mensaje de fallo indica que este test de hecho entró en pánico como nosotros esperabamos ,
 pero el mensaje de pánico no incluyo el hilo `'Guess value must be
 less than or equal to 100'` que esperabamos. El mensaje de pánico que sí obtuvimos en este caso fue
 `Guess value must be greater than or equal to 1, got 200.` ¡Ahora podemos empezar a
 averiguar donde está el bug!
 
-Ahora que sabes varias formas para escribir pruebas, echemos un vistazo a lo que está pasando
-cuando corremos nuestras pruebas y exploramos las diferentes opciones que podemos usar con `cargo
+Ahora que sabes varias formas para escribir tests, echemos un vistazo a lo que está pasando
+cuando corremos nuestros test y exploramos las diferentes opciones que podemos usar con `cargo
 test`.
