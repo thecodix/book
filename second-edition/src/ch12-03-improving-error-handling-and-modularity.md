@@ -659,7 +659,7 @@ fn main() {
 }
 ```
 
-<span class="caption">Listado 12-14: Colocación de la crate "minigrep" en 
+<span class="caption">Listado 12-14: Trayendo la crate "minigrep" en 
 scope de *src/main. rs*.</span>
 
 Para introducir el crate de la biblioteca en la crate binaria, utilizamos `extern crate
@@ -670,7 +670,7 @@ toda la funcionalidad debería estar conectada y debería funcionar. Ejecuta el 
 
 ¡Uf! Eso fue mucho trabajo, pero nos hemos preparado para el éxito en 
 el futuro. Ahora es mucho más fácil manejar errores, y hemos hecho el código más
-modular. Casi todo nuestro trabajo se hará en *src/lib.rs* a partir de ahora.
+modular. A partir de ahora casi todo nuestro trabajo se hará en *src/lib.rs*.
 
 Aprovechemos esta nueva modularidad haciendo algo que habría sido
 difícil con el código antiguo, pero es fácil con el nuevo código: 
