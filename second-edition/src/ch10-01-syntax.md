@@ -258,12 +258,12 @@ hard to read and understand. If you get to a point of needing lots of generic
 types, it’s probably a sign that your code could use some restructuring to be
 separated into smaller pieces.
 
-### Usando Tipos de Datos Genéricos en Definiciones Enum
+### Using Generic Data Types in Enum Definitions
 
-Similares a las estructuras, Los Enums pueden ser definidos para albergar tipos de datos genéricos en sus
-variantes. Usamos el enum `Option<T>` proporcionado por la biblioteca estándar en el
-Capítulo 6, y ahora su definición debería de tener más sentido. Echemos
-otro vistazo:
+Similarly to structs, enums can be defined to hold generic data types in their
+variants. We used the `Option<T>` enum provided by the standard library in
+Chapter 6, and now its definition should make more sense. Let’s take another
+look:
 
 ```rust
 enum Option<T> {
@@ -272,16 +272,16 @@ enum Option<T> {
 }
 ```
 
-En otras palabras, `Option<T>` es un Enum genérico del tipo `T`. El cual tiene dos
-variantes: `Some`, que alberga un valor de tipo `T`, y una variante `None` que 
-no alberga ningún valor. La biblioteca estándar solo debe de tener esta única
-definición para respaldar la creación de valores en este enum que tenga cualquier
-tipo concreto. La idea de “un valor opcional” es más un concepto abstracto que
-un tipo específico, y Rust nos deja expresar este concepto abstracto sin muchas
-duplicaciones.
+In other words, `Option<T>` is an enum generic in type `T`. It has two
+variants: `Some`, which holds one value of type `T`, and a `None` variant that
+doesn’t hold any value. The standard library only has to have this one
+definition to support the creation of values of this enum that have any
+concrete type. The idea of “an optional value” is a more abstract concept than
+one specific type, and Rust lets us express this abstract concept without lots
+of duplication.
 
-Enums también pueden usar múltiples tipos genéricos. La definición del enum `Result`
-que usamos en el capítulo 9 es un ejemplo:
+Enums can use multiple generic types as well. The definition of the `Result`
+enum that we used in Chapter 9 is one example:
 
 ```rust
 enum Result<T, E> {
@@ -290,28 +290,28 @@ enum Result<T, E> {
 }
 ```
 
-El Enum `Result` es genérico sobre dos tipos, `T` y `E`. `Result` tiene dos
-variantes: `Ok`, la cual alberga un valor de tipo `T`, y `Err`, el cual alberga un valor
-de tipo `E`. Esta definición hace conveniente el usar el enum `Result` 
-en donde queramos tener una operación que pueda tener éxito (y dar un valor de algún
-tipo `T`) o fallar (y dar un error de algún tipo `E`). Recuerda el listado 9-2
-donde abrimos un archivo: en ese caso, `T` estaba rellenado con el tipo
-`std::fs::File` cuando el archivo se abría con éxito y `E` estaba rellenado
-con el tipo `std::io::Error` cuando habían problemas abriendo el archivo.
+The `Result` enum is generic over two types, `T` and `E`. `Result` has two
+variants: `Ok`, which holds a value of type `T`, and `Err`, which holds a value
+of type `E`. This definition makes it convenient to use the `Result` enum
+anywhere we have an operation that might succeed (and return a value of some
+type `T`) or fail (and return an error of some type `E`). Recall Listing 9-2
+when we opened a file: in that case, `T` was filled in with the type
+`std::fs::File` when the file was opened successfully and `E` was filled in
+with the type `std::io::Error` when there were problems opening the file.
 
-Cuando reconoces situaciones en tu código con múltiple estructura o definiciones
-Enum que eran diferentes solo en los tipos de los valores que albergaban, puedes
-retirar la duplicación al usar el mismo proceso que usamos con las definiciones de
-función para introducir tipos genéricos en su lugar.
+When you recognize situations in your code with multiple struct or enum
+definitions that differ only in the types of the values they hold, you can
+remove the duplication by using the same process we used with the function
+definitions to introduce generic types instead.
 
-### Usando Tipos de Datos Genéricos en Definiciones de Métodos
+### Using Generic Data Types in Method Definitions
 
-Como hicimos en el capítulo 5, podemos implementar métodos en estructuras y Enums que
-tengan tipos genéricos en sus definiciones. El listado 10-9 muestra la estructura `Point<T>`
-que definimos en el listado 10-6. Hemos entonces identificado un método llamado `x` en
-`Point<T>` que da una referencia a los datos en el campo `x`:
+Like we did in Chapter 5, we can implement methods on structs and enums that
+have generic types in their definitions. Listing 10-9 shows the `Point<T>`
+struct we defined in Listing 10-6. We’ve then defined a method named `x` on
+`Point<T>` that returns a reference to the data in the field `x`:
 
-<span class="filename">Number of archive: src/main.rs</span>
+<span class="filename">Filename: src/main.rs</span>
 
 ```rust
 struct Point<T> {
@@ -332,17 +332,17 @@ fn main() {
 }
 ```
 
-<span class="caption">Listado 10-9: Implementando un método llamado `x` en la estructura
-`Point<T>` que dará una referencia al campo `x`, la cual es del 
-tipo `T`.</span>
+<span class="caption">Listing 10-9: Implementing a method named `x` on the
+`Point<T>` struct that will return a reference to the `x` field, which is of
+type `T`.</span>
 
-Nota que tenemos que declarar `T` justo luego de `impl` para usar `T` en el
-tipo `Point<T>`. Declarando `T` como un tipo genérico antes del `impl` es como Rust
-sabe que el tipo en los corchetes angulares en `Point` es un tipo genérico en lugar de un
-tipo concreto. por ejemplo, podríamos escoger el implementar métodos en instancias
-`Point<f32>` en lugar de instancias `Point` con cualquier tipo genérico.
-El listado 10-10 muestra que no declaramos nada luego del `impl` en este 
-caso, ya que estamos usando el tipo concreto, `f32`:
+Note that we have to declare `T` just after `impl` in order to use `T` in the
+type `Point<T>`. Declaring `T` as a generic type after the `impl` is how Rust
+knows the type in the angle brackets in `Point` is a generic type rather than a
+concrete type. For example, we could choose to implement methods on
+`Point<f32>` instances rather than `Point` instances with any generic type.
+Listing 10-10 shows that we don’t declare anything after the `impl` in this
+case, since we’re using a concrete type, `f32`:
 
 ```rust
 # struct Point<T> {
@@ -357,26 +357,26 @@ impl Point<f32> {
 }
 ```
 
-<span class="caption">Listado 10-10: Construyendo un bloqueo `impl`que solo 
-aplica a una estructura con un tipo específico es usada para el parámetro de tipo genérico
- `T`</span>
+<span class="caption">Listing 10-10: Building an `impl` block which only
+applies to a struct with a specific type is used for the generic type parameter
+`T`</span>
 
-Este código significa que el tipo `Point<f32>` tendrá un método llamado
-`distance_from_origin`, y otras instancias de `Point<T>` donde `T` no es de 
-tipo `32` no tendrá este método definido. Este método mide que tan lejos es nuestro
-punto del punto de las coordinadas (0.0, 0.0) y usa operaciones
-matemáticas que solo son disponibles para tipos de punto flotante-
+This code means the type `Point<f32>` will have a method named
+`distance_from_origin`, and other instances of `Point<T>` where `T` is not of
+type `f32` will not have this method defined. This method measures how far our
+point is from the point of coordinates (0.0, 0.0) and uses mathematical
+operations which are only available for floating-point types.
 
-parámetros de tipo genérico en una definición de estructura no son siempre el mismo 
-parámetro de tipo que tú quieres usar en firmas de método de estructura. El listado
-10-11 define un método `mixup` en la estructura `Point<T, U>` desde el listado 10-8.
-El método toma otro `Point` como un parámetro, el que puede tener diferentes 
-tipos que el `self` `Point` que estamos nombrando en `mixup`. El método crea
-una nueva instancia `Point` que tiene el valor `x` del `self` `Point` (que es
-de tipo `T`) y el valor `y` del `Point` aprobado (el cual es de tipo
- `W`):
+Generic type parameters in a struct definition aren’t always the same generic
+type parameters you want to use in that struct’s method signatures. Listing
+10-11 defines a method `mixup` on the `Point<T, U>` struct from Listing 10-8.
+The method takes another `Point` as a parameter, which might have different
+types than the `self` `Point` that we’re calling `mixup` on. The method creates
+a new `Point` instance that has the `x` value from the `self` `Point` (which is
+of type `T`) and the `y` value from the passed-in `Point` (which is of type
+`W`):
 
-<span class="filename">Nombre del archivo: src/main.rs</span>
+<span class="filename">Filename: src/main.rs</span>
 
 ```rust
 struct Point<T, U> {
@@ -403,54 +403,54 @@ fn main() {
 }
 ```
 
-<span class="caption">Listado 10-11: Metodos que usan diferentes tipos genéricos
-que su definición de estructura</span>
+<span class="caption">Listing 10-11: Methods that use different generic types
+than their struct’s definition</span>
 
-En `main`, hemos definido un `Point` que tiene un `i32` por `x` (con valor `5`)
-y un `f64` por `y` (con valor `10.4`). `p2` es un `Point` que tiene un pedazo de cordón de `x` (con valor `"Hello"`) y un `char` por `y` (con valor `c`).
-El llamar `mixup` en `p1` con el argumento `p2` nos da `p3`, que tendrá
-un `i32` por `x`, ya que `x` vino de `p1`. `p3` tendrá un `char` por `y`,
-ya que `y` vino de `p2`. El `println!` emitirá un `p3.x = 5, p3.y = c`.
+In `main`, we’ve defined a `Point` that has an `i32` for `x` (with value `5`)
+and an `f64` for `y` (with value `10.4`). `p2` is a `Point` that has a string
+slice for `x` (with value `"Hello"`) and a `char` for `y` (with value `c`).
+Calling `mixup` on `p1` with the argument `p2` gives us `p3`, which will have
+an `i32` for `x`, since `x` came from `p1`. `p3` will have a `char` for `y`,
+since `y` came from `p2`. The `println!` will print `p3.x = 5, p3.y = c`.
 
-Date cuenta de que los parámetros genéricos `T` y `U` son declarados después de `impl`, ya que
-ellos van con la definición de la estructura. Los parámetros genéricos `V` y `W` son
-declarados luego de `fn mixup`, que ellos solo son relevantes para el método.
+Note that the generic parameters `T` and `U` are declared after `impl`, since
+they go with the struct definition. The generic parameters `V` and `W` are
+declared after `fn mixup`, since they are only relevant to the method.
 
-### El Desempeño del Código Usando Genéricos
+### Performance of Code Using Generics
 
-Te estarás preguntando mientras leías esta sección si hay un tiempo de coste en el tiempo de ejecución
-al usar tipos de parámetros genéricos. Tengo buenas noticias: ¡La forma en la que Rust ha implementado los
-genéricos significa que tu código no se ejecutará más lento como si hubieses especificado
-tipos concretos en vez de tipos de parámetros genéricos!
+You may have been reading this section and wondering if there’s a run-time cost
+to using generic type parameters. Good news: the way that Rust has implemented
+generics means that your code will not run any slower than if you had specified
+concrete types instead of generic type parameters!
 
-Rust logra esto al realizar una *monotransformación* del código usando los genéricos
-al tiempo de compilar. La monotransformación es el proceso de convertir un código genérico en un
-código especificado con tipos concretos que de hecho se usan rellenos.
+Rust accomplishes this by performing *monomorphization* of code using generics
+at compile time. Monomorphization is the process of turning generic code into
+specific code with the concrete types that are actually used filled in.
 
+What the compiler does is the opposite of the steps that we performed to create
+the generic function in Listing 10-5. The compiler looks at all the places that
+generic code is called and generates code for the concrete types that the
+generic code is called with.
 
-Lo que el compilador hace es lo opuesto de los pasos que hemos realizado para crear
-la función genérica en el listado 10-5. El compilador mira por todos los lugares que el
-código genérico ha sido llamado y genera códigos para los tipos concretos con los que el
-código genérico es llamado.
-
-Trabajemos con un ejemplo que usa el enum `Option` en la biblioteca estándar:
+Let’s work through an example that uses the standard library’s `Option` enum:
 
 ```rust
 let integer = Some(5);
 let float = Some(5.0);
 ```
 
-Cuando Rust compila este código, este realiza la monotransformación. El compilador
-leerá los valores que han sido pasados a `Option` y verá que tenemos dos
-tipos de `Option<T>`: uno es `i32`, y uno es `f64`. Y así, expandirá
-la definición genérica de `Option<T>` en `Option_i32` y `Option_f64`,
-y así reemplazando la definición genérica con las especificadas.
+When Rust compiles this code, it will perform monomorphization. The compiler
+will read the values that have been passed to `Option` and see that we have two
+kinds of `Option<T>`: one is `i32`, and one is `f64`. As such, it will expand
+the generic definition of `Option<T>` into `Option_i32` and `Option_f64`,
+thereby replacing the generic definition with the specific ones.
 
-La versión monotransformada de nuestro código que el compilador genera lucirá
-así, con los usos del genérico `Option` reemplazados con las definiciones
-especificas creadas por el compilador:
+The monomorphized version of our code that the compiler generates looks like
+this, with the uses of the generic `Option` replaced with the specific
+definitions created by the compiler:
 
-<span class="filename">Nombre del archivo: src/main.rs</span>
+<span class="filename">Filename: src/main.rs</span>
 
 ```rust
 enum Option_i32 {
@@ -469,8 +469,8 @@ fn main() {
 }
 ```
 
-Podemos escribir códigos no duplicados usando genéricos, y Rust compilará eso
-en un código que especifica el tipo en cada instancia. eso significa que no pagamos
-costos de tiempos de ejecución por usar genéricos; cuando el código se ejecuta, se lleva a cabo como si
-lo hubiésemos duplicado cada definición particular a mano. El proceso de 
-monotransformación es lo que hace los genéricos de Rust extremamente eficientes en el tiempo de ejecución.
+We can write the non-duplicated code using generics, and Rust will compile that
+into code that specifies the type in each instance. That means we pay no
+runtime cost for using generics; when the code runs, it performs just like it
+would if we had duplicated each particular definition by hand. The process of
+monomorphization is what makes Rust’s generics extremely efficient at runtime.
