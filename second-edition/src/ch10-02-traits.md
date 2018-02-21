@@ -288,7 +288,7 @@ implementación inválida.
 
 ### Los límites de los rasgos
 
-Ahora que hemos definidos los ragos y los hemos implementado en los tipos, podemos usar
+Ahora que hemos definidos los rasgos y los hemos implementado en los tipos, podemos usar
 rasgos con parámetros de tipo genéricos. Podemos restringir a los tipos genéricos y así
 en vez de ser cualquier tipo, el compilador se asegurará de que el tipo será
 limitado a esos tipos que implementan un rasgo particular y de este modo tener el
