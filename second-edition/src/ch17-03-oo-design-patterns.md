@@ -200,19 +200,19 @@ impl Post {
 ```
 
 <span class="caption">Listado 17-14: Añadiendo una implementación de marcador para
-el método `content` en `Post` que siempre devuelva un pedazo de hilo vacío</span>
+el método `content` en `Post` que siempre devuelva un pedazo de cadena de caracteres vacío</span>
 
-Con este método `content` añadido, todo en el listado 17-11 hasta la línea 8
+Con este método `content` añadido, todo en el Listado 17-11 hasta la línea 8
 trabaja como lo hemos previsto.
 
 ### Solicitar una revisión la publicación cambia su estado
 
-A continuación necesitamos añadir funcionalidad para solicitar una revisión de un estado, lo que
+A continuación necesitamos añadir la funcionalidad para solicitar una revisión de un estado, lo que
 debería cambiar su estado de `Draft` a `PendingReview`. Queremos darle a `Post`
-un método público llamado `request_review` que llevará referencias mutables a
+un método público llamado `request_review` que llevará una referencia mutable a
 `self`. Entonces vamos a llamar un método interno `request_review`  en el
 estado actual de `Post`, y este segundo método `request_review` consumirá
-el estado actual y devolverá un nuevo estado. El listado 17-15 muestra este código:
+el estado actual y devolverá un nuevo estado. El Listado 17-15 muestra este código:
 
 <!-- NOTE TO DE/AU: We might want to move this explanation to after the code if
 you want to add wingdings, we can see once we transfer it to Word -->
@@ -220,7 +220,7 @@ you want to add wingdings, we can see once we transfer it to Word -->
 and because we got some questions about this example that I wanted to expand
 upon /Carol -->
 
-<span class="filename">Nombre del archivo: src/lib.rs</span>
+<span class="filename">Filename: src/lib.rs</span>
 
 ```rust
 # pub struct Post {
@@ -261,33 +261,33 @@ impl State for PendingReview {
 <span class="caption">Listado 17-15: Implementando métodos `request_review` en
 los rasgos `Post` y `State`</span>
 
-Hemos añadido el método `request_review` al rasgo `State`; todos los tipos
-que implementen el rasgo ahora necesitarán implementar el método`request_review`.
+Hemos añadido el método `request_review` al rasgo `State`; todos los tipos que
+implementen el rasgo ahora necesitarán implementar el método`request_review`.
 Nota que en vez de tener a `self`, `&self`, o `&mut self` como el primer
-parámetro del método, tenemos a `self: Box<Self>`. Ésta sintáxis significa que
-método sólo es válido cuando se le llama en un `Box` que albergue el tipo. Ésta sintáxis toma 
+parámetro del método, tenemos a `self: Box<Self>`. Esta sintáxis significa que el
+método sólo es válido cuando se le convoca en un `Box`, albergando el tipo. Esta sintáxis toma 
 posesión de `Box<Self>`, invalidando el estado viejo para que así el valor de estado de
-`Post` pueda transformarse él mismo en un nuevo estado.
+`Post` pueda transformarse en una nuevo.
 
 <!-- Above -- so Post can transform, or so Draft can transform? -->
 <!-- Technically it's so the Draft value can transform into another value,
 which changes the state of Post-- I've tried to clarify. /Carol -->
 
-Para consumir el viejo estado, el método `request_review` necesita tomar posesión
+Para consumir el estado viejo, el método `request_review` necesita tomar posesión
 del valor de estado. Aquí es donde el `Option` en el campo `state` de `Post`
-entra: llamamos el método `take` para tomar el valor `Some` del campo `state`
+entra: convocamos el método `take` para sacar el valor `Some` del campo `state`
 y dejar un `None` en su lugar, ya que Rust no nos permite tener
-campos sin poblar en estructura. Esto nos deja mover el valor `state` del
+campos vacíos en estructuras. Esto nos deja mudar el valor `state` de
 `Post` en vez de tomarlo prestado. Entonces asignaremos el valor `state` de la publicación al
 resultado de esta operación.
 
 Necesitamos asignar `state` a `None` temporalmente, en vez de usar un código como `self.state
 = self.state.request_review();` que asignaría el campo `state` directamente, para
-tomar posesión del valor `state`. Ésto asegura que `Post` no pueda usar el viejo
-valor `state` después de que lo hayamos transformado en un nuevo estado.
+tomar posesión del valor `state`. Esto asegura que `Post` no pueda usar el viejo
+valor `state` después de que lo hayamos transformado en uno nuevo.
 
-El método `request_review` en `Draft` necesita devolver una nueva instancia en una caja de
-una nueva estructura `PendingReview`, lo que representa el estado en el que una publicación está esperando
+El método `request_review` en `Draft` necesita devolver una nueva instancia encajonada de
+una nueva estructura `PendingReview`, el cual representa el estado cuando una publicación está esperando
 por una revisión. La estructura `PendingReview` también implementa el método `request_review`,
 pero no hace ninguna transformación. En cambio, se devuelve a sí mismo, ya que
 cuando solicitamos una revisión en una publicación que ya está en el estado `PendingReview`,
@@ -298,14 +298,14 @@ método `request_review` en `Post` es el mismo sin importar su valor `state`. Ca
 estado es responsable de sus propias reglas.
 
 Vamos a dejar el método `content` en `Post` como está, devolviendo un 
-pedazo de hilo vacío. Ahora podemos tener un `Post` en el estado `PendingReview` así como
+pedazo de cadena de caracteres vacío. Ahora podemos tener un `Post` en el estado `PendingReview` así como
 en el estado `Draft`, pero queremos el mismo comportamiento en el estado `PendingReview`.
-¡El listado 17-11 ahora funciona hasta la linea 11! 
+¡El Listado 17-11 ahora funciona hasta la linea 11! 
 
 ### Añadiendo el método `approve` que cambia el comportamiento de `content`
 
 El método `approve` será similar al método `request_review`: se
-ajustará `state` al valor que el estado actual diga que debe tener cuando ese
+ajustará `state` al valor al que el estado actual diga que debería tener cuando ese
 estado sea aprobado, como se muestra en el listado 17-16.
 
 <span class="filename">Nombre del archivo: src/lib.rs</span>
@@ -375,18 +375,18 @@ los rasgos `Post` y `State`</span>
 Añadimos el método `approve` al rasgo `State`, y añadimos una nueva estructura que
 implemente `State`, el estado `Published`.
 
-Similar a `request_review`, si llamamos el método `approve` en `Draft`, no
-tendrá efecto ya que devolverá `self`. Cuando llamamos `approve` en
-`PendingReview`, devuelve una nueva instancia en caja de la estructura `Published`.
-La estructura `Published` implementará el rasgo `State`, y para ambos el 
-método `request_review` y el método `approve`, se devuelve a sí mismo, ya que la
+Similar a `request_review`, si convocamos el método `approve` en `Draft`, no
+tendrá efecto ya que devolverá `self`. Cuando convocamos `approve` en
+`PendingReview`, devuelve una nueva instancia encajonada de la estructura `Published`.
+La estructura `Published` implementará el rasgo `State`, y para ambos, el 
+método `request_review` y el `approve`, se devuelve a sí mismo, ya que la
 publicación debe permanecer en el estado `Published` en esos casos.
 
-Ahora para actualizar el método `content` en `Post`: Si el estado es `Published` vamos a
-querer devolver el valor en el campo `content` de la publicación; de otra manera vamos 
-a querer que devuelva un pedazo de hilo vacío, como se muestra en el listado 17-17:
+Ahora para actualizar el método `content` en `Post`: si el estado es `Published`
+querremos devolver el valor en el campo `content` de la publicación; de otra manera querremos que
+devuelva un trozo de cadena de caracteres vacío, como se muestra en el Listado 17-17:
 
-<span class="filename">Nombre del archivo: src/lib.rs</span>
+<span class="filename">Filename: src/lib.rs</span>
 
 ```rust
 # trait State {
@@ -409,32 +409,32 @@ impl Post {
 <span class="caption">Listado 17-17: Actualizando el método `content` en `Post` para
 delegarlo a un método `content` en `State`</span>
 
-Ya que la meta es manetener todas estas reglas dentro de las estructuras que implementen
-`State`, llamamos un método `content` sobre el valor en `state` y pasamos la instancia de 
-la publicación (que es, `self`) como un argumento. Entonces regresamos el valor que es
+Ya que el objetivo es manetener todas estas reglas dentro de las estructuras que implemente
+`State`, convocamos un método `content` en el valor en `state` y pasamos la instancia de 
+la publicación (que es, `self`) como un argumento. Entonces devolvemos el valor que es
 retornado al usar el método `content` en el valor `state`.
 
-Llamamos el método  `as_ref` en `Option` porque queremos una referencia al
+Convocamos el método  `as_ref` en el `Option` porque queremos una referencia al
 valor dentro de `Option` en vez de tener posesión del mismo. Ya que `state` es un
-`Option<Box<State>>`, el llamar `as_ref` devuelve un `Option<&Box<State>>`. Si 
-no hubieramos llamado `as_ref`, obtendríamos un error porque no podemos mover `state` fuera 
-del prestado `&self` del parámetro de la función.
+`Option<Box<State>>`, el convocar `as_ref` devuelve un `Option<&Box<State>>`. Si 
+no hubieramos convocado a `as_ref`, obtendríamos un error porque no podemos sacar `state` fuera 
+del `&self` prestado del parámetro de función.
 
-Entonces estamos llamado el método `unwrap`, el que sabemos que nunca entrará en pánico, ya que
-sabemos que los métodos en `Post` aseguran que `state` siempre contendrá un valor `Some`
+Entonces estamos convocando el método `unwrap`, el que sabemos que nunca entrará en pánico, ya que
+sabemos que los métodos en `Post` dan la seguridad de que `state` siempre contendrá un valor `Some`
 cuando esos métodos terminen. Este es uno de los casos de los que hablamos en el
-capítulo 12 cuando sabemos que un valor `None` nunca es posible, incluso si el
+Capítulo 12 cuando sabemos que un valor `None` nunca es posible, incluso si el
 compilador es incapaz de entender eso.
 
-Así que tenemos un `&Box<State>`, y entonces llamamos al `content` en el, la coerción
+Así que tenemos un `&Box<State>`, y cuando llamamos al `content` en él, la coerción
 deref tendrá efecto en el `&` y el `Box` y así el método `content`
-será llamado en el tipo que implemente el rasgo `State`.
+será convocado al final en el tipo que implemente el rasgo `State`.
 
-Eso significa que necesitamos añadir `content` a la definición del rasgo `State` y allí es
-donde pondremos la lógica para decidir qué contenido devuelva dependiendo de qué estado
+Eso quiere decir que necesitamos añadir `content` a la definición del rasgo `State`, y allí es
+donde pondremos la lógica por la que el contenido retorna dependiendo de qué estado
 tengamos, como lo muestra el listado 17-18:
 
-<span class="filename">Nombre del archivo: src/lib.rs</span>
+<span class="filename">Filename: src/lib.rs</span>
 
 ```rust
 # pub struct Post {
@@ -461,14 +461,14 @@ impl State for Published {
 <span class="caption">Listado 17-18: Añadiendo el método `content` al rasgo `State`
 </span>
 
-Añadimos una implementación por defecto para el método `content` que devuelva un pedazo
-vacío de hilo. Eso significa que no necesitamos implementar `content` en las estructuras `Draft`
+Añadimos una implementación por defecto para el método `content` que devuelva un trozo
+de cadena de caracteres vacío. Eso quiere decir que no necesitamos implementar `content` en las estructuras `Draft`
 y `PendingReview`. La estructura `Published` entonces anulará el método `content`
 y devolverá el valor en `post.content`.
 
-Nota que necesitamos anotaciones de tiempo de vida en este método, como discutimos en el 
+Note que necesitamos anotaciones cronológicas en este método, como discutimos en el 
 Capítulo 10. Estamos tomando una referencia a un `post` como un argumento, y devolviendo 
-una referencia para partir desde ese `post`, para que así el tiempo de vida de la referencia devuelta
+una referencia para partir desde ese `post`, así el tiempo de vida de la referencia devuelta
 esté relacionado con el tiempo de vida del argumento`post`.
 
 <!-- Is this it finished, without the touch up we make to get rid of the empty
@@ -476,8 +476,8 @@ string? That's pretty awesome coding, maybe give it some ceremony here. Does
 all of 17-11 now work? -->
 <!-- Yep! Good point, so added! /Carol -->
 
-Y hemos terminado-- ¡Todo el listado 17-11 funciona! Hemos implementado el patrón
-de estado con las reglas del ritmo de trabajo de la publicación en el blog. La lógica que gira alrededor de las reglas
+Y hemos terminado-- ¡Todo el Listado 17-11 funciona! Hemos implementado el patrón
+de estado con las reglas del ritmo de trabajo de la publicación en el blog. La lógica que gira entorno a las reglas
 vive en los objetos de estados en vez de estar dispersas por todo el `Post`.
 
 ### Tradeoffs of the State Pattern
