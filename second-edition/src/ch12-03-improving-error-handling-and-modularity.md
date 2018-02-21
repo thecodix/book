@@ -412,22 +412,22 @@ In this listing, we’ve used a method we haven’t covered before:
 `unwrap_or_else`, which is defined on `Result<T, E>` by the standard library.
 Using `unwrap_or_else` allows us to define some custom, non-`panic!` error
 handling. If the `Result` is an `Ok` value, this method’s behavior is similar
-to `unwrap`: it returns the inner value `Ok` is wrapping. However, if the value
-is an `Err` value, this method calls the code in the *closure*, which is an
-anonymous function we define and pass as an argument to `unwrap_or_else`. We’ll
-cover closures in more detail in Chapter 13. For now, you just need to know
-that `unwrap_or_else` will pass the inner value of the `Err`, which in this
-case is the static string `not enough arguments` that we added in Listing 12-9,
-to our closure in the argument `err` that appears between the vertical pipes.
-The code in the closure can then use the `err` value when it runs.
+a `unwrap`: devuelve el valor interno `Ok` que está envolviendo. Sin embargo, si el valor
+es un valor `Err`, este método llama al código en el *cierre*, que es una 
+función anónima que definimos y pasamos como argumento a `unwrap_or_else`. Cubriremos los
+cierres con más detalle en el capítulo 13. Por ahora, sólo necesitas saber que
+`unwrap_or_else` pasará el valor interno del `Err`, que en este caso es la cadena 
+estática `not enought arguments` que añadimos en el Listado 12-9, a nuestro
+cierre en el argumento `err` que aparece entre los tubos verticales. El código
+en el cierre puede entonces usar el valor `err` cuando se ejecuta.
 
-We’ve added a new `use` line to import `process` from the standard library. The
-code in the closure that will be run in the error case is only two lines: we
-print the `err` value and then call `process::exit`. The `process::exit`
-function will stop the program immediately and return the number that was
-passed as the exit status code. This is similar to the `panic!`-based handling
-we used in Listing 12-8, but we no longer get all the extra output. Let’s try
-it:
+Hemos añadido una nueva línea de `use` para importar `process` de la biblioteca estándar. El
+código del cierre que se ejecutará en caso de error sólo tiene dos líneas: imprimimos
+el valor `err` y luego llamamos `proceso::exit`. La función `process::exit`
+detendrá inmediatamente el programa y devolverá el número pasado como código
+de estado de salida. Esto es similar al manejo basado en `panic!` que usamos
+en Listado 12-8, pero ya no obtenemos toda la salida extra.
+Intentémoslo:
 
 ```text
 $ cargo run
@@ -437,23 +437,23 @@ $ cargo run
 Problem parsing arguments: not enough arguments
 ```
 
-Great! This output is much friendlier for our users.
+¡Grandioso! Este resultado es mucho más amigable para nuestros usuarios.
 
-### Extracting Logic from `main`
+### Extrayendo la lógica de `main`
 
-Now that we’ve finished refactoring the configuration parsing, let’s turn to
-the program’s logic. As we stated in “Separation of Concerns for Binary
-Projects”, we’ll extract a function named `run` that will hold all the logic
-currently in the `main` function that isn’t involved with setting up
-configuration or handling errors. When we’re done, `main` will be concise and
-easy to verify by inspection, and we’ll be able to write tests for all the
-other logic.
+Ahora que hemos terminado de refactorizar la configuración, volvamos a la
+lógica del programa. Como dijimos en "Separación de Problemas para Proyectos 
+Binarios", extraeremos una función llamada `run` que contendrá toda la lógica
+actualmente en la función `main` que no está involucrada en la configuración
+o manejo de errores. Cuando terminemos, `main` será conciso y fácil de 
+verificar por inspección, y seremos capaces de escribir pruebas para toda la
+otra lógica.
 
-Listing 12-11 shows the extracted `run` function. For now, we’re just making
-the small, incremental improvement of extracting the function. We’re still
-defining the function in *src/main.rs*:
+El listado 12-11 muestra la función `Run` extraída. Por ahora, sólo estamos haciendo
+la pequeña, mejora incremental de extraer la función. Seguimos definiendo
+la función en *src/main.rs*:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del Archivo: src/main.rs</span>
 
 ```rust,ignore
 fn main() {
@@ -478,24 +478,24 @@ fn run(config: Config) {
 // --snip--
 ```
 
-<span class="caption">Listing 12-11: Extracting a `run` function containing the
-rest of the program logic</span>
+<span class="caption">Listado 12-11: Extracción de una función `run` que contiene el 
+resto de la lógica del programa</span>
 
-The `run` function now contains all the remaining logic from `main`, starting
-from reading the file. The `run` function takes the `Config` instance as an
-argument.
+La función `run` ahora contiene toda la lógica restante de `main`, empezando por
+leer el archivo. La función `run` toma la instancia `Config` como un
+argumento.
 
-#### Returning Errors from the `run` Function
+#### Devolución de Errores de la Función `run`
 
-With the remaining program logic separated into the `run` function, we can
-improve the error handling, as we did with `Config::new` in Listing 12-9.
-Instead of allowing the program to panic by calling `expect`, the `run`
-function will return a `Result<T, E>` when something goes wrong. This will let
-us further consolidate into `main` the logic around handling errors in a
-user-friendly way. Listing 12-12 shows the changes we need to make to the
-signature and body of `run`:
+Con la lógica del programa restante separada en la función `run`, podemos
+mejorar el manejo de errores, como lo hicimos con `Config::new` en el Listado 12-9.
+En lugar de permitir que el programa entre en pánico llamando a `expect`, la función
+`run` devuelve un `Result<T, E>` cuando algo sale mal. Esto nos permitirá consolidar
+aún más en `main` la lógica de manejar errores de una forma amigable.
+El listado 12-12 muestra los cambios que necesitamos hacer en la
+firma y cuerpo de `run`:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del Archivo: src/main.rs</span>
 
 ```rust,ignore
 use std::error::Error;
@@ -514,34 +514,34 @@ fn run(config: Config) -> Result<(), Box<Error>> {
 }
 ```
 
-<span class="caption">Listing 12-12: Changing the `run` function to return
-`Result`</span>
+<span class="caption">Listado 12-12: Cambiar la función `run` para devolver 
+`Result`.</span>
 
-We’ve made three significant changes here. First, we changed the return type of
-the `run` function to `Result<(), Box<Error>>`. This function previously
-returned the unit type, `()`, and we keep that as the value returned in the
-`Ok` case.
+Hemos hecho tres cambios significativos aquí. Primero, cambiamos el tipo de retorno de 
+la función `run` por `Result<(), Box<Error>>`. Esta función anteriormente 
+devolvía el tipo de unidad, `()`, y lo mantenemos como el valor devuelto en el
+caso `Ok`.
 
-For the error type, we used the *trait object* `Box<Error>` (and we’ve brought
-`std::error::Error` into scope with a `use` statement at the top). We’ll cover
-trait objects in Chapter 17. For now, just know that `Box<Error>` means the
-function will return a type that implements the `Error` trait, but we don’t
-have to specify what particular type the return value will be. This gives us
-flexibility to return error values that may be of different types in different
-error cases.
+Para el tipo de error, usamos el *trait object* `Box<Error>` (y hemos traído 
+`std::error::Error` al alcance con una declaración `use` en la parte superior). Cubriremos
+objetos de rasgos en el capítulo 17. Por ahora, sólo debes saber que `Box<Error>` significa que
+la función devolverá un tipo que implementa el rasgo `Error`, pero no tenemos que 
+especificar qué tipo particular será el valor de retorno. Esto nos da flexibilidad
+para devolver valores de error que pueden ser de diferentes tipos en diferentes
+casos de error.
 
-Second, we’ve removed the calls to `expect` in favor of `?`, as we talked about
-in Chapter 9. Rather than `panic!` on an error, `?` will return the error value
-from the current function for the caller to handle.
+Segundo, hemos quitado las llamadas a `expect` a favor de `?`, como hablamos en 
+el Capítulo 9. En lugar de `panic!` en un error, `?` devolverá el valor de error 
+de la función actual para que la persona que lo llama lo maneje.
 
-Third, the `run` function now returns an `Ok` value in the success case. We’ve
-declared the `run` function’s success type as `()` in the signature, which
-means we need to wrap the unit type value in the `Ok` value. This `Ok(())`
-syntax might look a bit strange at first, but using `()` like this is the
-idiomatic way to indicate that we’re calling `run` for its side effects only;
-it doesn’t return a value we need.
+En tercer lugar, la función `run` ahora devuelve un valor `Ok` en caso de éxito. Hemos 
+declarado el tipo de éxito de la función `run` como `()` en la firma, lo que significa
+que necesitamos envolver el valor del tipo de unidad en el valor `Ok`. Esta sintaxis
+`Ok(())` puede parecer un poco extraña al principio, pero usar `()` como este es la
+manera idiomática de indicar que estamos llamando `run` por sus efectos secundarios;
+no devuelve un valor que necesitamos.
 
-When you run this code, it will compile but will display a warning:
+Cuando ejecutes este código, compilará pero mostrará una advertencia:
 
 ```text
 warning: unused `std::result::Result` which must be used
@@ -552,18 +552,18 @@ warning: unused `std::result::Result` which must be used
 = note: #[warn(unused_must_use)] on by default
 ```
 
-Rust tells us that our code ignored the `Result` value, and the `Result` value
-might indicate that an error occurred. But we’re not checking to see whether or
-not there was an error, and the compiler reminds us that we probably meant to
-have some error handling code here! Let’s rectify that problem now.
+Rust nos dice que nuestro código ignoró el valor `Result`, y el valor `Result` 
+podría indicar que ocurrió un error. Pero no estamos comprobando si hubo o 
+no un error, y el compilador nos recuerda que probablemente quisiéramos 
+tener algún código de manejo de errores aquí! Vamos a rectificar ese problema ahora.
 
-#### Handling Errors Returned from `run` in `main`
+#### Manejo de Errores Devueltos por `run` en` main`
 
-We’ll check for errors and handle them using a technique similar to the way we
-handled errors with `Config::new` in Listing 12-10, but with a slight
-difference:
+Verificaremos errores y los manejaremos usando una técnica similar a la forma en que
+manejamos errores con `Config::new` en el Listado 12-10, pero con una ligera
+diferencia:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,ignore
 fn main() {
@@ -580,33 +580,33 @@ fn main() {
 }
 ```
 
-We use `if let` rather than `unwrap_or_else` to check whether `run` returns an
-`Err` value and call `process::exit(1)` if it does. The `run` function doesn’t
-return a value that we want to `unwrap` in the same way that `Config::new`
-returns the `Config` instance. Because `run` returns `()` in the success case,
-we only care about detecting an error, so we don’t need `unwrap_or_else` to
-return the unwrapped value because it would only be `()`.
+Usamos `if let` en lugar de `unwrap_o_else` para comprobar si `run` devuelve un 
+valor `Err` y llama a `process::exit(1)` si es así. La función `run` no devuelve
+un valor que queremos `unwrap` de la misma manera que `Config::new`
+devuelve la instancia `Config`. Debido a que en caso de éxito `run` devuelve `()`,
+sólo nos importa detectar un error, por lo que no necesitamos `unwrap_or_else` para
+devolver el valor desenvuelto porque sólo sería `()`.
 
-The bodies of the `if let` and the `unwrap_or_else` functions are the same in
-both cases: we print the error and exit.
+Los cuerpos de las funciones `if let` y `unwrap_or_else` son los mismos en 
+ambos casos: imprimimos el error y salimos.
 
-### Splitting Code into a Library Crate
+### División de Código en una Crate de Biblioteca
 
-Our `minigrep` project is looking good so far! Now we’ll split the
-*src/main.rs* file and put some code into the *src/lib.rs* file so we can test
-it and have a *src/main.rs* file with fewer responsibilities.
+Nuestro proyecto `minigrep` se ve bien hasta ahora! Ahora dividiremos el
+archivo *src/main.rs* y pondremos algún código en el archivo *src/lib.rs* para que podamos
+probarlo y tener un archivo *src/main.rs* con menos responsabilidades.
 
-Let’s move all the code that isn’t the `main` function from *src/main.rs* to
+Movamos todo el código que no es la función `main` de *src/main.rs* a 
 *src/lib.rs*:
 
-* The `run` function definition
-* The relevant `use` statements
-* The definition of `Config`
-* The `Config::new` function definition
+* La definición de la función `run`
+* Las declaraciones de `use` relevantes
+* La definición de `Config`.
+* La definición de la función `Config::new`
 
-The contents of *src/lib.rs* should have the signatures shown in Listing 12-13
-(we’ve omitted the bodies of the functions for brevity). Note that this won't
-compile until we modify *src/main.rs* in the listing after this one:
+El contenido de *src/lib.rs* debe tener las firmas mostradas en el Listado 12-13
+(hemos omitido los cuerpos de las funciones por brevedad). Ten en cuenta que esto no 
+se compilará hasta que modifiquemos *src/main.rs* en el listado después de este:
 
 <span class="filename">Filename: src/lib.rs</span>
 
