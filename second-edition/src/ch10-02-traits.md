@@ -186,9 +186,9 @@ in a trait, instead of making every implementation on every type define custom
 behavior. When we implement the trait on a particular type, we can choose to
 keep or override each method’s default behavior.
 
-Listing 10-15 shows how we could have chosen to specify a default string for
-the `summary` method of the `Summarizable` trait instead of choosing to only
-define the method signature like we did in Listing 10-12:
+El Listado 10-15 muestra cómo podríamos haber elegido especificar una cadena de caraceteres por defecto para
+el método `summary` del rasgo `Summarizable` en lugar de elegir sólo
+definir la firma del método como hicimos en el Listado 10-12:
 
 <span class="filename">Filename: lib.rs</span>
 
@@ -200,21 +200,21 @@ pub trait Summarizable {
 }
 ```
 
-<span class="caption">Listing 10-15: Definition of a `Summarizable` trait with
-a default implementation of the `summary` method</span>
+<span class="caption">El Listado 10-15: Definición de un rasgo `Summarizable` con
+una implementación por defecto del método `summary`</span>
 
-If we wanted to use this default implementation to summarize instances of
-`NewsArticle` instead of defining a custom implementation like we did in
-Listing 10-13, we would specify an empty `impl` block:
+Si quisieramos esta implementación por defecto para resumir instancias de
+`NewsArticle` en lugar de definir una impplementación personalizada como hicimos en
+el Listado 10-13, especificaríamos un bloque vacío `impl`:
 
 ```rust,ignore
 impl Summarizable for NewsArticle {}
 ```
 
-Even though we’re no longer choosing to define the `summary` method on
-`NewsArticle` directly, since the `summary` method has a default implementation
-and we specified that `NewsArticle` implements the `Summarizable` trait, we can
-still call the `summary` method on an instance of `NewsArticle`:
+Incluso cuando ya no elegimos definir el método `summary` en
+`NewsArticle` directamente, ya que el método `summary` tiene una implementación por defecto
+y que especificamos que `NewsArticle` implementa el rasgo `Summarizable`, podemos
+seguir convocando el método `summary` en una instancia de `NewsArticle`:
 
 ```rust,ignore
 let article = NewsArticle {
@@ -228,22 +228,22 @@ let article = NewsArticle {
 println!("New article available! {}", article.summary());
 ```
 
-This code prints `New article available! (Read more...)`.
+Este código pone `New article available! (Read more...)`.
 
-Changing the `Summarizable` trait to have a default implementation for
-`summary` does not require us to change anything about the implementations of
-`Summarizable` on `Tweet` in Listing 10-13 or `WeatherForecast` in Listing
-10-14: the syntax for overriding a default implementation is exactly the same
-as the syntax for implementing a trait method that doesn’t have a default
-implementation.
+Cambiar el rasgo `Summarizable` para tener una implementación por defecto de
+`summary` no nos pide cambiar nada sobre las implementaciones de
+`Summarizable` en `Tweet` en el Listado 10-13 o `WeatherForecast` en el Listado
+10-14: la sintaxis para invalidar a una implementación por defecto es exactamente la misma
+a la sintaxis para implementar un método de rasgo que no tiene una implementación
+por defecto.
 
-Default implementations are allowed to call the other methods in the same
-trait, even if those other methods don’t have a default implementation. In this
-way, a trait can provide a lot of useful functionality and only require
-implementors to specify a small part of it. We could choose to have the
-`Summarizable` trait also have an `author_summary` method whose implementation
-is required, then a `summary` method that has a default implementation that
-calls the `author_summary` method:
+Las implementaciones por defetos pueden convocar los otro métodos en el mismo
+rasgo, incluso si esos otros métodos no tienen una implementación por defecto. De esta
+manera, un rasgo puede proporcionar un montón de funcionalidades útiles y sólo requiere
+implementadores para específicar una pequeña parte de él. Podríamos elegir tener el
+rasgo `Summarizable` y también tener un método `author_summary` cuya implementación
+es requerida, entonces, un método `summary` que tiene una implementación por defecto que
+convoca el método `author_summary`:
 
 ```rust
 pub trait Summarizable {
@@ -255,8 +255,8 @@ pub trait Summarizable {
 }
 ```
 
-In order to use this version of `Summarizable`, we’re only required to define
-`author_summary` when we implement the trait on a type:
+Con el fin de utilizar esta versión de `Summarizable`, sólo nos piden definir
+`author_summary` cuando implementamos el rasgo en un tipo:
 
 ```rust,ignore
 impl Summarizable for Tweet {
@@ -266,9 +266,9 @@ impl Summarizable for Tweet {
 }
 ```
 
-Once we define `author_summary`, we can call `summary` on instances of the
-`Tweet` struct, and the default implementation of `summary` will call the
-definition of `author_summary` that we’ve provided.
+Una vez que definimos `author_summary`, podemos convocar `summary` en instancias de la
+estructura `Tweet`, y la implementación por defecto de `summary` convocará la
+definicion de `author_summary` que hemos proporcionado.
 
 ```rust,ignore
 let tweet = Tweet {
@@ -281,26 +281,26 @@ let tweet = Tweet {
 println!("1 new tweet: {}", tweet.summary());
 ```
 
-This will print `1 new tweet: (Read more from @horse_ebooks...)`.
+Esto pondrá `1 new tweet: (Read more from @horse_ebooks...)`.
 
-Note that it is not possible to call the default implementation from an
-overriding implementation.
+Note que no es posible convocar la implementación por defecto desde una
+implementación inválida.
 
-### Trait Bounds
+### Los límites de los rasgos
 
-Now that we’ve defined traits and implemented those traits on types, we can use
-traits with generic type parameters. We can constrain generic types so that
-rather than being any type, the compiler will ensure that the type will be
-limited to those types that implement a particular trait and thus have the
-behavior that we need the types to have. This is called specifying *trait
-bounds* on a generic type.
+Ahora que hemos definidos los rasgos y los hemos implementado en los tipos, podemos usar
+rasgos con parámetros de tipo genéricos. Podemos restringir a los tipos genéricos y así
+en vez de ser cualquier tipo, el compilador se asegurará de que el tipo será
+limitado a esos tipos que implementan un rasgo particular y de este modo tener el
+comportamiento que necesitamos que tengan los tipos. Esto se convoca especificando *trait
+bounds* en un tipo genérico.
 
-For example, in Listing 10-13, we implemented the `Summarizable` trait on the
-types `NewsArticle` and `Tweet`. We can define a function `notify` that calls
-the `summary` method on its parameter `item`, which is of the generic type `T`.
-To be able to call `summary` on `item` without getting an error, we can use
-trait bounds on `T` to specify that `item` must be of a type that implements
-the `Summarizable` trait:
+Por ejemplo, en el Listado 10-13, implementamos el rasgo `Summarizable` en los
+tipos `NewsArticle` y `Tweet`. Podemos definir una función `notify` que convoque
+el método `summary` en su parámetro `item`, el cual es del tipo genérico `T`.
+Para poder convocar `summary` en `item` sin tener ningún error, podemos usar
+los límites del rasgo en `T` para especificar que `item` debe ser un tipo que implementa
+el rasgo `Summarizable`:
 
 ```rust,ignore
 pub fn notify<T: Summarizable>(item: T) {
@@ -308,32 +308,32 @@ pub fn notify<T: Summarizable>(item: T) {
 }
 ```
 
-Trait bounds go with the declaration of the generic type parameter, after a
-colon and within the angle brackets. Because of the trait bound on `T`, we can
-call `notify` and pass in any instance of `NewsArticle` or `Tweet`. The
-external code from Listing 10-14 that’s using our `aggregator` crate can call
-our `notify` function and pass in an instance of `WeatherForecast`, since
-`Summarizable` is implemented for `WeatherForecast` as well. Code that calls
-`notify` with any other type, like a `String` or an `i32`, won’t compile, since
-those types do not implement `Summarizable`.
+Los límites de rasgo van con la declaración del parámetro de tipo genérico, después de un
+dos puntos y dentro de las comillas angulares. Por el límite de rasgo en `T`, podemos convocar
+ `notify` y pasar cualquier instancia de `NewsArticle` o `Tweet`. El
+código externo del Listado 10-14 que está usando nuestro cajón `aggregator` puede convocar
+nuestra función `notify` y pasar una instancia de `WeatherForecast`, ya que
+`Summarizable` es implementado por `WeatherForecast` también. El código que convoca
+`notify` con cualquier otro tipo, como un `String` o una `i32`, no compilará, ya que
+esos tipos no implementan `Summarizable`.
 
-We can specify multiple trait bounds on a generic type by using `+`. If we
-needed to be able to use display formatting on the type `T` in a function as
-well as the `summary` method, we can use the trait bounds `T: Summarizable +
-Display`. This means `T` can be any type that implements both `Summarizable`
-and `Display`.
+Podemos específicar múltiples límites de rasgo en un tipo genérico usando `+`. Si nosotros
+necesitáramos ser capaces de usar el formato de salida en el tipo `T` en una funcion al
+igual que el método `summary`, podemos usar los límites de rasgo `T: Summarizable +
+Display`. Esto significa que `T` puede ser cualquier tipo que implemente a `Summarizable`
+y a `Display`.
 
-For functions that have multiple generic type parameters, each generic has its
-own trait bounds. Specifying lots of trait bound information in the angle
-brackets between a function’s name and its parameter list can get hard to read,
-so there’s an alternate syntax for specifying trait bounds that lets us move
-them to a `where` clause after the function signature. So instead of:
+Para funciones que tienen multiples parámetros de tipo genéricos, cada genérico tiene su
+propio límites de rasgo. Especificando montones de información de límite de rasgo en las comillas
+angulares entre un nombre de función y su lista de parámetros puede ser difícil de leer,
+así que hay una sintaxis alternativa para especificar límites de rasgo que nos permitan moverlos
+a una condición `where` luego de la firma de función. Así que en lugar de:
 
 ```rust,ignore
 fn some_function<T: Display + Clone, U: Clone + Debug>(t: T, u: U) -> i32 {
 ```
 
-We can write this instead with a `where` clause:
+Podemos escribir esto en su lugar con una condición `where`:
 
 ```rust,ignore
 fn some_function<T, U>(t: T, u: U) -> i32
@@ -342,16 +342,16 @@ fn some_function<T, U>(t: T, u: U) -> i32
 {
 ```
 
-This is less cluttered and makes this function’s signature look more similar to
-a function without lots of trait bounds, in that the function name, parameter
-list, and return type are close together.
+Esto es menos desordenado y hace que esta firma de función se vea más parecida a
+una función sin montones de límites de rasgo, ya que el nombre de la función, la lista de 
+parámetros, y el tipo de retorno son muy cercanos.
 
-### Fixing the `largest` Function with Trait Bounds
+### Arreglar la función `largest` con Límites de Rasgo
 
-So any time you want to use behavior defined by a trait on a generic, you need
-to specify that trait in the generic type parameter’s type bounds. We can now
-fix the definition of the `largest` function that uses a generic type parameter
-from Listing 10-5! When we set that code aside, we were getting this error:
+Así que siempre que quieras usar un comportamiendo definido por un rasgo en un genérico, necesitas
+especificar ese rasgo en el parámetro genérico de tipo de los límites de tipo. ¡Ahora podemos
+arreglar la definición de la función `largest` que usa un parámetro genérico de tipo
+del Listado 10-5! Cuando establecemos ese código a un lado, obtendremos este error:
 
 ```text
 error[E0369]: binary operation `>` cannot be applied to type `T`
@@ -362,19 +362,19 @@ error[E0369]: binary operation `>` cannot be applied to type `T`
 note: an implementation of `std::cmp::PartialOrd` might be missing for `T`
 ```
 
-In the body of `largest` we wanted to be able to compare two values of type `T`
-using the greater-than operator. That operator is defined as a default method
-on the standard library trait `std::cmp::PartialOrd`. So in order to be able to
-use the greater-than operator, we need to specify `PartialOrd` in the trait
-bounds for `T` so that the `largest` function will work on slices of any type
-that can be compared. We don’t need to bring `PartialOrd` into scope because
-it’s in the prelude.
+En el cuerpo de `largest` quisimos ser capaces de comprar dos valores del tipo `T`
+usando el operador mayor que. Ese operador es definido como un método predeterminado
+en la biblioteca estándar de rasgo `std::cmp::PartialOrd`. Así que con el fin de ser capaz de
+usar el operador mayor que, necesitamos especificar el `PartialOrd` en los límites
+de rasgo para `T` y así la función `largest` funcionará en los pedazos de cualquier tipo
+que pueda ser comparado. No necesitamos traer `PartialOrd` a la mira porque
+está en el preludio.
 
 ```rust,ignore
 fn largest<T: PartialOrd>(list: &[T]) -> T {
 ```
 
-If we try to compile this, we’ll get different errors:
+Si intentamos compilar esto, obtendremos distintos errores:
 
 ```text
 error[E0508]: cannot move out of type `[T]`, a non-copy array
@@ -395,14 +395,14 @@ error[E0507]: cannot move out of borrowed content
   |         cannot move out of borrowed content
 ```
 
-The key to this error is `cannot move out of type [T], a non-copy array`.
-With our non-generic versions of the `largest` function, we were only trying to
-find the largest `i32` or `char`. As we discussed in Chapter 4, types like
-`i32` and `char` that have a known size can be stored on the stack, so they
-implement the `Copy` trait. When we changed the `largest` function to be
-generic, it’s now possible that the `list` parameter could have types in it
-that don’t implement the `Copy` trait, which means we wouldn’t be able to move
-the value out of `list[0]` and into the `largest` variable.
+La clave para este error es `cannot move out of type [T], a non-copy array`.
+Con nuestras versiones no genéricas de la función `largest`, sólo estamos intentando
+encontrar el más largo `i32` o `char`. Como discutimos en el Capítulo Chapter 4, los tipos como
+`i32` y `char` que tienen un tamaño conocido pueden ser almacenadas en el montón, así que ellos
+implementan el rasgo `Copy`. Cuando cambiamos la función `largest` a ser
+genérica, ahora es posible que el parámetro `list` podría tener tipos en él
+que no implementan el rasgo `Copy`, lo que significa que no seremos capaces de mover
+valor fuera de `list[0]` y dentro de la variable `largest`.
 
 If we only want to be able to call this code with types that are `Copy`, we can
 add `Copy` to the trait bounds of `T`! Listing 10-16 shows the complete code of
