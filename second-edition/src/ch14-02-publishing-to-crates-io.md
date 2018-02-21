@@ -51,14 +51,14 @@ function</span>
 Justo aquí, estamos dando una descripción de qué es lo que hace la función
 `add_one`, comenzamos una sección con la cabecera `Examples`, y luego ofrecemos
 código que demuestra cómo se usa la función `add_one`. Podemos generar la
-documentación HTML desde éste comentario de documentación si ejecutamos
+documentación HTML desde este comentario de documentación si ejecutamos
 `cargo doc`. Este comando ejecuta la herramienta distribuída con Rust `rustdoc`
 e introduce la documentación HTML generada en el directorio *target/doc*.
 
 Por conveniencia, ejecutar `cargo doc --open` construirá el HTML para su
 documentación del crate actual (así como también construirá la documentación
-para todas sus dependencias del crate) y abrirá el resultado en un buscador web.
-Navegue a la función `add_one` y usted verá cómo se muestrael texto en los 
+para todas las dependencias de su crate) y abrirá el resultado en un buscador web.
+Navegue a la función `add_one` y usted verá cómo se muestra el texto en los 
 comentarios de documentación, como en la Figura 14-1:
 
 <img alt="Rendered HTML documentation for the `add_one` function of `my_crate`" src="img/trpl14-01.png" class="center" />
@@ -76,9 +76,9 @@ los autores de crates suelen usar en sus documentaciones incluyen:
   podría `panic!` (entrar en pánico). Los llamadores de la función que no quieran
   que sus programas entren en pánico deberán asegurarse de no llamar la función
   en estas situaciones.
-* **Errores**: Si la función retorna un `Result` (resultado), describiendo los
+* **Errores**: Si la función retorna un `Result` (resultado), describir los
   tipos de errores que podrían ocurrir y qué condiciones son las que podrían
-  causar que estos errores sean retornados pueden ser útiles para los llamadores,
+  causar que estos errores sean retornados puede ser útil para los llamadores,
   para ellos así ser capaces de escribir código que maneje los diferentes tipos
   de errores de diferentes formas.
 * **Seguridad**: Si llamar a la función es `unsafe` (inseguro) (discutiremos la
@@ -88,7 +88,7 @@ los autores de crates suelen usar en sus documentaciones incluyen:
 
 La mayoría de las secciones de comentarios de documentación no necesitan todas
 estas secciones, pero es una buena lista para recordarle los aspectos de su código
-que otras personas querrán saber a la hora de llamar su código.
+que otras personas querrán saber a la hora de llamarlo.
 
 #### Comentarios de Documentación como Exámenes
 
@@ -99,7 +99,7 @@ ejecutar `cargo test` ejecutará los ejemplos de códigos en su documentación,
 que los ejemplos que no funcionan porque el código ha cambiado desde que la
 documentación se escribió. Ejecute `cargo text` con la documentación para la función
 `add_one` desde el Listado 14-1; usted debería de ver una sección en los resultados
-del exámen que se vería así:
+del exámen que se verá así:
 
 ```text
    Doc-tests my_crate
