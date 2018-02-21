@@ -1,39 +1,39 @@
-## How to Write Tests
+## Cómo Escribir Pruebas
 
-Tests are Rust functions that verify that the non-test code is functioning in
-the expected manner. The bodies of test functions typically perform these three
-actions:
+Las pruebas son funciones de Rust que verifican que el codigo que no está usando funcione
+de la manera esperada. Los cuerpos de las funciones de prueba realizan tipicamente estas tres
+acciones:
 
-1. Set up any needed data or state
-2. Run the code we want to test
-3. Assert the results are what we expect
+1. Colocan un dato o estado necesitado
+2. corren el código que queremos probar
+3. Aseguran los resultados que estamos esperando
 
-Let’s look at the features Rust provides specifically for writing tests that
-take these actions, which include the `test` attribute, a few macros, and the
-`should_panic` attribute.
+Miremos las caracteristicas que nos provee Rust específicamente para escribir pruebas que
+engloben estas acciones, las cuales incluyen el atributo `test` , unos cuantos macros, y el
+atributo `should_panic` .
 
-### The Anatomy of a Test Function
+### La Anatomía de una Función de Prueba
 
-At its simplest, a test in Rust is a function that’s annotated with the `test`
-attribute. Attributes are metadata about pieces of Rust code; one example is
-the `derive` attribute we used with structs in Chapter 5. To change a function
-into a test function, we add `#[test]` on the line before `fn`. When we run our
-tests with the `cargo test` command, Rust builds a test runner binary that runs
-the functions annotated with the `test` attribute and reports on whether each
-test function passes or fails.
+De la manera más simple, una prueba en Rust es una función que está anotada con el atributo `test`.
+Los atributos son datos metas sobre piezas del código Rust; un ejemplo es
+el atributo `derive` que usamos con las estructuras en el Capítulo 5. Para cambiar una función
+a una de prueba, agregamos `#[test]` en la línea anterior a `fn`. Cuando corremos nuestras 
+pruebas con el comando `cargo test` Rust construye un binario que ejecute el test que corre
+las funciones anotadas con el atributo `test` y reporta si cada 
+función de prueba aprueba o falla.
 
-In Chapter 7, we saw that when we make a new library project with Cargo, a test
-module with a test function in it is automatically generated for us. This
-module helps us start writing our tests so we don’t have to look up the exact
-structure and syntax of test functions every time we start a new project. We
-can add as many additional test functions and as many test modules as we want!
+En el Capítulo 7 vimos que cuando hacemos un nuevo proyecto de biblioteca con Cargo, un módulo
+de prueba con una función de prueba en él es automáticamente generado para nosotros. Este
+módulo nos ayuda a empezar a escribir nuestras pruebas para que no tengamos que buscar la estructura
+o sintaxis exactas de las funciones de prueba cada vez que empezamos un nuevo proyecto. Podemos
+también agregar tantas funciones y módulos de prueba adicionales como queramos.
 
-We’ll explore some aspects of how tests work by experimenting with the template
-test generated for us without actually testing any code. Then we’ll write some
-real-world tests that call some code that we’ve written and assert that its
-behavior is correct.
+Exploraremos algunos aspectos de como trabajan las pruebas al experimentar con el la prueba
+de la plantilla generada para nosotros sin probar ningún código. Entonces escribiremos unas
+pruebas en el mundo real que llamen algún código que hayamos escrito y asegurar que su
+comportamiento sea uno correcto.
 
-Let’s create a new library project called `adder`:
+Vamos a crear un nuevo proyecto en la biblioteca llamado `adder`:
 
 ```text
 $ cargo new adder
@@ -41,10 +41,10 @@ $ cargo new adder
 $ cd adder
 ```
 
-The contents of the *src/lib.rs* file in your adder library should look like
-Listing 11-1:
+Los contenidos del archivo *src/lib.rs* en tu biblioteca de complementos deberían verse como
+los del listado 11-1:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 #[cfg(test)]
@@ -56,21 +56,21 @@ mod tests {
 }
 ```
 
-<span class="caption">Listing 11-1: The test module and function generated
-automatically by `cargo new`</span>
+<span class="caption">Listado 11-1: El módulo de prueba y la función generada 
+automáticamente por `cargo new`</span>
 
-For now, let’s ignore the top two lines and focus on the function to see how it
-works. Note the `#[test]` annotation before the `fn` line: this attribute
-indicates this is a test function, so the test runner knows to treat this
-function as a test. We could also have non-test functions in the `tests` module
-to help set up common scenarios or perform common operations, so we need to
-indicate which functions are tests by using the `#[test]` attribute.
+Por ahora ignoremos las dos lineas superiores y enfoquémonos en la función para ver cómo
+funciona. Date cuenta de que la anotación `#[test]` está antes de la linea `fn`: este atributo
+indica que ésta es una función de prueba, así que el ejecutador de la prueba sabe cómo tratar esta 
+función de prueba. Podríamos tener funciones que no lo son en el módulo `tests` 
+para que nos ayuden a crear escenarios o realizar operaciones comunes, así que necesitamos 
+indicarle qué funciones son de prueba usando el atributo `#[test]`.
 
-The function body uses the `assert_eq!` macro to assert that 2 + 2 equals 4.
-This assertion serves as an example of the format for a typical test. Let’s run
-it to see that this test passes.
+La función del cuerpo usa el macro `assert_eq!` para asegurar que 2 + 2 es igual a 4.
+Esta afirmación sirve como un ejemplo del formato para el la prueba típica. Vamos a correrla
+para ver que esta prueba es satisfactoria.
 
-The `cargo test` command runs all tests in our project, as shown in Listing
+El comando `cargo test` corre todas las pruebas en nuestro proyecto, como lo muestra el listado
 11-2:
 
 ```text
@@ -91,37 +91,37 @@ running 0 tests
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-<span class="caption">Listing 11-2: The output from running the automatically
-generated test</span>
+<span class="caption">Listado 11-2: La respuesta de correr la prueba que ha sido generada 
+automaticamente</span>
 
-Cargo compiled and ran the test. After the `Compiling`, `Finished`, and
-`Running` lines is the line `running 1 test`. The next line shows the name
-of the generated test function, called `it_works`, and the result of running
-that test, `ok`. The overall summary of running the tests appears next. The
-text `test result: ok.` means that all the tests passed, and the portion that
-reads `1 passed; 0 failed` totals the number of tests that passed or failed.
+Cargo compiló y corrió el la prueba. Luego de las lineas `Compiling`, `Finished`, y
+`Running` esta linea `running 1 test`, la siguiente linea muestra el nombre 
+de la función de prueba generada, llamada `it_works`, y el resultado del correr 
+esa prueba, `ok`. El resumen completo de la prueba ejecutada es lo siguiente que aparece. El
+texto `test result: ok.` significa que todos las pruebas han sido satisfactorias, y que la porción que 
+lee `1 passed; 0 failed` es el total del número de pruebas que han sido aprobadas o fallidas.
 
-Because we don’t have any tests we’ve marked as ignored, the summary shows `0
-ignored`. We also haven’t filtered the tests being run, so the end of the
-summary shows `0 filtered out`. We’ll talk about ignoring and filtering out
-tests in the next section, “Controlling How Tests Are Run.”
+Ya que no tenemos ninguna prueba que tengamos marcada como ignorado, el resumen muestra `0
+ignored`. Tampoco hemos filtrado las pruebas que se están ejecutando, así que el final del
+resumen muestra `0 filtered out`. Hablaremos del ignorar y filtrar
+pruebas en la siguiente sección, “Controlando cómo son ejecutados los tests.”
 
-The `0 measured` statistic is for benchmark tests that measure performance.
-Benchmark tests are, as of this writing, only available in nightly Rust. See
-Chapter 1 for more information about nightly Rust.
+La estadística `0 measured` se usa para pruebas de referencia que miden el desempeño.
+Las pruebas de referencia son, en estos escritos, solo disponible en el Rust nightly. Mira
+El capítulo 1 para más información sobre el Rust nightly.
 
-The next part of the test output, which starts with `Doc-tests adder`, is for
-the results of any documentation tests. We don’t have any documentation tests
-yet, but Rust can compile any code examples that appear in our API
-documentation. This feature helps us keep our docs and our code in sync! We’ll
-discuss how to write documentation tests in the “Documentation Comments”
-section of Chapter 14. For now, we’ll ignore the `Doc-tests` output.
+La siguiente parte de la respuesta de la prueba, la cual comienza con `Doc-tests adder`, es para
+los resultados de cualquier prueba de documentación. No tenemos ninguna 
+por ahora, pero Rust puede compilar cualquier ejemplo de códigos que aparezcan en nuestra documentación
+API. ¡Esta caracteristica nos ayuda a mantener nuestros documentos y nuestro código en un estado de sincronización! Discutiremos
+cómo escribir pruebas de documentación en la sección 
+“Comentarios de Cocumentación” del Capítulo 14. Por ahora, ignoraremos la respuesta `Doc-tests`.
 
-Let’s change the name of our test to see how that changes the test output.
-Change the `it_works` function to a different name, such as `exploration`, like
-so:
+Cambiemos el nombre de nuestra prueba para ver cómo eso cambia el resultado de la misma.
+Cambia la función `it_works` a un nombre diferente, uno como `exploration`, de esta manera:
 
-<span class="filename">Filename: src/lib.rs</span>
+
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 #[cfg(test)]
@@ -133,7 +133,7 @@ mod tests {
 }
 ```
 
-Then run `cargo test` again. The output now shows `exploration` instead of
+Entonces ejecuta `cargo test` de nuevo. La respuesta ahora muestra `exploration` en vez de
 `it_works`:
 
 ```text
@@ -143,14 +143,14 @@ test tests::exploration ... ok
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-Let’s add another test, but this time we’ll make a test that fails! Tests fail
-when something in the test function panics. Each test is run in a new thread,
-and when the main thread sees that a test thread has died, the test is marked
-as failed. We talked about the simplest way to cause a panic in Chapter 9,
-which is to call the `panic!` macro. Enter the new test, `another`, so your
-*src/lib.rs* file looks like Listing 11-3:
+Añadamos otra prueba, ¡pero esta vez haremos una que falle! Ellas fallan
+cuando algo dentro de la función de prueba entra en pánico. Cada una es ejecutada en un nuevo hilo,
+y cuando el hilo principal se da cuenta de que un hilo de prueba ha muerto, la prueba es marcada 
+como fallida. Hablamos sobre la manera más simple para causar pánico en el Capítulo 9,
+la cual es llamar al macro `panic!`. Ingresa en la nueva prueba, `another`, para que tu archivo
+*src/lib.rs* se parezca al del Listado 11-3:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del Archivo: src/lib.rs</span>
 
 ```rust
 #[cfg(test)]
@@ -167,11 +167,11 @@ mod tests {
 }
 ```
 
-<span class="caption">Listing 11-3: Adding a second test that will fail because
-we call the `panic!` macro</span>
+<span class="caption">Listado 11-3: Añadiendo una segunda prueba que fallará porque 
+llamamos el macro `panic!` </span>
 
-Run the tests again using `cargo test`. The output should look like Listing
-11-4, which shows that our `exploration` test passed and `another` failed:
+Ejecuta la prueba de nuevo usando `cargo test`. La respuesta debería lucir como la del Listado 
+11-4, la cual muestra que nuestra prueba `exploration` es satisfactoria y `another` es fallida:
 
 ```text
 running 2 tests
@@ -192,24 +192,24 @@ test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out
 error: test failed
 ```
 
-<span class="caption">Listing 11-4: Test results when one test passes and one
-test fails</span>
+<span class="caption">Listado 11-4: Los resultados de las pruebas cuando una es satisfactoria y la
+otra es fallida</span>
 
-Instead of `ok`, the line `test tests::another` shows `FAILED`. Two new
-sections appear between the individual results and the summary: the first
-section displays the detailed reason for each test failure. In this case,
-`another` failed because it `panicked at 'Make this test fail'`, which happened
-on line 10 in the *src/lib.rs* file. The next section lists just the names of
-all the failing tests, which is useful when there are lots of tests and lots of
-detailed failing test output. We can use the name of a failing test to run just
-that test to more easily debug it; we’ll talk more about ways to run tests in
-the “Controlling How Tests Are Run” section.
+En vez de `ok`, la linea `test tests::another` muestra `FAILED`. Dos nuevas
+secciones se muestran entre los resultados individuales y el resumen: La primera sección
+muestra la razón detallada de por qué cada prueba fue falliza. En este caso,
+`another` falló porque `panicked at 'Make this test fail'`, lo que sucedió
+en la linea 10 del archivo *src/lib.rs*. La siguiente sección hace una lista solo de los nombres de
+todos las pruebas fallidas, lo que es útil cuando hay muchas pruebas y muchas 
+respuestas detalladas de las pruebas fallidas. Podemos usar el nombre de una prueba fallida para ejecutarla
+solamente y así eliminar los fallos de la misma; hablaremos más sobre otras formas de ejecutar pruebas en
+la sección “Controlando Cómo las Pruebas son Ejecutadas”.
 
-The summary line displays at the end: overall, our test result is `FAILED`.
-We had one test pass and one test fail.
+La linea de resumen se muestra al final: en general, nuestro resultado de prueba es `FAILED`.
+Hicimos que una prueba que fuese satisfactoria y otra fallida.
 
-Now that you’ve seen what the test results look like in different scenarios,
-let’s look at some macros other than `panic!` that are useful in tests.
+Ahora que ya has visto como lucen los resultados de las pruebas en diferentes escenarios,
+miremos otros macros además del `panic!` que son útiles en ellas.
 
 ### Checking Results with the `assert!` Macro
 
