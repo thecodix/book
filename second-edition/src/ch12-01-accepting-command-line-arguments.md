@@ -147,7 +147,7 @@ Searching for test
 In file sample.txt
 ```
 
-Genial, el programa está funcionando! Los valores de los argumentos que necesitamos están
+Genial, ¡el programa está funcionando! Los valores de los argumentos que necesitamos están
 siendo guardados en las variables correctas. Más adelante añadiremos el manejo de errores para 
 tratar ciertas situaciones potencialmente erróneas, como cuando el usuario no proporciona 
 argumentos; por ahora, ignoraremos esa situación y trabajemos en añadir capacidades de 
