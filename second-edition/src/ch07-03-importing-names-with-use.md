@@ -55,7 +55,7 @@ La línea `use a::series::of; ` significa que en lugar de usar la ruta completa
 `of`.
 
 La palabra clave `use` sólo aporta lo que hemos especificado en el alcance: no 
-lleva a los módulos niño a scope. Por eso todavía tenemos que usar 
+lleva a los módulos hijo a scope. Por eso todavía tenemos que usar 
 `of::nested_modules` cuando queremos llamar a la función `nested_modules`.
 
 Podríamos haber optado por incluir la función en scope en lugar de especificar 
