@@ -1,7 +1,7 @@
 ## Usando Objetos de Rasgos que Permiten Valores de Diferentes Tipos
 
 En el Capítulo 8, mencionamos que una limitación de los vectores es que ellos
-solo pueden almacenar elementos de un tipo. Creamos una solución en el Listado
+sólo pueden almacenar elementos de un tipo. Creamos una solución en el Listado
 8-10 donde definimos un enumerado `SpreadsheetCell` que tenía variantes para
 sostener enteros, flotantes, y texto. Esto significó que podíamos almacenar
 diferentes tipos de dato en cada celda y aún tener un vector que es representado
@@ -27,7 +27,7 @@ no podemos conocer ni definir todos los tipos que otros programadores querrán
 crear. Lo que sí sabemos es que `rust_gui` necesita llevar rastro de muchos
 valores que son de diferentes tipos, y necesita ser capaz de llamar un método
 `draw` en cada uno de estos diferentes tipos de valores. No necesita saber
-exactamente lo que pasará cuando llamamos el método `draw`, solo que el valor
+exactamente lo que pasará cuando llamamos el método `draw`, sólo que el valor
 tendrá el método disponibles para nosotros llamarlo.
 
 Para hacer esto en un lenguaje con herencia, podríamos definir una clase llamada
