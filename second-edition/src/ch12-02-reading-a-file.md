@@ -4,8 +4,8 @@ Ahora añadiremos funcionalidad para leer el archivo especificado en el argument
 línea de comandos `filename`. Primero, necesitamos un archivo de muestra para probarlo con: 
 el mejor tipo de archivo a utilizar para asegurarnos de que `minigrep` está funcionando es uno 
 con una pequeña cantidad de texto sobre múltiples líneas con algunas palabras repetidas. El 
-Listado 12-3 tiene un poema de Emily Dickinson que funcionará bien! Crea un archivo llamado
-*poem.txt* en el nivel raíz de tu proyecto e introduce el poema "No soy nadie!
+Listado 12-3 tiene un poema de Emily Dickinson que funcionará ¡bien! Crea un archivo llamado
+*poem.txt* en el nivel raíz de tu proyecto e introduce el poema "¡No soy nadie!
 ¿Quién eres tú?"
 
 <span class="filename">Nombre del Archivo: poem.txt</span>
