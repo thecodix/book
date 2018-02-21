@@ -1,27 +1,26 @@
-## Designing the Thread Pool Interface
+## Diseñando la interfaz del Grupo de Subproceso
 
-Let’s talk about what using the pool should look like. The authors often find
-that when trying to design some code, writing the client interface first can
-really help guide your design. Write the API of the code to be structured in
-the way you’d want to call it, then implement the functionality within that
-structure rather than implementing the functionality then designing the public
-API.
+Vamos a hablar sobre cómo debería verse el uso del grupo. Los autores a menudo encuentran 
+que cuando se intenta diseñar algún código, escribir primero la interfaz del cliente puede 
+ayudar realmente a guiar su diseño. Escriba la API del código que se estructurará de la 
+manera en que le gustaría llamarlo, luego implemente la funcionalidad dentro de esa estructura 
+en lugar de implementar la funcionalidad y luego diseñar la API pública.
 
-Similar to how we used Test Driven Development in the project in Chapter 12,
-we’re going to use Compiler Driven Development here. We’re going to write the
-code that calls the functions we wish we had, then we’ll lean on the compiler
-to tell us what we should change next. The compiler error messages will guide
-our implementation.
+De manera similar a como utilizamos el Desarrollo Impulsado por Prueba en el proyecto del 
+Capítulo 12, vamos a usar el Desarrollo Impulsado por el Compilador aquí. Vamos a escribir 
+el código que llama a las funciones que deseamos tener, luego nos apoyaremos en el compilador 
+para decirnos qué debemos cambiar a continuación. Los mensajes de error del compilador guiarán 
+nuestra implementación.
 
-### Code Structure if We Could Use `thread::spawn`
+### Estructura del Código si Pudiéramos Usar `thread::spawn`
 
-First, let’s explore what the code to create a new thread for every connection
-could look like. This isn’t our final plan due to the problems with potentially
-spawning an unlimited number of threads that we talked about earlier, but it’s
-a start. Listing 20-11 shows the changes to `main` to spawn a new thread to
-handle each stream within the `for` loop:
+Primero, exploremos cómo podría ser el código para crear un nuevo subproceso para cada conexión. 
+Este no es nuestro plan final debido a los problemas con el posible desarrollo de un número 
+ilimitado de subprocesos de los que hablamos anteriormente, pero es un comienzo. El Listado 20-11 
+muestra los cambios a `main` para engendrar un nuevo subproceso para manejar cada flujo dentro del 
+bucle `for`:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,no_run
 # use std::thread;
@@ -43,23 +42,22 @@ fn main() {
 # fn handle_connection(mut stream: TcpStream) {}
 ```
 
-<span class="caption">Listing 20-11: Spawning a new thread for each
-stream</span>
+<span class="caption">Listado 20-11: Engendrando un nuevo subproceso para cada
+flujo</span>
 
-As we learned in Chapter 16, `thread::spawn` will create a new thread and then
-run the code in the closure in it. If you run this code and load `/sleep` and
-then `/` in two browser tabs, you’ll indeed see the request to `/` doesn’t have
-to wait for `/sleep` to finish. But as we mentioned, this will eventually
-overwhelm the system since we’re making new threads without any limit.
+Como aprendimos en el Capítulo 16, `thread::spawn` creará un nuevo subproceso y luego ejecutará 
+el código en el cierre. Si ejecuta este código y carga `/sleep` y luego `/` en dos pestañas del 
+navegador, verá que la solicitud a `/` no tiene que esperar a que `/sleep` termine. Pero como 
+mencionamos, esto eventualmente abrumará al sistema ya que estamos creando nuevos subprocesos sin límite. 
 
-### Creating a Similar Interface for `ThreadPool`
+### Creando una Interfaz Similar para `ThreadPool`
 
-We want our thread pool to work in a similar, familiar way so that switching
-from threads to a thread pool doesn’t require large changes to the code we want
-to run in the pool. Listing 20-12 shows the hypothetical interface for a
-`ThreadPool` struct we’d like to use instead of `thread::spawn`:
+Queremos que nuestro grupo de subprocesos funcione de forma similar y familiar, de modo que el 
+cambio de subprocesos a un grupo de subprocesos no requiera grandes cambios en el código que queremos 
+ejecutar en el grupo. El Listado 20-12 muestra la interfaz hipotética para una estructura `ThreadPool` 
+que nos gustaría usar en lugar de `thread::spawn`:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,no_run
 # use std::thread;
@@ -88,17 +86,16 @@ fn main() {
 # fn handle_connection(mut stream: TcpStream) {}
 ```
 
-<span class="caption">Listing 20-12: How we want to be able to use the
-`ThreadPool` we’re going to implement</span>
+<span class="caption">Listado 20-12: Cómo queremos ser capaces de usar el `ThreadPool` vamos a implementar</span>
 
-We use `ThreadPool::new` to create a new thread pool with a configurable number
-of threads, in this case four. Then, in the `for` loop, `pool.execute` will
-work in a similar way to `thread::spawn`.
+Usamos `ThreadPool::new` para crear un nuevo grupo de subprocesos con un número configurable de 
+subprocesos, en este caso cuatro. Luego, en el bucle `for`, `pool.execute` funcionará de forma 
+similar a `thread::spawn`.
 
-### Compiler Driven Development to Get the API Compiling
+### Desarrollo Impulsado por el Compilador para Obtener la Compilación API
 
-Go ahead and make the changes in Listing 20-12 to *src/main.rs*, and let’s use
-the compiler errors to drive our development. Here’s the first error we get:
+Siga adelante y realice los cambios en el Listado 20-12 a *src/main.rs*, y usemos los errores del 
+compilador para impulsar nuestro desarrollo. Aquí está el primer error que obtenemos:
 
 ```text
 $ cargo check
@@ -113,37 +110,35 @@ error[E0433]: failed to resolve. Use of undeclared type or module `ThreadPool`
 error: aborting due to previous error
 ```
 
-Great, we need a `ThreadPool`. Let’s switch the `hello` crate from a binary
-crate to a library crate to hold our `ThreadPool` implementation, since the
-thread pool implementation will be independent of the particular kind of work
-that we’re doing in our web server. Once we’ve got the thread pool library
-written, we could use that functionality to do whatever work we want to do, not
-just serve web requests.
+Genial, necesitamos un `ThreadPool`. Cambiemos la caja `hello` de una caja binaria a una caja 
+de biblioteca para mantener nuestra implementación `ThreadPool`, ya que la implementación del 
+grupo de subprocesos será independiente del tipo particular de trabajo que estamos haciendo en 
+nuestro servidor web. Una vez que tengamos la biblioteca del grupo de subprocesos escrita, podríamos 
+usar esa funcionalidad para hacer el trabajo que queramos hacer, no solo para servir solicitudes web.
 
-So create *src/lib.rs* that contains the simplest definition of a `ThreadPool`
-struct that we can have for now:
+Entonces cree *src/lib.rs* que contenga la definición más simple de una estructura `ThreadPool` 
+que podamos tener por ahora:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 pub struct ThreadPool;
 ```
 
-Then create a new directory, *src/bin*, and move the binary crate rooted in
-*src/main.rs* into *src/bin/main.rs*. This will make the library crate be the
-primary crate in the *hello* directory; we can still run the binary in
-*src/bin/main.rs* using `cargo run` though. After moving the *main.rs* file,
-edit it to bring the library crate in and bring `ThreadPool` into scope by
-adding this at the top of *src/bin/main.rs*:
+A continuación, cree un nuevo directorio, *src/bin*, y mueva la caja binaria enraizada en *src/main.rs* 
+dentro de *src/bin/main.rs*. Esto hará que la caja de la biblioteca sea la caja primaria en el 
+directorio *hello*; aún podemos ejecutar el binario en *src/bin/main.rs* usando `cargo run`. Después 
+de mover el archivo *main.rs*, edítelo para traer la caja de la biblioteca y poner `ThreadPool` en el 
+alcance agregando esto en la parte superior de *src/bin/main.rs*:
 
-<span class="filename">Filename: src/bin/main.rs</span>
+<span class="filename">Nombre del archivo: src/bin/main.rs</span>
 
 ```rust,ignore
 extern crate hello;
 use hello::ThreadPool;
 ```
 
-And try again in order to get the next error that we need to address:
+Y vuelva a intentarlo para obtener el siguiente error que debemos abordar:
 
 ```text
 $ cargo check
@@ -157,13 +152,11 @@ current scope
    |
 ```
 
-Cool, the next thing is to create an associated function named `new` for
-`ThreadPool`. We also know that `new` needs to have one parameter that can
-accept `4` as an argument, and `new` should return a `ThreadPool` instance.
-Let’s implement the simplest `new` function that will have those
-characteristics:
+Genial, lo siguiente es crear una función asociada llamada `new` para `ThreadPool`. También sabemos 
+que `new` necesita tener un parámetro que pueda aceptar `4` como argumento, y `new` debería devolver 
+una instancia `ThreadPool`. Implementemos la función `new` más simple que tendrá esas características:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 pub struct ThreadPool;
@@ -175,13 +168,12 @@ impl ThreadPool {
 }
 ```
 
-We picked `u32` as the type of the `size` parameter, since we know that a
-negative number of threads makes no sense. `u32` is a solid default. Once we
-actually implement `new` for real, we’ll reconsider whether this is the right
-choice for what the implementation needs, but for now, we’re just working
-through compiler errors.
+Escogimos `u32` como el tipo del parámetro `size` ya que sabemos que un número negativo de 
+subprocesos no tiene sentido. `u32` es un valor predeterminado sólido. Una vez que realmente 
+implementamos `new` de verdad, reconsideraremos si esta es la opción correcta para lo que la 
+implementación necesita, pero por ahora, solo estamos trabajando en los errores del compilador.
 
-Let’s check the code again:
+Revisemos el código nuevamente:
 
 ```text
 $ cargo check
@@ -200,14 +192,12 @@ current scope
    |              ^^^^^^^
 ```
 
-Okay, a warning and an error. Ignoring the warning for a moment, the error is
-because we don’t have an `execute` method on `ThreadPool`. Let’s define one,
-and we need it to take a closure. If you remember from Chapter 13, we can take
-closures as arguments with three different traits: `Fn`, `FnMut`, and `FnOnce`.
-What kind of closure should we use? Well, we know we’re going to end up doing
-something similar to `thread::spawn`; what bounds does the signature of
-`thread::spawn` have on its argument? Let’s look at the documentation, which
-says:
+De acuerdo, una advertencia y un error. Ignorando la advertencia por un momento, el error es 
+porque no tenemos un método `execute` en `ThreadPool`. Definamos uno, y necesitamos que tome un 
+cierre. Si recuerda del Capítulo 13, podemos tomar cierres como argumentos con tres rasgos 
+diferentes: `Fn`, `FnMut`, y `FnOnce`. ¿Qué tipo de cierre deberíamos usar? Bueno, sabemos que 
+vamos a terminar haciendo algo similar a `thread::spawn`; ¿Qué límites tiene la firma de `thread::spawn` 
+en su argumento? Miremos la documentación, que dice:
 
 ```rust,ignore
 pub fn spawn<F, T>(f: F) -> JoinHandle<T>
@@ -216,20 +206,18 @@ pub fn spawn<F, T>(f: F) -> JoinHandle<T>
         T: Send + 'static
 ```
 
-`F` is the parameter we care about here; `T` is related to the return value and
-we’re not concerned with that. Given that `spawn` uses `FnOnce` as the trait
-bound on `F`, it’s probably what we want as well, since we’ll eventually be
-passing the argument we get in `execute` to `spawn`. We can be further
-confident that `FnOnce` is the trait that we want to use since the thread for
-running a request is only going to execute that request’s closure one time.
+`F` es el parámetro que nos importa aquí; `T` está relacionado con el valor de retorno y no estamos 
+preocupados con eso. Dado que `spawn` usa `FnOnce` como el rasgo ligado en `F`, es probablemente lo 
+que también queremos, ya que eventualmente pasaremos el argumento que obtenemos en `execute` a `spawn`. 
+Podemos estar más seguros de que `FnOnce` es el rasgo que queremos usar, ya que el subproceso para 
+ejecutar una solicitud solo ejecutará el cierre de esa solicitud una sola vez.
 
-`F` also has the trait bound `Send` and the lifetime bound `'static`, which
-also make sense for our situation: we need `Send` to transfer the closure from
-one thread to another, and `'static` because we don’t know how long the thread
-will execute. Let’s create an `execute` method on `ThreadPool` that will take a
-generic parameter `F` with these bounds:
+`F` también tiene el atributo `Send` y el límite de vida `'static`, que también tienen sentido para 
+nuestra situación: necesitamos `Send` para transferir el cierre de un subproceso a otro, y `'static` 
+porque no sé cuánto tiempo se ejecutará el subproceso. Vamos a crear un método `execute` en `ThreadPool` 
+que tomará un parámetro genérico `F` con estos límites:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 # pub struct ThreadPool;
@@ -245,14 +233,12 @@ impl ThreadPool {
 }
 ```
 
-The `FnOnce` trait still needs the `()` after it since this `FnOnce` is
-representing a closure that takes no parameters and doesn’t return a value.
-Just like function definitions, the return type can be omitted from the
-signature, but even if we have no parameters, we still need the parentheses.
+El rasgo `FnOnce` todavía necesita el `()` después de este, ya que este `FnOnce` representa un cierre 
+que no toma parámetros y no devuelve un valor. Al igual que las definiciones de función, el tipo de 
+devolución puede omitirse de la firma, pero incluso si no tenemos parámetros, aún necesitamos los paréntesis.
 
-Again, since we’re working on getting the interface compiling, we’re adding the
-simplest implementation of the `execute` method, which does nothing. Let’s
-check again:
+Nuevamente, dado que estamos trabajando para obtener la compilación de la interfaz, estamos agregando la 
+implementación más simple del método `execute`, el cual no hace nada. Revisemos nuevamente:
 
 ```text
 $ cargo check
@@ -270,15 +256,14 @@ warning: unused variable: `f`, #[warn(unused_variables)] on by default
   |                              ^
 ```
 
-Only warnings now! It compiles! Note that if you try `cargo run` and making a
-request in the browser, though, you’ll see the errors in the browser again that
-we saw in the beginning of the chapter. Our library isn’t actually calling the
-closure passed to `execute` yet!
+¡Solo advertencias ahora! ¡Compila! Tenga en cuenta que si prueba `cargo run` y realiza una solicitud 
+en el navegador, verá los errores en el navegador de nuevo que vimos al principio del capítulo. 
+¡Nuestra biblioteca no está llamando al cierre pasado a `execute` todavía!
 
-> A saying you might hear about languages with strict compilers like Haskell
-> and Rust is “if the code compiles, it works.” This is a good time to remember
-> that this is just a phrase and a feeling people sometimes have, it’s not
-> actually universally true. Our project compiles, but it does absolutely
-> nothing! If we were building a real, complete project, this would be a great
-> time to start writing unit tests to check that the code compiles *and* has
-> the behavior we want.
+> Un dicho que puede escuchar sobre idiomas con compiladores estrictos como Haskell
+> y Rust es "si el código se compila, funciona". Este es un buen momento para recordar
+> que esta es solo una frase y un sentimiento que la gente a veces tiene, no es
+> universalmente verdadero. Nuestro proyecto compila, ¡pero no hace absolutamente
+> nada! Si estuviéramos construyendo un proyecto real y completo, sería gran
+> hora de comenzar a escribir pruebas unitarias para verificar que el código compila *y* tiene
+> el comportamiento que queremos.
