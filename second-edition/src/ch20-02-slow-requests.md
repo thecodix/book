@@ -1,22 +1,22 @@
-## How Slow Requests Affect Throughput
+## Como Los Requerimientos Lentos Afectan El Rendimiento 
 
-Right now, the server will process each request in turn. That works for
-services like ours that aren’t expected to get very many requests, but as
-applications get more complex, this sort of serial execution isn’t optimal.
+Ahora mismo, el servidor procesará cada requerimiento en turno. Este funciona para
+servicios como el nuestros que no esperan recibir muchos requerimientos, pero como 
+las aplicaciones se vuelven mas complejas, este tipo de ejecuciones en serie no es óptima.
 
-Because our current program processes connections sequentially, it won’t
-process a second connection until it’s completed processing the first. If we
-get one request that takes a long time to process, requests coming in during
-that time will have to wait until the long request is finished, even if the new
-requests can be processed quickly. Let’s see this in action.
+Debido a que nuestro programa actual procesa las conexiones secuencialmente, este no 
+procesará una segunda conexión hasta que se haya completado el procesamiento de la primera. Si nosotros 
+tenemos un requerimiento que tome mucho tiempo procesar, los requerimientos recibidos durante 
+ese tiempo tendrán que esperar hasta que es terminado el requerimiento largo, aún si el nuevo 
+requerimiento pueda ser procesado rápidamente. Veamos esto en acción. 
 
-### Simulating a Slow Request in the Current Server Implementation
+### Simulación de un Requerimiento Lento en la Implementación del Servidor Actual 
 
-Let’s see the effect of a request that takes a long time to process on requests
-made to our current server implementation. Listing 20-10 shows the code to
-respond to another request, `/sleep`, that will cause the server to sleep for
-five seconds before responding. This will simulate a slow request so that we
-can see that our server processes requests serially.
+Veamos el efecto de un requerimiento que tome un largo tiempo para procesar en requerimientos 
+hechos en nuestra implementacion del servidor actual. El listado 20-10 muestra el código para  
+responder a otro requerimiento,`/sleep`, este causará que el servidor se duerma por
+cinco segundos antes de responder. Esto simulará un requerimiento lento para que nosotros
+podamos ver que nuestros servidor procesa los requerimientos en serie.
 
 <span class="filename">Filename: src/main.rs</span>
 
@@ -52,59 +52,59 @@ fn handle_connection(mut stream: TcpStream) {
 <span class="caption">Listing 20-10: Simulating a slow request by recognizing
 `/sleep` and sleeping for 5 seconds</span>
 
-This code is a bit messy, but it’s good enough for our simulation purposes! We
-created a second request `sleep`, whose data we’ll recognize. We added an `else
-if` after the `if` block to check for the request to `/sleep`, and when we see
-that request, we’ll sleep for five seconds before rendering the hello page.
+Este código es un poco desordenado, pero es suficientemente bueno para nuestros propósitos de simulación! Nosotros hemos
+creado un segundo requerimiento `sleep`, cuya data nosotros reconoceremos. Nosotros añadimos un `else
+if` despues del bloque `if` para verificar que el requerimiento para `/sleep`, y cuando nosotros vemos      
+ese requerimiento, Nosotros dormiremos por cinco segundos antes de reproducir la pagina de saludo.
 
-You can really see how primitive our server is here; real libraries would
-handle the recognition of multiple requests in a less verbose way!
+Usted puede realmente ver cuan primitivo es nuestro servidor aquí;las librerías reales podrían 
+manejar el reconocimiento de múltiples requerimientos en una manera menos verbosa!
 
-Start the server with `cargo run`, and then open up two browser windows: one
-for `http://localhost:8080/` and one for `http://localhost:8080/sleep`. If
-you hit `/` a few times, as before, you’ll see it respond quickly. But if you
-hit `/sleep`, and then load up `/`, you’ll see that `/` waits until `sleep`
-has slept for its full five seconds before going on.
+Inicie el servidor con `cargo run`, y luego abra dos ventanas del navegador: una
+para `http://localhost:8080/` y una para `http://localhost:8080/sleep`. Si
+Usted toca unas pocas veces `/`, como antes, Usted verá que responderá rápidamente. Pero si Ud
+toca `/sleep`, y luego carga `/`, Ud. verá que `/` espera hasta `sleep`
+ha dormido por sus cinco segundos completos antes de continuar.
 
-There are multiple ways we could change how our web server works in order to
-avoid having all requests back up behind a slow request; the one we’re going to
-implement is a thread pool.
+Existen multiples vías en que nosotros podríamos cambiar como funciones nuestro servidor web con la finalidad de 
+evitar tener todos los requerimientos de respaldo detrás de un requerimiento lento; el que vamos a 
+implementar es un grupo de subprocesos.
 
-### Improving Throughput with a Thread Pool
+### Mejorando el Rendimiento con un Grupo de Subprocesos
 
-A *thread pool* is a group of spawned threads that are ready to handle some
-task. When the program receives a new task, one of the threads in the pool will
-be assigned the task and will go off and process it. The remaining threads in
-the pool are available to handle any other tasks that come in while the first
-thread is processing. When the first thread is done processing its task, it
-gets returned to the pool of idle threads ready to handle a new task.
+Un *grupo de Subprocesos* es un grupo de procesos generados que estan listos para manejar algunas
+tareas. Cuando el programa recibe una nueva tarea, uno de los hilos del grupo será
+asignado a la tarea e irá y la procesará. El resto
+de los subprocesos estan disponibles para manejar cualquier otra tarea que venga mientras el primero
+esta procesando. Cuendo el primer hilo ha terminado de procesar la tarea, el
+regresa al grupo de subprocesos inactivos listo para manejar la próxima tarea.
 
-A thread pool will allow us to process connections concurrently: we can start
-processing a new connection before an older connection is finished. This
-increases the throughput of our server.
+Un grupo de sibprocesos nos permitirá procesar conexiones al mismo tiempo: nosotros podemos iniciar 
+el procesamiento de una nueva conexión antes que una conexión mas antigua este terminada. Esto
+incrementa el rendimiento de nuestro servidor.
 
-Here’s what we’re going to implement: instead of waiting for each request to
-process before starting on the next one, we’ll send the processing of each
-connection to a different thread. The threads will come from a pool of four
-threads that we’ll spawn when we start our program. The reason we’re limiting
-the number of threads to a small number is that if we created a new thread for
-each request as the requests come in, someone making ten million requests to
-our server could create havoc by using up all of our server’s resources and
-grinding the processing of all requests to a halt.
+Aqui esta lo que vamos a implementar: en lugar de esperar a que cada requerimiento sea
+procesado antes de empezar con el siguiente, nosotros enviaremos el procesamiento de cada
+conexión a un subgrupo diferente. Los subgrupos vendrán de un grupo de cuatro 
+subgrupos que nosotros engendraremos cuando nosotros iniciemos nuestro programa. La razón por la cual nosotros estamos limitando
+el número de subgrupos a un pequeño número es que si nosotros creamos un nuevo subgrupo
+para cada requermimiento mientras los requerimientos lleguen, alguien haciendo diez millones de requerimientos para
+nuestro servidor podría crear estragos mediante el uso de todos los recursos de nuestro servidor y
+moler el procesamiento de todos los requerimientos a un alto.
 
-Rather than spawning unlimited threads, we’ll have a fixed number of threads
-waiting in the pool. As requests come in, we’ll send the requests to the pool
-for processing. The pool will maintain a queue of incoming requests. Each of
-the threads in the pool will pop a request off of this queue, handle the
-request, and then ask the queue for another request. With this design, we can
-process `N` requests concurrently, where `N` is the number of threads. This
-still means that `N` long-running requests can cause requests to back up in the
-queue, but we’ve increased the number of long-running requests we can handle
-before that point from one to `N`.
+Antes que engendrar subgrupos ilimitadamente, nosotros tendremos un número fijo de subgrupos 
+esperando en la piscina. A medida que un requerimiento entre, nosotros enviaremos un requerimiento al grupo
+para el procesamiento. El grupo mantendrá una cola de requerimientos entrantes. Cada uno 
+de los subgrupos en la piscina sacará un requerimiento de esta cola, manejando el
+requerimiento, y luego preguntando a la cola por otro requerimiento. Con este diseño, nosotros podemos
+procesar `N` requerimientos a la vez, donde `N` es el número de subgrupos. Esto
+todavía significa que `N` requerimientos de largo procesamiento pueden causar que los requerimientos de respaldo en la 
+cola, pero nosotros hemos incrementado el número de el número de requerimientos de largo procesamientos que podemos manejar
+antes de ese puntos desde uno hasta `N`.
 
-This design is one of many ways to improve the throughput of our web server.
-This isn’t a book about web servers, though, so it’s the one we’re going to
-cover. Other options are the fork/join model and the single threaded async I/O
-model. If you’re interested in this topic, you may want to read more about
-other solutions and try to implement them in Rust; with a low-level language
-like Rust, all of these options are possible.
+Este diseño es una de las muchas vías para mejorar el procesamiento de nuestros servidor web.
+Este no es un libro sobre servidores web,aunque, es el único que vamos a 
+cubrir. Otras opciones son el modelo tenedor/unión y el modelo I/O asincrónico de un solo subgrupo.
+Si Ud. esta interesado en este tópico, Ud deseará leer más sobre
+otras soluciones y tratar de implementarlas en Rust; con un lenguaje de bajo nivel
+como Rust, todas estas opciones son posibles.
