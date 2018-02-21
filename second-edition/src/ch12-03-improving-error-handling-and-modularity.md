@@ -23,7 +23,7 @@ al abrir el archivo falla, pero el mensaje de error simplemente imprime `file no
 Abrir un archivo puede fallar de varias maneras, además de que el archivo falte: por 
 ejemplo, el archivo puede existir, pero es posible que no tengamos permiso para abrirlo. 
 Ahora mismo, si estamos en esa situación, imprimiríamos el mensaje de error `file not found`
-que daría al usuario la información incorrecta!
+que daría al usuario la información ¡incorrecta!
 
 Cuarto, usamos `expect` repetidamente para manejar diferentes errores, y si el usuario
 ejecuta nuestro programa sin especificar suficientes argumentos, obtendrá un error `index
