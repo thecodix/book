@@ -16,13 +16,13 @@ atributo `should_panic` .
 
 De la manera más simple, una prueba en Rust es una función que está anotada con el atributo `test`.
 Los atributos son datos metas sobre piezas del código Rust; un ejemplo es
-el atributo `derive` que usamos con las estructuras en el capítulo 5. Para cambiar una función
+el atributo `derive` que usamos con las estructuras en el Capítulo 5. Para cambiar una función
 a una de prueba, agregamos `#[test]` en la línea anterior a `fn`. Cuando corremos nuestras 
 pruebas con el comando `cargo test` Rust construye un binario que ejecute el test que corre
 las funciones anotadas con el atributo `test` y reporta si cada 
 función de prueba aprueba o falla.
 
-En el capítulo 7 vimos que cuando hacemos un nuevo proyecto de biblioteca con Cargo, un módulo
+En el Capítulo 7 vimos que cuando hacemos un nuevo proyecto de biblioteca con Cargo, un módulo
 de prueba con una función de prueba en él es automáticamente generado para nosotros. Este
 módulo nos ayuda a empezar a escribir nuestras pruebas para que no tengamos que buscar la estructura
 o sintaxis exactas de las funciones de prueba cada vez que empezamos un nuevo proyecto. Podemos
@@ -107,15 +107,15 @@ resumen muestra `0 filtered out`. Hablaremos del ignorar y filtrar
 pruebas en la siguiente sección, “Controlando cómo son ejecutados los tests.”
 
 La estadística `0 measured` se usa para pruebas de referencia que miden el desempeño.
-Las tests de referencia son, en estos escritos, solo disponible en el Rust nightly. Mira
+Las pruebas de referencia son, en estos escritos, solo disponible en el Rust nightly. Mira
 El capítulo 1 para más información sobre el Rust nightly.
 
 La siguiente parte de la respuesta de la prueba, la cual comienza con `Doc-tests adder`, es para
-los resultados de cualquier prueba de documentación. No tenemos ninguna prueba de documentación
+los resultados de cualquier prueba de documentación. No tenemos ninguna 
 por ahora, pero Rust puede compilar cualquier ejemplo de códigos que aparezcan en nuestra documentación
 API. ¡Esta caracteristica nos ayuda a mantener nuestros documentos y nuestro código en un estado de sincronización! Discutiremos
 cómo escribir pruebas de documentación en la sección 
-“Comentarios de documentación” del capítulo 14. Por ahora, ignoraremos la respuesta `Doc-tests`.
+“Comentarios de Cocumentación” del Capítulo 14. Por ahora, ignoraremos la respuesta `Doc-tests`.
 
 Cambiemos el nombre de nuestra prueba para ver cómo eso cambia el resultado de la misma.
 Cambia la función `it_works` a un nombre diferente, uno como `exploration`, de esta manera:
@@ -146,9 +146,9 @@ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 Añadamos otra prueba, ¡pero esta vez haremos una que falle! Ellas fallan
 cuando algo dentro de la función de prueba entra en pánico. Cada una es ejecutada en un nuevo hilo,
 y cuando el hilo principal se da cuenta de que un hilo de prueba ha muerto, la prueba es marcada 
-como fallida. Hablamos sobre la manera más simple para causar pánico en el capítulo 9,
+como fallida. Hablamos sobre la manera más simple para causar pánico en el Capítulo 9,
 la cual es llamar al macro `panic!`. Ingresa en la nueva prueba, `another`, para que tu archivo
-*src/lib.rs* se parezca al del listado 11-3:
+*src/lib.rs* se parezca al del Listado 11-3:
 
 <span class="filename">Nombre del Archivo: src/lib.rs</span>
 
@@ -170,7 +170,7 @@ mod tests {
 <span class="caption">Listado 11-3: Añadiendo una segunda prueba que fallará porque 
 llamamos el macro `panic!` </span>
 
-Ejecuta la prueba de nuevo usando `cargo test`. La respuesta debería lucir como la del listado 
+Ejecuta la prueba de nuevo usando `cargo test`. La respuesta debería lucir como la del Listado 
 11-4, la cual muestra que nuestra prueba `exploration` es satisfactoria y `another` es fallida:
 
 ```text
@@ -203,7 +203,7 @@ en la linea 10 del archivo *src/lib.rs*. La siguiente sección hace una lista so
 todos las pruebas fallidas, lo que es útil cuando hay muchas pruebas y muchas 
 respuestas detalladas de las pruebas fallidas. Podemos usar el nombre de una prueba fallida para ejecutarla
 solamente y así eliminar los fallos de la misma; hablaremos más sobre otras formas de ejecutar pruebas en
-la sección “Controlando cómo las pruebas son ejecutadas”.
+la sección “Controlando Cómo las Pruebas son Ejecutadas”.
 
 La linea de resumen se muestra al final: en general, nuestro resultado de prueba es `FAILED`.
 Hicimos que una prueba que fuese satisfactoria y otra fallida.
