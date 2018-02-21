@@ -194,16 +194,29 @@ happens when we call this method with `String` values. We’ll discuss generics
 in Chapter 10. This signature gives us the clues we need to understand the
 tricky bits of the `+` operator.
 
-Primero, `s2` tiene un `&`, queriendo decir que estamos añadiendo una *referencia* de la segunda cadena de caracteres a la segunda cadena debido al parámetro `s` en la función `add`: solo podemos añadir una `&str` a una `String`; no podemos añadir dos valores de `String`
-juntos. Pero espera - el tipo de `&s2` es `&String`, no `&str`, como se especifica en el segundo parámetro a `add`. Entonces,  ¿por qué el Listado 8-18 compila?
+First, `s2` has an `&`, meaning that we’re adding a *reference* of the second
+string to the first string because of the `s` parameter in the `add` function:
+we can only add a `&str` to a `String`; we can’t add two `String` values
+together. But wait - the type of `&s2` is `&String`, not `&str`, as specified
+in the second parameter to `add`. So why does Listing 8-18 compile?
 
-La razón por al cual somos capaces de usar `&s2` en la convocatoria a `add` es que el compilador puede *coerce* el argumento `&String` en una `&str`. Cuando convocamos el método `add`, Rust usa una *deref coercion*, el cual vuelve a `&s2` en `&s2[..]`.
-Discutiremos el deref coercion con mayor profundidad en el Capítulo 15. Porque `add` no toma posesión del parámetro `s`, `s2` seguirá siendo un `String` válido luego de esta operación.
+The reason we’re able to use `&s2` in the call to `add` is that the compiler
+can *coerce* the `&String` argument into a `&str`. When we call the `add`
+method, Rust uses a *deref coercion*, which here turns `&s2` into `&s2[..]`.
+We’ll discuss deref coercion in more depth in Chapter 15. Because `add` does
+not take ownership of the `s` parameter, `s2` will still be a valid `String`
+after this operation.
 
-Segundo, podemos ver en la firma que `add` toma posesión de `self`, porque `self` *not* tiene una `&`. Esto significa que el `s1` en el Listado 8-18 será movido a la convocatoria `add` y que ya no será válida luego de eso. Así que aunque `let s3 = s1 + &s2;` parece que va a copiar ambas cadenas y crear una nueva, este declaración en realidad toma posesión de `s1`, añade una copia de los contenidos de
-`s2`, y luego regresa posesión del resultado. En otras palabras, pararece que está haciendo un montón de copias, pero no: la implementación es más eficiente que el copiado.
+Second, we can see in the signature that `add` takes ownership of `self`,
+because `self` does *not* have an `&`. This means `s1` in Listing 8-18 will be
+moved into the `add` call and no longer be valid after that. So although `let
+s3 = s1 + &s2;` looks like it will copy both strings and create a new one, this
+statement actually takes ownership of `s1`, appends a copy of the contents of
+`s2`, and then returns ownership of the result. In other words, it looks like
+it’s making a lot of copies but isn’t: the implementation is more efficient
+than copying.
 
-Si necesitamos encadenar múltiples cadenas de caracteres, el comportamiento de `+` se vuelve difícil de manejar:
+If we need to concatenate multiple strings, the behavior of `+` gets unwieldy:
 
 ```rust
 let s1 = String::from("tic");
@@ -213,7 +226,9 @@ let s3 = String::from("toe");
 let s = s1 + "-" + &s2 + "-" + &s3;
 ```
 
-En este punto, `s` será `tic-tac-toe`. Con todos los caracteres `+` y `"`, será difícil ver qué está pasando. Para más cadenas complicadas combinándose, podemos usar la Macro `format!`:
+At this point, `s` will be `tic-tac-toe`. With all of the `+` and `"`
+characters, it’s difficult to see what’s going on. For more complicated string
+combining, we can use the `format!` macro:
 
 ```rust
 let s1 = String::from("tic");
@@ -223,11 +238,17 @@ let s3 = String::from("toe");
 let s = format!("{}-{}-{}", s1, s2, s3);
 ```
 
-Este código también establece a `s` para `tic-tac-toe`. La Macro `format!` funciona en la misma forma que `println!`, pero en lugar de poner la salida en la pantalla, devuelve una `String` con los contenidos. La versión del código que usa `format!` es mucho más fácil de leer y tampoco toma posesión de ninguno de sus parámetros.
+This code also sets `s` to `tic-tac-toe`. The `format!` macro works in the same
+way as `println!`, but instead of printing the output to the screen, it returns
+a `String` with the contents. The version of the code using `format!` is much
+easier to read and also doesn’t take ownership of any of its parameters.
 
-### Indexación en cadenas de caracteres
+### Indexing into Strings
 
-En muchos otros lenguajes de programación, acceder a caracteres individuales en una cadena de caracteres haciendo referencia de ellos indexando es una operación válida y común. Sin embargo, si intentamos acceder a partes de una `String` usando sintaxis de indexación en Rust, tendremos un error. Considere el código valido en Listado 8-19:
+In many other programming languages, accessing individual characters in a
+string by referencing them by index is a valid and common operation. However,
+if we try to access parts of a `String` using indexing syntax in Rust, we’ll
+get an error. Consider the invalid code in Listing 8-19:
 
 ```rust,ignore
 let s1 = String::from("hello");
@@ -237,7 +258,7 @@ let h = s1[0];
 <span class="caption">Listing 8-19: Attempting to use indexing syntax with a
 String</span>
 
-Este código resultará en el siguiente error:
+This code will result in the following error:
 
 ```text
 error[E0277]: the trait bound `std::string::String: std::ops::Index<{integer}>` is not satisfied
@@ -249,62 +270,102 @@ error[E0277]: the trait bound `std::string::String: std::ops::Index<{integer}>` 
   = help: the trait `std::ops::Index<{integer}>` is not implemented for `std::string::String`
 ```
 
-El error y la nota cuentan la historia: Las cadenas de caracteres de Rust no soportan indexado. ¿Pero por qué no? Para responder esa pregunta, necesitamos discutir cómo Rust almacena cadenas en la memoria.
+The error and the note tell the story: Rust strings don’t support indexing. But
+why not? To answer that question, we need to discuss how Rust stores strings in
+memory.
 
-#### Representación interna
+#### Internal Representation
 
-Una `String` es un envoltorio sobre un `Vec<u8>`. Echemos un vistazo a algunas de nuestras cadenas de ejemplo correctamente cifradas en UTF-8 del Listado 8-14. Primero, esta:
+A `String` is a wrapper over a `Vec<u8>`. Let’s look at some of our properly
+encoded UTF-8 example strings from Listing 8-14. First, this one:
 
 ```rust
 let len = String::from("Hola").len();
 ```
 
-En este caso, `len` será cuatro, lo que se refiere a `Vec` almacenando la cadena “Hola” que pesa cuatro bytes. Cada una de esas letras pesa un byte cuando se codifican en UTF-8. Pero, ¿qué pasa con la siguiente línea?
+In this case, `len` will be four, which means the `Vec` storing the string
+“Hola” is four bytes long. Each of these letters takes one byte when encoded in
+UTF-8. But what about the following line?
 
 ```rust
 let len = String::from("Здравствуйте").len();
 ```
 
-Note que esta cadena empieza con la letra capital cirílica Ze, no con el número arábico 3. Preguntado cuánto pesa la cadena, podrías decir 12. Sin embargo, la respuesta de Rust es 24: ese es el número de bytes que toma codificar “Здравствуйте” en UTF-8, porque cada valor escalar de Unicode usa dos bytes de almacenamiento. Por lo tanto, un índice en los bytes de la cadena no siempre se correlacionará
-con un valor escalar de Unicode. Para demostrarlo, considere este codígo inválido de Rust:
+Note that this string begins with the capital Cyrillic letter Ze, not the
+Arabic number 3. Asked how long the string is, you might say 12. However,
+Rust’s answer is 24: that’s the number of bytes it takes to encode
+“Здравствуйте” in UTF-8, because each Unicode scalar value takes two bytes of
+storage. Therefore, an index into the string’s bytes will not always correlate
+to a valid Unicode scalar value. To demonstrate, consider this invalid Rust
+code:
 
 ```rust,ignore
 let hello = "Здравствуйте";
 let answer = &hello[0];
 ```
 
-¿Cuál debería ser el valor de `answer`? Debería ser `З`, ¿la primera letra? Cuando se codifica en UTF-8, el primer byte de `З` es `208`, y el segundo es `151`, así que `answer` debería ser, de hecho, `208`, pero `208` no es un caracter válido por sí mismo. Volviendo, `208` no es probalemente lo que un usuario querría si ellos preguntan por la primera letra de esta cadena; sin embargo, esa es la unica información que Rust tiene en el byte indexado 0. Volviendo, el valor del byte no es probablemente lo que los usuarios quieren, incluso si la cadena sólo contiene letras latinas: si `&"hello"[0]` era un código válido que regresaba el valor del byte, regresaría `104`, no `h`. Para evitar que se regrese un valor inesperado y cause bugs que puede que no sean descubiertos inmediatamente, Rust no recopila este código del todo y previene malentendidos antes en el proceso de desarrollo.
+What should the value of `answer` be? Should it be `З`, the first letter? When
+encoded in UTF-8, the first byte of `З` is `208`, and the second is `151`, so
+`answer` should in fact be `208`, but `208` is not a valid character on its
+own. Returning `208` is likely not what a user would want if they asked for the
+first letter of this string; however, that’s the only data that Rust has at
+byte index 0. Returning the byte value is probably not what users want, even if
+the string contains only Latin letters: if `&"hello"[0]` was valid code that
+returned the byte value, it would return `104`, not `h`. To avoid returning an
+unexpected value and causing bugs that might not be discovered immediately,
+Rust doesn’t compile this code at all and prevents misunderstandings earlier in
+the development process.
 
-#### ¡Bytes y valores escalares y grafema clusters! Oh Dios!
+#### Bytes and Scalar Values and Grapheme Clusters! Oh My!
 
-Otro punto sobre UTF-8 es que en realidad hay tres formas relevantes de echar un vistazo a las cadenas de caracteres desde la perspectiva de Rust: con bytes, valores escalares, y grafema clusters (lo más cercano a lo que llamaríamos *letters*).
+Another point about UTF-8 is that there are actually three relevant ways to
+look at strings from Rust’s perspective: as bytes, scalar values, and grapheme
+clusters (the closest thing to what we would call *letters*).
 
-Si echamos un vistazo a la palabra hindi “नमस्ते” escrita en el script Devanagari, es guardada por último como `Vec` del valor `u8` que se ve así:
+If we look at the Hindi word “नमस्ते” written in the Devanagari script, it is
+ultimately stored as a `Vec` of `u8` values that looks like this:
 
 ```text
 [224, 164, 168, 224, 164, 174, 224, 164, 184, 224, 165, 141, 224, 164, 164,
 224, 165, 135]
 ```
 
-Eso es 18 bytes y es cómo las computadoras guardan finalmente esta información. Si les echamos un vistazo como un valor escalar de Unicode, el cual es lo que el tipo de `char` de Rust es, esos bytes se ven así:
+That’s 18 bytes and is how computers ultimately store this data. If we look at
+them as Unicode scalar values, which are what Rust’s `char` type is, those
+bytes look like this:
 
 ```text
 ['न', 'म', 'स', '्', 'त', 'े']
 ```
 
-Hay seis valores `char` aquí, pero el cuarto y el quinto no son letras: son diacríticos que no tienen sentido por sí mismos. Finalmente, si les echamos un vistazo como un grafema clusters, tendremos lo que una persona llamaría cuatro letras que forman la palabra hindi:
+There are six `char` values here, but the fourth and sixth are not letters:
+they’re diacritics that don’t make sense on their own. Finally, if we look at
+them as grapheme clusters, we’d get what a person would call the four letters
+that make up the Hindi word:
 
 ```text
 ["न", "म", "स्", "ते"]
 ```
 
-Rust proporciona diferentes maneras de interpretar las información bruta de las cadenas que las computadoras almacenan, así que cada programa puede escoger  la interpretación que necesite, sin importar en qué idioma humano esté la infromación.
+Rust provides different ways of interpreting the raw string data that computers
+store so that each program can choose the interpretation it needs, no matter
+what human language the data is in.
 
-Una razón final de por qué Rust no nos permite indexar en una `String` para obtener un caracter es que se espera que las operaciones de indexación siempre tomen un tiempo constante (O(1)). Pero es imposible garantizar ese desempeño con una `String`, porque Rust tendría que guíar los contenidos desde el inicio hasta el índice para determinar cuántos caracteres válidos hubo.
+A final reason Rust doesn’t allow us to index into a `String` to get a
+character is that indexing operations are expected to always take constant time
+(O(1)). But it isn’t possible to guarantee that performance with a `String`,
+because Rust would have to walk through the contents from the beginning to the
+index to determine how many valid characters there were.
 
-### Dividiendo Strings
+### Slicing Strings
 
-Indexar en una cadena de caracteres es a menudo una mala idea porque no está claro lo que el tipo de retorno de la operación de indexación de cadenas debería ser: un valor de byte, un caracter, un grafema cluster, o un trozo de cadena. Por lo tanto, Rust te pide ser más específico si de verdad necesitas usar indices para crear trozos de cadena. Para ser más específico en tu indexado e indicar que quieres un trozo de cadena, en lugar de indexar usando `[]` con un solo número, puedes usar `[]` con un rango para crear un trozo de cadena que contenga bytes en particular:
+Indexing into a string is often a bad idea because it’s not clear what the
+return type of the string indexing operation should be: a byte value, a
+character, a grapheme cluster, or a string slice. Therefore, Rust asks you to
+be more specific if you really need to use indices to create string slices. To
+be more specific in your indexing and indicate that you want a string slice,
+rather than indexing using `[]` with a single number, you can use `[]` with a
+range to create a string slice containing particular bytes:
 
 ```rust
 let hello = "Здравствуйте";
@@ -312,22 +373,28 @@ let hello = "Здравствуйте";
 let s = &hello[0..4];
 ```
 
-Aquí, `s` será un `&str` que contiene los primeros cuatro bytes de la cadena. Anteriormente, mencionamos que cada uno de estos caracteres pesaban dos bytes, lo que significa que `s` será `Зд`.
+Here, `s` will be a `&str` that contains the first four bytes of the string.
+Earlier, we mentioned that each of these characters was two bytes, which means
+`s` will be `Зд`.
 
-¿Qué pasaría si usamos `&hello[0..1]`? La respuesta: Rust se aterrorizará al momento de ejecución de la misma forma que cuando accede a un índice inválido en un vector:
+What would happen if we used `&hello[0..1]`? The answer: Rust will panic at
+runtime in the same way that accessing an invalid index in a vector does:
 
 ```text
 thread 'main' panicked at 'byte index 1 is not a char boundary; it is inside 'З' (bytes 0..2) of `Здравствуйте`', src/libcore/str/mod.rs:2188:4
 ```
 
-Deberías usar rangos para crear trozos de cadena con precaución, porque puede colgar tu programa.
+You should use ranges to create string slices with caution, because it can
+crash your program.
 
-### Métodos para iterar sobre cadenas
+### Methods for Iterating Over Strings
 
-Afortunadamente, podemos acceder a elementos en una cadena de otras maneras.
+Fortunately, we can access elements in a string in other ways.
 
-Si necesitamos realizar operación en un valor escalar individual de Unicode, la mejor forma de hacerlo es usar el método `chars`. Convocando `chars` en “नमस्ते” se seleccionan y retornan seis valores del tipo `char`, y podemos iterar sobre el resultado
-con el fin de acceder a cada elemento:
+If we need to perform operations on individual Unicode scalar values, the best
+way to do so is to use the `chars` method. Calling `chars` on “नमस्ते” separates
+out and returns six values of type `char`, and we can iterate over the result
+in order to access each element:
 
 ```rust
 for c in "नमस्ते".chars() {
@@ -335,7 +402,7 @@ for c in "नमस्ते".chars() {
 }
 ```
 
-Este código mostrará lo siguiente:
+This code will print the following:
 
 ```text
 न
@@ -346,7 +413,8 @@ Este código mostrará lo siguiente:
 े
 ```
 
-El método `bytes` retorna cada byte puro, lo cual podría ser apropiado para tu dominio:
+The `bytes` method returns each raw byte, which might be appropriate for your
+domain:
 
 ```rust
 for b in "नमस्ते".bytes() {
@@ -354,7 +422,7 @@ for b in "नमस्ते".bytes() {
 }
 ```
 
-Este código mostrará los 18 bytes que forman esta `String`, empezando con:
+This code will print the 18 bytes that make up this `String`, starting with:
 
 ```text
 224
@@ -364,12 +432,22 @@ Este código mostrará los 18 bytes que forman esta `String`, empezando con:
 // ... etc
 ```
 
-Pero asegúrate de recordar que un valor escalar de Unicode puede ser hecho por más de un byte.
+But be sure to remember that valid Unicode scalar values may be made up of more
+than one byte.
 
-Conseguir un grafema clusters desde cadenas de caracteres es complejo, así que esta funcionalidad no es proporcionada por la biblioteca estándar. Las cajas están disponibles en [crates.io](https://crates.io) si esta es la funcionalidad que necesitas.
+Getting grapheme clusters from strings is complex, so this functionality is not
+provided by the standard library. Crates are available on
+[crates.io](https://crates.io) if this is the functionality you need.
 
-### Las cadenas de caracteres no son tan simples
+### Strings Are Not So Simple
 
-Resumiendo, las cadenas de caracteres son complicadas. Los diferentes lenguajes de programación hacen diferentes elecciones sobre cómo presentar esta complejidad al programador. Rust ha elegido hacer el manejo correcto de la información de `String`. El comportamiento por defecto para todos los programas de Rust, lo que significa que los programadores tienen que pensar más en manejar información de UTF-8 por adelantado. Este punto intermedio expone más la complejidad de las cadenas de caracteres que de otros lenguajes de programación, pero le impide tener errores de manejo que hacen referencia a caracteres no ASCII luego en tu ciclo de vida de desarrollo.
+To summarize, strings are complicated. Different programming languages make
+different choices about how to present this complexity to the programmer. Rust
+has chosen to make the correct handling of `String` data the default behavior
+for all Rust programs, which means programmers have to put more thought into
+handling UTF-8 data upfront. This trade-off exposes more of the complexity of
+strings than other programming languages do but prevents you from having to
+handle errors involving non-ASCII characters later in your development life
+cycle.
 
-Cambiemos a algo un poquito menos complejo: ¡mapas hash!
+Let’s switch to something a bit less complex: hash maps!
