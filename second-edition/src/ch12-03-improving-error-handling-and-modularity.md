@@ -46,24 +46,24 @@ the following steps:
 * Split your program into a *main.rs* and a *lib.rs*, and move your program’s
 logic to *lib.rs*.
 * Mientras que tu lógica de análisis de línea de comandos es pequeña, puede permanecer en *main.rs*.
-* Cuando la lógica de análisis de la línea de comandos empiece a complicarse, extrála de
+* Cuando la lógica de análisis de la línea de comandos empiece a complicarse, extráela de
 *main.rs* y muevela a *lib.rs*.
 * Las responsabilidades que permanecen en la función `main` después de este proceso
   deben limitarse a:
   
 * Llamar a la lógica de análisis de línea de comandos con los valores del argumento
-* Configuración de cualquier otra configuración
+* Configurar cualquier otra configuración
 * Llamar a una función de `run` en *lib.rs*
 * Manejar el error si `run` devuelve un error
 
-Este patrón trata de separar los problemas: *main.rs* maneja la ejecución del 
+Este patrón trata de separar los concerns: *main.rs* maneja la ejecución del 
 programa, y *lib.rs* maneja toda la lógica de la tarea a mano. Debido a que no
 podemos probar la función `main` directamente, esta estructura nos permite probar toda
 la lógica de nuestro programa moviéndola a funciones en *lib.rs*. El único código que 
 queda en *main.rs* será lo suficientemente pequeño como para verificar su exactitud al 
 leerlo. Repasemos nuestro programa siguiendo este proceso.
 
-#### Extracción del Analizador de Argumentos
+#### Extracción del Analizador de Argumentos (Argument Parser)
 
 Extraeremos la funcionalidad para analizar argumentos en una función
 que `main` llamará a preparar para mover el análisis lógico de línea
@@ -96,7 +96,7 @@ Seguimos recopilando los argumentos de la línea de comandos en un vector, pero 
 asignar el valor del argumento en el índice `1` a la variable `query` y el 
 valor del argumento en el índice `2` a la variable `filename` dentro de la función
 `main`, pasamos el vector entero a la función `parse_config`. La función `parse_config` 
-mantiene entonces la lógica que determina qué argumento va en qué variable
+mantiene entonces la lógica que determina qué argumento va en qué variable,
 y devuelve los valores a `main`. Seguimos creando las variables `query` 
 y `filename` en `main`, pero `main` ya no tiene la responsabilidad de
 determinar cómo se corresponden los argumentos y las variables de la 
@@ -104,8 +104,8 @@ línea de comandos.
 
 Este retrabajo puede parecer exagerado para nuestro pequeño programa, pero estamos refactorizando
 en pequeños pasos incrementales. Después de hacer este cambio, ejecuta el programa nuevamente para
-verificar que el análisis de argumentos sigue funcionando. Es bueno revisar tu progreso con 
-frecuencia, porque eso te ayudará a identificar la causa de los problemas cuando 
+verificar que el análisis de argumentos sigue funcionando. Es bueno revisar tu progreso  
+frecuentemente, porque eso te ayudará a identificar la causa de los problemas cuando 
 ocurran.
 
 #### Clasificación de Valores de Configuración
@@ -124,8 +124,8 @@ de la estructura un nombre significativo. Hacerlo así facilitará a los futuros
 de este código entender cómo se relacionan los diferentes valores entre sí y 
 cuál es su propósito.
 
-> Nota: Algunas personas llaman a este anti-patrón de usar valores primitivos cuando un 
-> tipo complejo sería más apropiado *obsesión primitiva*.
+> Nota: Algunas personas llaman a este anti-patrón de usar valores primitivos cuando  
+> sería mas apropiado un tipo complejo *obsesión primitiva*.
 
 El listado 12-6 muestra la adición de una estructura llamada `Config` definida para tener 
 campos con el nombre `query` y `filename`. También hemos cambiado la función `parse_config` 
@@ -143,8 +143,8 @@ fn main() {
 
     let config = parse_config(&args);
 
-    println!("Searching for {}", config.query);
-    println!("In file {}", config.filename);
+    println!("buscando {}", config.query);
+    println!("En el archivo {}", config.filename);
 
     let mut f = File::open(config.filename).expect("file not found");
 
