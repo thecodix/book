@@ -1,4 +1,4 @@
-## Refactorización para Mejorar la Modularidad y el Manejo de Errores
+## Refactorizando para Mejorar la Modularidad y el Manejo de Errores
 
 Para mejorar nuestro programa, arreglaremos cuatro problemas que tienen que ver con la
 estructura del programa y cómo está manejando errores potenciales.
@@ -7,7 +7,7 @@ En primer lugar, nuestra función `main` realiza ahora dos tareas: analiza argum
 abre archivos. Para una función tan pequeña, esto no es un problema importante. Sin embargo, si
 continuamos ampliando nuestro programa dentro de `main`, la cantidad de tareas separadas
 que maneja la función `main` aumentará. A medida que una función adquiere responsabilidades, se
-vuelve más difícil razonar, más difícil de probar y más difícil de cambiar sin romper 
+vuelve más difícil de analizar, más difícil de probar y más difícil de cambiar sin romper 
 una de sus partes. Es mejor separar la funcionalidad para que cada función sea
 responsable de una tarea.
 
@@ -19,7 +19,7 @@ más difícil será seguir la pista del propósito de cada una. Es mejor agrupar
 variables de configuración en una sola estructura para dejar claro su propósito.
 
 El tercer problema es que hemos usado `expect` para imprimir un mensaje de error cuando
-al abrir el archivo falla, pero el mensaje de error simplemente imprime `file not found`.
+falla abrir el archivo, pero el mensaje de error simplemente imprime `file not found`.
 Abrir un archivo puede fallar de varias maneras, además de que el archivo falte: por 
 ejemplo, el archivo puede existir, pero es posible que no tengamos permiso para abrirlo. 
 Ahora mismo, si estamos en esa situación, imprimiríamos el mensaje de error `file not found`
@@ -30,7 +30,7 @@ ejecuta nuestro programa sin especificar suficientes argumentos, obtendrá un er
 out of bounds` de Rust, que no explica claramente el problema. Sería mejor si
 todo el código de manejo de errores estuviera en un solo lugar para que los futuros mantenedores
 tengan sólo un lugar para consultar en el código si la lógica de manejo de errores necesita 
-cambiar. Tener todo el código de manejo de errores en un solo lugar también asegurará que 
+cambiarse. Tener todo el código de manejo de errores en un solo lugar también asegurará que 
 estamos imprimiendo mensajes que serán significativos para nuestros usuarios finales.
 
 Abordemos estos cuatro problemas refactorizando nuestro proyecto.
@@ -38,9 +38,9 @@ Abordemos estos cuatro problemas refactorizando nuestro proyecto.
 ### Separación de Problemas Para Proyectos Binarios
 
 El problema organizativo de asignar la responsabilidad de múltiples tareas a la
-función `main` es común a muchos proyectos binarios. Como resultado, la comunidad 
+función `main` es común en muchos proyectos binarios. Como resultado, la comunidad 
 de Rust ha desarrollado un tipo de proceso guía para dividir los problemas separados
-de un programa binario cuando "principal" comienza a hacerse grande. El proceso tiene
+de un programa binario cuando `main` comienza a hacerse grande. El proceso tiene
 los siguientes pasos:
 
  * Divide tu programa en *main.rs* y *lib.rs*, y mueva la lógica de tu
