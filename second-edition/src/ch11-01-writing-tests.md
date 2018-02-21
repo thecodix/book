@@ -211,9 +211,9 @@ We had one test pass and one test fail.
 Now that you’ve seen what the test results look like in different scenarios,
 let’s look at some macros other than `panic!` that are useful in tests.
 
-### Chequear los resultados con el Macro `assert!` 
+### Chequeando los Resultados con el Macro `assert!` 
 
-El comando macro `assert!` que es proporcionado por la biblioteca estándar, es bastante útil cuando quieres
+El comando macro `assert!` el cual es proporcionado por la biblioteca estándar, es bastante útil cuando quieres
 asegurarte de que una condición valora al comando `true`. Le damos al
 comando macro `assert!` un argumento que valora un binomio. Si el valor es
 `true`, `assert!` no hace nada y la prueba es aprobada. Si el valor es `false`,
@@ -370,7 +370,7 @@ test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out
 5, la comparación de las longitudes en `can_hold` ahora da `false`: en resumen, 8 no es
 menor que 5.
 
-### Probando la igualdad con los macros `assert_eq!` y `assert_ne!` 
+### Probando la Igualdad con los Macros `assert_eq!` y `assert_ne!` 
 
 Una manera común de probar funcionalidad es comparar el resultado del código bajo
 prueba al valor que esperamos de resultado para asegurarnos de que son iguales. 
