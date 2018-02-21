@@ -555,7 +555,7 @@ warning: unused `std::result::Result` which must be used
 Rust nos dice que nuestro código ignoró el valor `Result`, y el valor `Result` 
 podría indicar que ocurrió un error. Pero no estamos comprobando si hubo o 
 no un error, y el compilador nos recuerda que probablemente quisiéramos 
-tener algún código de manejo de errores aquí! Vamos a rectificar ese problema ahora.
+tener algún código de manejo de errores ¡aquí! Vamos a rectificar ese problema ahora.
 
 #### Manejo de Errores Devueltos por `run` en` main`
 
@@ -592,7 +592,7 @@ ambos casos: imprimimos el error y salimos.
 
 ### División de Código en una Crate de Biblioteca
 
-Nuestro proyecto `minigrep` se ve bien hasta ahora! Ahora dividiremos el
+Nuestro proyecto `minigrep` se ve bien hasta ¡ahora! Ahora dividiremos el
 archivo *src/main.rs* y pondremos algún código en el archivo *src/lib.rs* para que podamos
 probarlo y tener un archivo *src/main.rs* con menos responsabilidades.
 
