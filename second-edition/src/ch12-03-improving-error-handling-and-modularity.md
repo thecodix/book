@@ -35,11 +35,11 @@ estamos imprimiendo mensajes que serán significativos para nuestros usuarios fi
 
 Abordemos estos cuatro problemas refactorizando nuestro proyecto.
 
-### Separación de Problemas Para Proyectos Binarios
+### Separación de Concerns Para Proyectos Binarios
 
 El problema organizativo de asignar la responsabilidad de múltiples tareas a la
 función `main` es común en muchos proyectos binarios. Como resultado, la comunidad 
-de Rust ha desarrollado un tipo de proceso guía para dividir los problemas separados
+de Rust ha desarrollado un tipo de proceso guía para separar los concerns
 de un programa binario cuando `main` comienza a hacerse grande. El proceso tiene
 los siguientes pasos:
 
