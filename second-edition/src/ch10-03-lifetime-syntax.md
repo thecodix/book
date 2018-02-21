@@ -601,32 +601,32 @@ it can’t figure out lifetimes for, the compiler will stop with an error.
    assigned to all output lifetime parameters. This makes writing methods much
    nicer.
 
-Imaginemos que somos el compilador y apliquemos estas reglas para descubrir qué
-vidas de las referencias en la firma de la función `first_word` en el
-Listado 10-27 son. La firma comienza sin vidas asociadas con
+Pretendamos que somos el compilador y aplicamos estas reglas para descubrir qué
+son las vidas de las referencias en la firma de la función `first_word` en el
+Listado 10-27. La firma comienza sin vidas asociadas con
 las referencias:
 
 ```rust,ignore
 fn first_word(s: &str) -> &str {
 ```
 
-Entonces nosotros (como el compilador) aplicamos la primera regla, que dice que cada parámetro obtiene
-obtiene su propia vida. lo llamaremos `'a` como siempre, ahora la firma es:
+Entonces nosotros (como compilador) aplicamos la primera regla, la cual dice que cada parámetro obtiene
+obtiene su propia vida. Lo vamos a llamar `'a` como siempre, así que ahora la firma es:
 
 ```rust,ignore
 fn first_word<'a>(s: &'a str) -> &str {
 ```
 
-En la segunda regla, que se aplica porque hay exactamente una entrada
-de vida. La segunda regla dice que la vida del parámetro de entrada se vuelve
-asignada a la vida útil de salida, por lo que ahora la firma es:
+En la segunda regla, la cual se aplica porque hay exactamente una vida
+entrante. La segunda regla dice que la vida de un parámetro de entrada se
+asigna a la vida de salida, así que ahora la firma es:
 
 ```rust,ignore
 fn first_word<'a>(s: &'a str) -> &'a str {
 ```
 
 Ahora todas las referencias en esta firma de función tienen vidas, y el
-el compilador puede continuar su análisis sin necesidad de que el programador anote
+el compilador puede continuar su análisis sin necesitar al programador para anotar
 las vidas en esta firma de función.
 
 Hagamos otro ejemplo, esta vez con la función `longest` que no tenía
@@ -636,23 +636,23 @@ parámetros de vida cuando comenzamos a trabajar en el Listado 10-22:
 fn longest(x: &str, y: &str) -> &str {
 ```
 
-Fingiendo que somos el compilador de nuevo, apliquemos la primera regla: cada parámetro
-obtiene su propia vida. Esta vez tenemos dos parámetros, entonces tenemos dos
+Pretendiendo que somos el compilador de nuevo, apliquemos la primera regla: cada parámetro
+obtiene su propia vida. Esta vez tenemos dos parámetros, así que tenemos dos
 vidas:
 
 ```rust,ignore
 fn longest<'a, 'b>(x: &'a str, y: &'b str) -> &str {
 ```
 
-En cuanto a la segunda regla, no se aplica ya que hay más de una entrada
-de vida. En cuanto a la tercera regla, esto tampoco se aplica porque se trata de una
-función en lugar de un método, por lo que ninguno de los parámetros es `self`. Así que estamos
-fuera de las reglas, pero no hemos descubierto cuál es la duración del tipo de devolución.
+En cuanto a la segunda regla, no se aplica ya que hay más de una vida
+entrante. En el caso de la tercera regla, esto tampoco se aplica porque esto es una
+función más que un método, por lo que ninguno de los parámetros son `self`. Así que estamos
+fuera de las reglas, pero no hemos descubierto cuál es la vida del tipo de retorno.
 Es por eso que obtuvimos un error al intentar compilar el código del Listado 10-22: el
 compilador trabajó a través de las reglas de elisión de vida que conoce, pero todavía no puede
 descifrar todas las vidas de las referencias en la firma.
 
-Debido a que la tercera regla solo se aplica realmente a las firmas de métodos, veamos
+Debido a que la tercera regla solo se aplica realmente a las firmas de métodos, echemos un vistazo a
 las vidas en ese contexto ahora, y ver por qué la tercera regla significa que no tenemos
 que anotar vidas en firmas de métodos muy a menudo.
 
@@ -666,19 +666,19 @@ parameters need to be declared and used since the lifetime parameters could go
 with the struct's fields or with references passed into or returned from
 methods. /Carol -->
 
-Cuando implementamos métodos en una estructura con tiempos de vida, la sintaxis es nuevamente la
-misma que los parámetros de tipo genérico que mostramos en el listado 10-11: al
-colocar que los parámetros de vida se declaran y usan dependen de si el
+Cuando implementamos métodos en una estructura con vidas útiles, la sintaxis es de nuevo la
+misma que los parámetros de tipo genérico que mostramos en el listado 10-11: el
+lugar donde los parámetros de vida se declaran y usan depende de si el
 parámetro de vida está relacionado con los campos de estructura o los argumentos del método y
 valores de retorno.
 
-Los nombres de por vida para los campos de estructura siempre deben declararse después del `impl`
-palabra clave y luego se usa después del nombre de la estructura, ya que esas vidas son parte
+Los nombres de las vidas para los campos de estructura siempre deben especificarse después de la palabra clave `impl`
+y luego usarse después del nombre de la estructura, ya que esas vidas son parte
 del tipo de la estructura.
 
 En las firmas de métodos dentro del bloque `impl`, las referencias pueden estar vinculadas a
-el tiempo de vida de las referencias en los campos de la estructura, o pueden ser independientes. En
-adición, las reglas de elisión de por vida a menudo lo hacen de modo que las anotaciones de vida
+la vida de las referencias en los campos de la estructura, o podrían ser independientes. En
+adición, las reglas de elisión de vidas a menudo lo hacen de modo que las anotaciones de vida
 no son necesarios en las firmas de métodos. Veamos algunos ejemplos usando la
 estructura llamada `ImportantExcerpt` que definimos en el listado 10-26:
 
@@ -716,40 +716,40 @@ impl<'a> ImportantExcerpt<'a> {
 }
 ```
 
-Hay dos tiempos de vida de entrada, por lo que Rust aplica la primera regla de elisión de por vida
-y le da a ambos `&self` y `announcement` sus propias vidas. Entonces, porque
+Hay dos vidas entrantes, por lo que Rust aplica la primera regla de elisión de vida
+y le da a `&self` y a `announcement` sus propias vidas. Entonces, porque
 uno de los parámetros es `& self`, el tipo de retorno obtiene la vida útil de `&self`,
 y todas las vidas han sido contabilizadas.
 
 ### La vida estática
 
-Hay *una* vida especial que necesitamos discutir: `'static`. La vida 
+Hay *one* vida especial que necesitamos discutir: `'static`. La vida 
 `'static` es toda la duración del programa. Todos los literales de cadena tienen
-la vida `'static`, que podemos elegir anotar de la siguiente manera:
+la vida `'static`, el cual podemos elegir anotar de la siguiente manera:
 
 ```rust
 let s: &'static str = "I have a static lifetime.";
 ```
 
-El texto de esta cadena se almacena directamente en el binario de su programa y
+El texto de esta cadena de caracteres se almacena directamente en el binario de su programa y
 el binario de tu programa siempre está disponible. Por lo tanto, la vida de todos
 las cuerdas literales es `'static`.
 
 <!-- How would you add a static lifetime (below)? -->
 <!-- Just like you'd specify any lifetime, see above where it shows `&'static str`. /Carol -->
 
-Puede ver sugerencias para usar la vida `'static` en mensaje de texto de error y ayuda,
+Puedes ver sugerencias para usar la vida `'static` en un mensaje de texto de error y ayuda,
 pero antes de especificar `'static` como la vida para una referencia, piense
 acerca de si la referencia que tiene es una que realmente vive la totalidad de la
-vida útil de su programa o no (o incluso si desea que viva tanto tiempo, si
+vida útil de su programa o no (o incluso si quieres que viva tanto tiempo, si
 se pudede). La mayoría de las veces, el problema en el código es un intento de crear una
 referencia oscilante o una falta de coincidencia de las vidas útiles disponibles, y la solución
 está arreglando esos problemas, sin especificar la vida de `'static`.
 
-### Parámetros Genéricos de Tipo, Límites de Rasgos y Tiempos de Vida Juntos
+### Parámetros genéricos de tipo, límites de rasgos y tiempos de vida juntos
 
-Veamos brevemente la sintaxis de especificar los parámetros de tipo genérico, rasgos de
-límites, y vidas ¡todo en una función!
+Veamos brevemente la sintaxis para especificar los parámetros de tipo genérico, límites de
+rasgos, y vidas ¡todo en una función!
 
 ```rust
 use std::fmt::Display;
@@ -767,30 +767,30 @@ fn longest_with_an_announcement<'a, T>(x: &'a str, y: &'a str, ann: T) -> &'a st
 ```
 
 Este es la funcióm `longest` del listado 10-23 que devuelve la mayor cantidad de
-dos secciones de cadena, pero con un argumento adicional llamado `ann`. El tipo de `ann` es
+dos trozos de cadena, pero con un argumento adicional llamado `ann`. El tipo de `ann` es
 el tipo genérico `T`, que puede rellenarse por cualquier tipo que implemente el
-rasgo `Display` según lo especificado por la cláusula `where`. Este argumento adicional será
-impreso antes de que la función compare las longitudes de las partes de cuerda,
-por lo que es necesario el límite de rasgo `Display`. Porque las vidas son un
+rasgo `Display` según lo especificado por la condición `where`. Este argumento adicional será
+mostrado antes de que la función compare las longitudes de los trozos de cadena,
+es por eso que es necesario el límite de rasgo `Display`. Porque las vidas son un
 tipo genérico, las declaraciones del parámetro de duración ''a'y el
 parámetro genérico tipo `T` van en la misma lista dentro de los corchetes angulares después
 del nombre de la función.
 
 ## Resúmen
 
-Cubrimos mucho en este capítulo! Ahora que sabes sobre parámetros del tipo 
+¡Abarcamos mucho en este capítulo! Ahora que sabes sobre parámetros del tipo 
 genérico, rasgos y límites de rasgos, y parámetros genéricos de vida, estás
-listo para escribir código que no está duplicado pero que puede usarse de muchas maneras en diferentes
-situaciones Los parámetros de tipo genérico significan que el código se puede aplicar a diferentes
+listo para hacer código que no esté duplicado, pero que puede usarse en muchas diferentes
+situaciones. Los parámetros de tipo genérico se refieren a que el código se puede aplicar a diferentes
 tipos. Los rasgos y los límites de rasgos aseguran que, aunque los tipos son genéricos,
 esos tipos tendrán el comportamiento que el código necesita. Relaciones entre las
 vidas de referencias especificadas por anotaciones de por vida aseguran que este
 código flexible no tendrá ninguna referencia colgante. Y todo esto sucede en el
 tiempo de compilación para que el rendimiento en tiempo de ejecución no se vea afectado.
 
-Lo creas o no, hay mucho más que aprender en estas áreas: En el Capítulo 17
-discutirá los objetos de rasgo, que son otra forma de usar rasgos. El Capítulo 19 será
-cubrier escenarios más complejos que involucran anotaciones de vida. El Capítulo 20 lo hará
-llegar a algunas características avanzadas del sistema de tipo. Hasta el próximo, sin embargo, hablemos de
-cómo escribir pruebas en Rust para que podamos asegurarnos de que tu código use todos estas
+Lo creas o no, hay mucho más que aprender en estas áreas: En el Capítulo 17 se
+discutirán los objetos de rasgo, que son otra forma de usar los rasgos. El Capítulo 19 estará
+cubriendo escenarios más complejos que involucran anotaciones cronológicas. El Capítulo 20
+llegará a algunas características avanzadas del sistema de tipo. Hasta la próxima, sin embargo, hablemos de
+cómo programar tests en Rust para que podamos asegurarnos de que tu código use todos estas
 aplicaciones, ¡para que funcione de la manera que nosotros queremos!
