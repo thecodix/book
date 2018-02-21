@@ -1,22 +1,22 @@
 ## Implementando un patrón de diseño orientado a objetos
 
-El *patrón de estado* es un patrón de diseño orientado a objetos. El meollo del
+El *patrón de estado* es un patrón de diseño orientado a objetos. El punto crucial del
 patrón es que un valor tiene un estado interno, representado por un conjunto de *objetos
-de estado*, y el comportamiento del valor cambia dependiendo del estado interno. los
+de estado*, y el comportamiento del valor cambia dependiendo del estado interno. Los
 objetos de estado comparten funcionalidad--en Rust, por supuesto, usamos estructuras y
-rasgos más que objetos y sucesión. Cada objeto de estado representando al
+rasgos más que objetos y herencia. Cada objeto de estado representando al
 estado es responsable de su propio comportamiento y de gobernar cuando 
-debería cambiar a otro estado. El valor que alberga un objeto de estado desconoce
-los diferentes comportamientos de los estados o cuando hacer la transición entre estados.
+debería cambiar a otro. El valor que contiene un objeto de estado desconoce
+los diferentes comportamientos de los estados o cuándo hacer la transición entre estados.
 
 <!-- Below -- requirements for what, for what we need the value for? -->
 <!-- I've clarified /Carol -->
 
-El usar los patrones de estado significa que cuando los requerimientos del negocio del programa 
-cambián, no necesitaremos cambiar el código del valor que alberga el estado o el
+Al usar los patrones de estado significa que cuando los requisitos del negocio del programa 
+cambian, no necesitaremos cambiar el código del valor que contiene el estado o el
 código que usa el valor. Sólo tendremos que actualizar el códito dentro de uno de los
 objetos de estados para cambiar sus reglas, o quizás agregar más objetos de estado. 
-Miremos un ejemplo del diseño del patrón de estado y cómo usarlo en Rust.
+Veamos un ejemplo del diseño del patrón de estado y cómo usarlo en Rust.
 
 Para explorar esta idea, implementaremos una publicación de blog de ritmo de trabajo en una manera
 incremental. La funcionalidad definitiva del blog lucirá así:
@@ -24,15 +24,15 @@ incremental. La funcionalidad definitiva del blog lucirá así:
 1. Una publicación de blog inicia como un borrador vacío.
 2. Una vez el borrador esté hecho, una revisión de la publicación es requerida.
 3. Una vez la publicación sea aprobada, es publicada.
-4. Sólo las publicaciones de blogs que han sido publicadas devuelven contenido para emitir, así que publicaciones que no hayan sido aprobadas no pueden
+4. Sólo las publicaciones de blogs que han sido publicadas devuelven contenido para emitir, por lo que publicaciones que no hayan sido aprobadas no pueden
 publicarse accidentalmente.
 
 Cualquier otro cambio efectuado a una publicación no debería tener efecto. Por ejemplo, si 
-intentásemos aprobar un borrador de publicación de blog antes de que pidieramos una revisión, la publicación
+intentásemos aprobar un borrador de publicación de blog antes de que hayamos solicitado una revisión, la publicación
 debería permanecer como un borrador sin publicar.
 
-El listado 17-11 muestra este ritmo de trabajo en forma de código. Éste es un uso de ejemplo del
-API que vamos a implementar en una caja de biblioteca llamada `blog`:
+El Listado 17-11 muestra este ritmo de trabajo en forma de código. Este es un ejemplo del uso del
+API que vamos a implementar en un cajón de biblioteca llamada `blog`:
 
 <span class="filename">Nombre del archivo: src/main.rs</span>
 
@@ -55,20 +55,20 @@ fn main() {
 ```
 
 <span class="caption">Listado 17-11: Código que demuestra el comportamiento
-deseado que queremos que tenga nuestra caja `blog` </span>
+deseado que queremos que tenga nuestro cajón `blog` </span>
 
 Queremos permitir que el usuario cree un nuevo borrador de publicación en el blog con `Post::new`.
 Entonces, queremos permitir que el texto sea añadido a la publicación  mientras está
 en estado de borrador. Si intentamos obtener el contenido de esta publicación inmediatamente, antes
 de su aprobación, nada debería pasar porque la publicación es todavía un borrador. Hemos añadido
-un `assert_eq!` aquí para propósitos demonstrativos. Una unidad de prueba para
-esto sería el afirmar que un borrador de publicación de blog devuelve un hilo vacío desde el
-método `content`, pero no vamos a escribir pruebas para este ejemplo.
+un `assert_eq!` aquí para propósitos demonstrativos. Una unidad de test excelente para
+esto sería el afirmar que un borrador de publicación de blog devuelve una cadena vacía desde el
+método `content`, pero no vamos a efectuar tests para este ejemplo.
 
 Ahora, queremos habilitar una petición para una revisión de la publicación, y queremos que
-`content` devuelva un hilo vacío mientras esperamos por la revisión. Finalmente, cuando
+`content` devuelva una cadena de caracteres vacía mientras esperamos por la revisión. Finalmente, cuando
 el post recibe la aprobación, debería publicarse, significando esto que el texto de la
-publicación será devuelto cuando `content` sea llamado.
+publicación será devuelto cuando `content` sea convocado.
 
 <!-- Below -- so this is where we'll implement the state pattern? If so, can
 you make that explicit, just to be clear! I've added some text to the second
@@ -76,23 +76,23 @@ line, not sure if that's accurate though -->
 <!-- Yes, the state pattern will be implemented within the `Post` type. I've
 tweaked the wording a bit but you've pretty much got it! /Carol-->
 
-Nota que el unico tipo con el que interactuamos de la caja es el tipo`Post`.
-Este tipo usará el patrón de estado y albergará un valor que será
+Nota que el unico tipo con el que interactuamos del cajón es el de
+`Post`. Este tipo usará el patrón de estado y contendrá un valor que será
 uno de tres objetos de estado representando los varios estados en los que una publicación puede estar
----borrador, en la espera de una revisión, o publicado. El cambio de un estado a
+---borrador, en la espera de la revisión, o publicado. El cambio de un estado a
 otro será administrado internamente dentro del tipo `Post`. Los estados cambian en 
-respuesta a los usuarios de métodos en nuestro llamado de biblioteca en la instancia `Post`, pero
-no tienen que ser administrar los cambios de estado directamente. Esto también significa que los usuarios
-no pueden cometer un error en los estados, como publicar una publicación antes de que sea
+respuesta a los usuarios de métodos de nuestro llamado de biblioteca en el caso `Post`, pero
+no tienen que administrar los cambios de estado directamente. Esto también significa que los usuarios
+no pueden cometer un error en los estados, como subir una publicación antes de que sea
 revisada.
 
-### Definiendo `Post` y creando una nueva instancia en el estado de borradores
+### Definiendo `Post` y creando una nueva instancia en el estado de borradores.
 
 ¡Comencemos con la implementación de la biblioteca! Sabemos que necesitamos una
-estructura pública que albergue algun contenido, así que vamos a comenzar con la
+estructura pública que mantenga algún contenido, así que vamos a comenzar con la
 definición de la estructura y una función pública asociada `new` para crear una 
 instancia de `Post`, como se muestra en el listado 17-12. Tambien debemos hacer un rasgo
-`State` privado. Entonces `Post` albergará un rasgo de objeto de `Box<State>` dentro de un
+`State` privado. Entonces `Post` contendrá un rasgo de objeto de `Box<State>` dentro de un
 `Option` en un campo privado llamado `state`. Veremos por qué el `Option` es
 necesario en unos instantes.
 
@@ -130,9 +130,9 @@ impl State for Draft {}
 que crea una nueva instancia `Post`, un rasgo `State`, y una estructura `Draft`
 </span>
 
-Cuando creamos una nueva `Post`, establecemos su campo `state` a un valor `Some` que 
-albergue una `Box`. Este `Box` apunta a una nueva instancia de la estructura `Draft`. Esto
-asegura que cada vez que qcreamos una nueva instancia de `Post`, sea creada como un
+Cuando creamos un nuevo `Post`, establecemos su campo `state` a un valor `Some` que 
+mantenga en sí una `Box`. Este `Box` apunta a una nueva instancia de la estructura `Draft`. Esto
+asegura que cada vez que creamos una nueva instancia de `Post`, sea creada como un
 borrador. Ya que el campo `state` de `Post` es privado, ¡no hay manera de crear
 un `Post` en ningun otro estado!
 
@@ -144,7 +144,7 @@ En la función `Post::new`, establecemos el campo `content` a un nuevo, vacío
 publicación del blog. Implementamos esto como un método en vez de exponer el campo `content`
 como `pub`. Esto significa que podemos implementar un método después que controle
 cómo se leen en el campo `content` los datos. El método `add_text` es bastante 
-directo, así que vamos a añadir la implementación del listado 17-13 al bloque `impl
+directo, así que vamos a añadir la implementación del Listado 17-13 al bloque `impl
 Post`:
 
 <span class="filename">Nombre del archivo: src/lib.rs</span>
@@ -166,7 +166,7 @@ impl Post {
 texto al `content` de la publicación</span>
 
 `add_text` toma una referencia mutable a `self`, ya que estamos cambiando la instancia `Post`
-a la cual llamamos en `add_text`. Cuando llamamos `push_str` en el 
+a la cual llamamos en `add_text`. Cuando convocamos `push_str` en el 
 `String` en `content` y pasamos el argumento `text` para añadir al
 `content` guardado. Este comportamiento no depende del estado en el que esté la publicación así que no es
 parte del patrón de estado. El método `add_text` no interactua con el 
@@ -174,14 +174,14 @@ campo `state` para nada, pero es parte del comportamiento que queremos respaldar
 
 ### Asegurando que el contenido del borrador de una publicación esté vacío
 
-Incluso después de que hemos llamado `add_text` y añadido algun contenido a nuestra publicación, aun
-queremos que el método `content` devuelva un pedazo de hilo vacío ya que la publicación aun
-está en el estado de borrador, como se muestra en la linea 8 del listado 17-11. Por ahora, vamos
-a implementar el método `content` con la cosa más sencilla que realizará este
-requerimiento: siempre devolviendo un pedazo vacío de hilo. Vamos a cambiar esto
+Incluso después de que hemos convocado `add_text` y añadido algún contenido a nuestra publicación, aun
+queremos que el método `content` devuelva una cadena de caracteres vacía dado que la publicación aun
+está en el estado de borrador, como se muestra en la linea 8 del Listado 17-11. Por ahora, vamos
+a implementar el método `content` del modo más sencillo que realizará este
+requisito: siempre devolviendo una cadena de caratacteres vacía. Vamos a cambiar esto
 luego una vez que implementemos la habilidad para cambiar el estado de una publicación para que así pueda ser
 publicada. Hasta ahora, las publicaciones sólo pueden estar en estado de borrador, así que el contenido
-de la publicación debería estar siempre vacío. El listado 17-14 muestra esta implementación
+de la publicación debería estar siempre vacío. El Listado 17-14 muestra esta implementación
 de marcador:
 
 <span class="filename">Filename: src/lib.rs</span>
