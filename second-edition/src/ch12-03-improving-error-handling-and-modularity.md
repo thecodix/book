@@ -380,7 +380,6 @@ Devolver un valor `Err` de `Config::new` permite a la función `main`
 manejar el valor `Result` devuelto de la función `new` y salir del proceso 
 de forma más limpia en caso de error.
 
-
 #### Llamada a `Config::new` y Manejo de Errores
 
 Para manejar el caso de error e imprimir un mensaje amigable, necesitamos actualizar 
