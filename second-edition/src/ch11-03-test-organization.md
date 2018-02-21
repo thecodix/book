@@ -210,15 +210,15 @@ However, this means files in the *tests* directory don’t share the same
 behavior as files in *src* do, which you learned in Chapter 7 regarding how to
 separate code into modules and files.
 
-The different behavior of files in the *tests* directory is most noticeable
-when you have a set of helper functions that would be useful in multiple
-integration test files and you try to follow the steps in the “Moving Modules
-to Other Files” section of Chapter 7 to extract them into a common module. For
-example, if we create *tests/common.rs* and place a function named `setup` in
-it, we can add some code to `setup` that we want to call from multiple test
-functions in multiple test files:
+El comportamiento diferente de los archivos en el directorio *tests* es más notable
+cuando tienes un conjunto de funciones auxiliares que serían útiles en múltiples
+archivos de prueba de integración e intenta seguir los pasos en "Mover módulos"
+a otros archivos” sección del Capítulo 7 para extraerlos en un módulo común. por
+ejemplo, si creamos *tests / common.rs* y colocamos una función llamada `setup` en
+el, podemos agregar un código a `setup` que queremos llamar desde una prueba múltiples
+funciones en múltiples archivos de prueba:
 
-<span class="filename">Filename: tests/common.rs</span>
+<span class="filename">Nombre de archivo: tests/common.rs</span>
 
 ```rust
 pub fn setup() {
@@ -226,9 +226,9 @@ pub fn setup() {
 }
 ```
 
-When we run the tests again, we’ll see a new section in the test output for the
-*common.rs* file, even though this file doesn’t contain any test functions, nor
-did we call the `setup` function from anywhere:
+Cuando ejecutemos las pruebas nuevamente, veremos una nueva sección en la salida de prueba para el
+archivo *common.rs*, a pesar de que este archivo no contiene ninguna función de prueba, ni
+llamamos a la función `setup` desde donde sea:
 
 ```text
 running 1 test
@@ -256,26 +256,26 @@ running 0 tests
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-Having `common` appear in the test results with `running 0 tests` displayed for
-it is not what we wanted. We just wanted to share some code with the other
-integration test files.
+Tener `common` aparece en los resultados de la prueba con `running 0 tests` mostrado para
+lo que no queríamos. Solo queríamos compartir un código con el otro
+archivo de prueba de integración.
 
-To avoid having `common` appear in the test output, instead of creating
-*tests/common.rs*, we’ll create *tests/common/mod.rs*. In the “Rules of Module
-Filesystems” section of Chapter 7, we used the naming convention
-*module_name/mod.rs* for files of modules that have submodules, and we don’t
-have submodules for `common` here, but naming the file this way tells Rust not
-to treat the `common` module as an integration test file. When we move the
-`setup` function code into *tests/common/mod.rs* and delete the
-*tests/common.rs* file, the section in the test output will no longer appear.
-Files in subdirectories of the *tests* directory don’t get compiled as separate
-crates or have sections in the test output.
+Para evitar tener `common` en la salida de prueba, en lugar de crear
+*tests/common.rs*, crearemos *tests/common/mod.rs*. En las "Reglas del Módulo
+archivos del sistema” sección del Capítulo 7, utilizamos la convención de nomenclatura
+*module_name/mod.rs* para archivos de módulos que tienen submódulos, y nosotros no
+tenemos submódulos para `common` aquí, pero nombrar el archivo de esta manera le dice a Rust que no
+tratemos el archivo `common` como un archivo de prueba de integración. Cuando movemos la
+función del código `setup` en *tests/common/mod.rs* y eliminamos el
+archivo *tests/common.rs*, la sección en la salida de prueba ya no aparecerá.
+Los archivos en subdirectorios del directorio * tests * no se compilan por separado en
+cajas o tienen secciones en la salida de prueba.
 
-After we’ve created *tests/common/mod.rs*, we can use it from any of the
-integration test files as a module. Here’s an example of calling the `setup`
-function from the `it_adds_two` test in *tests/integration_test.rs*:
+Después de crear *tests / common / mod.rs*, podemos usarlo desde cualquiera de
+archivos de prueba de integración como un módulo. Aquí hay un ejemplo de llamar en  la función 
+'setup' de la prueba `it_adds_two` en *tests/integration_test.rs*:
 
-<span class="filename">Filename: tests/integration_test.rs</span>
+<span class="filename">Nombre de archivo: tests/integration_test.rs</span>
 
 ```rust,ignore
 extern crate adder;
@@ -289,37 +289,37 @@ fn it_adds_two() {
 }
 ```
 
-Note that the `mod common;` declaration is the same as the module declarations
-we demonstrated in Listing 7-4. Then in the test function, we can call the
-`common::setup()` function.
+Nótese que la declaración `mod common;` es lo mismo que las declaraciones del módulo
+que demostramos en el Listado 7-4. Luego, en la función de prueba, podemos llamar a la
+función `common::setup()`.
 
-#### Integration Tests for Binary Crates
+#### Pruebas de integración para cajas binarias
 
-If our project is a binary crate that only contains a *src/main.rs* file and
-doesn’t have a *src/lib.rs* file, we can’t create integration tests in the
-*tests* directory and use `extern crate` to import functions defined in the
-*src/main.rs* file. Only library crates expose functions that other crates can
-call and use; binary crates are meant to be run on their own.
+Si nuestro proyecto es una caja binaria que solo contiene un archivo *src/main.rs* y
+no tiene un archivo *src/lib.rs*, no podemos crear pruebas de integración en el
+directorio *tests* y usar el `extern crate` para importar funciones definidas en
+el archivo *src/main.rs*. Solo las cajas de la biblioteca exponen funciones que otras cajas pueden
+llamar y usar; las cajas binarias se deben ejecutar por sí mismas.
 
-This is one of the reasons Rust projects that provide a binary have a
-straightforward *src/main.rs* file that calls logic that lives in the
-*src/lib.rs* file. Using that structure, integration tests *can* test the
-library crate by using `extern crate` to exercise the important functionality.
-If the important functionality works, the small amount of code in the
-*src/main.rs* file will work as well, and that small amount of code doesn’t
-need to be tested.
+Esta es una de las razones por las cuales los proyectos de Rust que proporcionan un binario tienen una
+archivo sencillo *src/main.rs* que llama a la lógica que está en el
+archivo *src/lib.rs*. Usando esa estructura, las pruebas de integración * pueden * probar la
+caja de biblioteca mediante el uso de `extern crate` para ejercer la funcionalidad importante.
+Si la funcionalidad importante funciona, la pequeña cantidad de código en el
+archivo *src/main.rs* funcionará también, y esa pequeña cantidad de código no
+necesita ser probada.
 
-## Summary
+## Resúmen
 
-Rust’s testing features provide a way to specify how code should function to
-ensure it continues to work as we expect even as we make changes. Unit tests
-exercise different parts of a library separately and can test private
-implementation details. Integration tests check that many parts of the library
-work together correctly, and they use the library’s public API to test the code
-in the same way external code will use it. Even though Rust’s type system and
-ownership rules help prevent some kinds of bugs, tests are still important to
-help reduce logic bugs having to do with how your code is expected to behave.
+Las características de prueba de Rust proporcionan una manera de especificar cómo debe funcionar el código para
+asegúrarte de que siga funcionando como esperamos incluso mientras hacemos cambios. Pruebas unitarias
+ejercen diferentes partes de una biblioteca por separado y pueden probar implementación
+de detalles privados. Las pruebas de integración comprueban que muchas partes de la biblioteca
+trabajan juntos correctamente y usan la API pública de la biblioteca para probar el código
+de la misma forma que el código externo lo usará. Aunque el sistema de tipos de Rust y
+las reglas de propiedad ayudan a prevenir algunos tipos de errores, las pruebas siguen siendo importantes para
+ayudan a reducir los errores de lógica que tienen que ver con cómo se espera que su código se comporte.
 
-Let’s combine the knowledge you learned in this chapter and in previous
-chapters and work on a project in the next chapter!
+¡Combinemos el conocimiento que aprendió en este capítulo y en los anteriores
+capítulos y trabajemos en un proyecto en el próximo capítulo!
 
