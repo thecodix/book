@@ -10,7 +10,7 @@ objetos intercambiables son un conjunto de tipos fijados que conocemos cuando
 nuestro código es compilado.
 
 Sin embargo, algunas veces, queremos que el usuario de nuestra librería sea
-capaz de extender los conjuntos de tipos que que son válidos en una situación
+capaz de extender los conjuntos de tipos que son válidos en una situación
 particular. Para mostrar cómo podemos lograr eso, crearemos un ejemplo de
 herramienta de Graphical User Interface (Interface de Usuario Gráfica) que itera
 a través de una lista de objetos, llamando al método `draw` en cada uno para
