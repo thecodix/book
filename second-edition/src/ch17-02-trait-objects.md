@@ -1,74 +1,74 @@
-## Using Trait Objects that Allow for Values of Different Types
+## Usar objetos de rasgo que permiten valores de diferentes tipos
 
-In Chapter 8, we mentioned that one limitation of vectors is that they can only
-store elements of one type. We created a workaround in Listing 8-10 where we
-defined a `SpreadsheetCell` enum that had variants to hold integers, floats,
-and text. This meant we could store different types of data in each cell and
-still have a vector that represented a row of cells. This is a perfectly good
-solution when our interchangeable items are a fixed set of types that we know
-when our code gets compiled.
+En el Capítulo 8, mencionamos que una limitación de los vectores es que solo pueden
+almacenar elementos de un tipo. Creamos una solución alternativa en el listado 8-10 donde se
+definió una enumeración `SpreadsheetCell` que tenía variantes para contener enteros, flotantes,
+y texto. Esto significaba que podíamos almacenar diferentes tipos de datos en cada celda y
+todavía tiene un vector que representa una fila de celdas. Esto es perfectamente bueno para la
+solución cuando nuestros artículos intercambiables son un conjunto fijo de tipos que conocemos
+cuando nuestro código se compila.
 
-Sometimes, however, we want the user of our library to be able to extend the
-set of types that are valid in a particular situation. To show how we might
-achieve this, we’ll create an example Graphical User Interface tool that
-iterates through a list of items, calling a `draw` method on each one to drawn
-it to the screen; a common technique for GUI tools. We’re going to create a
-library crate containing the structure of a GUI library called `rust_gui`. This
-crate might include some types for people to use, such as `Button` or
-`TextField`. On top of these, users of `rust_gui` will want to create their own
-types that can be drawn on the screen: for instance, one programmer might add
-an `Image`, another might add a `SelectBox`.
+A veces, sin embargo, queremos que el usuario de nuestra biblioteca pueda ampliar el
+set de tipos que son válidos en una situación particular. Para mostrar cómo podríamos
+lograr esto, crearemos un ejemplo de herramienta de interfaz gráfica de usuario que
+itera a través de una lista de elementos, llamando a un método de 'dibujar' en cada uno para dibujarlo
+en la pantalla; una técnica común para herramientas GUI. Vamos a crear una
+caja de biblioteca que contiene la estructura de una biblioteca de GUI llamada `rust_gui`. Esta
+El cajón puede incluir algunos tipos para que las personas lo usen, como `Button` o
+`TextField`. Además de esto, los usuarios de `rust_gui` querrán crear sus propios
+tipos que se pueden dibujar en la pantalla: por ejemplo, un programador podría agregar
+una `Image`, y otro agregaría una `SelectBox`.
 
-We won’t implement a fully-fledged GUI library for this example, but will show
-how the pieces would fit together. At the time of writing the library, we can’t
-know and define all the types other programmers will want to create. What we do
-know is that `rust_gui` needs to keep track of a bunch of values that are of
-different types, and it needs to be able to call a `draw` method on each of
-these differently-typed values. It doesn’t need to know exactly what will
-happen when we call the `draw` method, just that the value will have that
-method available for us to call.
+No implementaremos una biblioteca de GUI completamente desarrollada para este ejemplo, pero mostraremos
+cómo las piezas encajarían juntas En el momento de escribir la biblioteca, no podemos
+conocer y definir todos los tipos que otros programadores querrán crear. Qué hacemos al
+saber que `rust_gui` necesita hacer un seguimiento de un montón de valores que son de
+diferentes tipos, y necesita poder llamar a un método de `draw` en cada de
+estos valores de tipo diferente. No necesita saber exactamente qué será lo que
+sucede cuando llamamos al método `draw`, solo que el valor tendrá ese
+método disponible para nosotros para llamar.
 
-To do this in a language with inheritance, we might define a class named
-`Component` that has a method named `draw` on it. The other classes like
-`Button`, `Image`, and `SelectBox` would inherit from `Component` and thus
-inherit the `draw` method. They could each override the `draw` method to define
-their custom behavior, but the framework could treat all of the types as if
-they were `Component` instances and call `draw` on them. But Rust doesn’t have
-inheritance, so we need another way.
+Para hacer esto en un lenguaje con herencia, podríamos definir una clase llamada
+`Component` que tiene un método llamado `draw` en el. Las otras clases como
+`Button`, `Image`, y `SelectBox` se heredarían de `Component` y por lo tanto
+heredaría el método `draw`. Podrían anular cada uno el método `draw` para definir
+su comportamiento personalizado, pero el marco podría tratar todos los tipos como si
+fueran `Component` instancias y llamadas `draw` en ellos. Pero Rust no tiene
+herencia, entonces necesitamos otra manera.
 
-### Defining a Trait for Common Behavior
+### Definición de un rasgo para el comportamiento común
 
-To implement the behavior we want `rust_gui` to have, we’ll define a trait
-named `Draw` that will have one method named `draw`. Then we can define a
-vector that takes a *trait object*. A trait object points to an instance of a
-type that implements the trait we specify. We create a trait object by
-specifying some sort of pointer, such as a `&` reference or a `Box<T>` smart
-pointer, and then specifying the relevant trait (we’ll talk about the reason
-trait objects have to use a pointer in Chapter 19 in the section on Dynamically
-Sized Types). We can use trait objects in place of a generic or concrete type.
-Wherever we use a trait object, Rust’s type system will ensure at compile-time
-that any value used in that context will implement the trait object’s trait.
-This way we don’t need to know all the possible types at compile time.
+Para implementar el comportamiento que queremos que tenga `rust_gui`, definiremos un rasgo
+llamado `Draw` que tendrá un método llamado `draw`. entonces podemos definir el
+vector que toma un *rasgo de objeto*. Un rasgo de objecto apunta a una instancia de
+tipo que implementa el rasgo que especificamos. Creamos un objeto de rasgo 
+especificando algún tipo de puntero, como una referencia `&` o un `Box <T>` puntero
+inteligente, y luego especificando el rasgo relevante (hablaremos de la razón
+los objetos rasgo tienen que usar un puntero en el Capítulo 19 en la sección Dinámicamente
+Tipos de tamaño). Podemos usar objetos de rasgo en lugar de un tipo genérico o concreto.
+Donde sea que usemos un objeto de rasgo, el sistema de tipos de Rust se asegurará en tiempo de compilación
+que cualquier valor utilizado en ese contexto implementará el rasgo del objeto rasgo.
+De esta forma, no necesitamos saber todos los tipos posibles en tiempo de compilación.
 
 <!-- What will the trait object do in this case? I've taken this last part of
 the line from below, but I'm not 100% on that -->
 <!-- I've moved up more and reworded a bit, hope that clarifies /Carol -->
 
-We’ve mentioned that in Rust we refrain from calling structs and enums
-“objects” to distinguish them from other languages’ objects. In a struct or
-enum, the data in the struct fields and the behavior in `impl` blocks is
-separated, whereas in other languages the data and behavior combined into one
-concept is often labeled an object. Trait objects, though, *are* more like
-objects in other languages, in the sense that they combine both data and
-behavior. However, trait objects differ from traditional objects in that we
-can’t add data to a trait object. Trait objects aren’t as generally useful as
-objects in other languages: their specific purpose is to allow abstraction
-across common behavior.
+Hemos mencionado que en Rust nos abstenemos de llamar a estructuras y enumeraciones de
+"Objetos" para distinguirlos de los objetos de otros idiomas. En una estructura o
+enum, los datos en los campos struct y el comportamiento en bloques `impl` es
+separado, mientras que en otros idiomas los datos y el comportamiento se combinaron en un
+concepto a menudo se etiquetan como un objeto. Los objetos de rasgo, sin embargo, *son* más como
+objetos en otros idiomas, en el sentido de que combinan datos y
+comportamiento. Sin embargo, los objetos de rasgo difieren de los objetos tradicionales en que
+no puede agregar datos a un objeto de rasgo. Los objetos de rasgo no son tan útiles en general como
+objetos en otros idiomas: su propósito específico es permitir la abstracción
+a través del comportamiento común.
 
-Listing 17-3 shows how to define a trait named `Draw` with one method named
+Listado 17-3 muestra cómo definir un rasgo llamado `Draw` con un método llamado
 `draw`:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre de archivo: src/lib.rs</span>
 
 ```rust
 pub trait Draw {
@@ -76,13 +76,13 @@ pub trait Draw {
 }
 ```
 
-<span class="caption">Listing 17-3: Definition of the `Draw` trait</span>
+<span class="caption">Listado 17-3: Definición del rasgo `Draw`</span>
 
-This should look familiar from our discussions on how to define traits in
-Chapter 10. Next comes something new: Listing 17-4 defines a struct named
-`Screen` that holds a vector named `components`. This vector is of type
-`Box<Draw>`, which is a trait object: it’s a stand-in for any type inside a
-`Box` that implements the `Draw` trait.
+Esto debería resultar familiar a partir de nuestras discusiones sobre cómo definir rasgos en
+Capítulo 10. Luego viene algo nuevo: el listado 17-4 define una estructura llamada
+`Screen` que contiene un vector llamado `components`. Este vector es de tipo
+`Box<Draw>`,que es un objeto de rasgo: es un sustituto para cualquier tipo dentro de un
+`Box` que implementa el rasgo `Draw`.
 
 <!-- Would it be useful to let the reader know why we need a box here, or will
 that be clear at this point? -->
@@ -90,7 +90,7 @@ that be clear at this point? -->
 this section where we talk about needing a `&` or a `Box` to be a trait object.
 /Carol -->
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre de archivo: src/lib.rs</span>
 
 ```rust
 # pub trait Draw {
@@ -102,14 +102,14 @@ pub struct Screen {
 }
 ```
 
-<span class="caption">Listing 17-4: Definition of the `Screen` struct with a
-`components` field holding a vector of trait objects that implement the `Draw`
-trait</span>
+<span class="caption">Listado 17-4: Definición de la estructura `Screen` con un
+campo de `componente` sosteniendo un vector de objetos de rasgo que implementan el rasgo
+`Draw`</span>
 
-On the `Screen` struct, we’ll define a method named `run` that will call the
-`draw` method on each of its `components`, as shown in Listing 17-5:
+En la estructura `Screen`, definiremos un método llamado` run` que llamará al
+`draw` método en cada uno de sus `component`, como se muestra en el Listado 17-5:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre de archivo: src/lib.rs</span>
 
 ```rust
 # pub trait Draw {
@@ -129,16 +129,16 @@ impl Screen {
 }
 ```
 
-<span class="caption">Listing 17-5: Implementing a `run` method on `Screen`
-that calls the `draw` method on each component</span>
+<span class="caption">Listado 17-5: Implementando un método `run` en` Screen`
+que llama al método `draw` en cada componente</span>
 
-This works differently to defining a struct that uses a generic type parameter
-with trait bounds. A generic type parameter can only be substituted with one
-concrete type at a time, while trait objects allow for multiple concrete types
-to fill in for the trait object at runtime. For example, we could have defined
-the `Screen` struct using a generic type and a trait bound as in Listing 17-6:
+Esto funciona de manera diferente a la definición de una estructura que usa un parámetro de tipo genérico
+con límites de rasgos. Un parámetro de tipo genérico solo puede ser sustituido por un
+tipo concreto a la vez, mientras que los objetos rasgo permiten múltiples tipos de concreto
+para completar el objeto de rasgo en tiempo de ejecución. Por ejemplo, podríamos haber definido
+la estructura `Screen` usando un tipo genérico y un rasgo de rasgo como en el Listado 17-6:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre de archivo: src/lib.rs</span>
 
 ```rust
 # pub trait Draw {
@@ -159,27 +159,27 @@ impl<T> Screen<T>
 }
 ```
 
-<span class="caption">Listing 17-6: An alternate implementation of the `Screen`
-struct and its `run` method using generics and trait bounds</span>
+<span class="caption">Listado 17-6: Una implementación alternativa de la estructura
+'Screen' y su método `run` utilizando genéricos y límites de rasgos </ span>
 
-This restricts us to a `Screen` instance that has a list of components all of
-type `Button` or all of type `TextField`. If you’ll only ever have homogeneous
-collections, using generics and trait bounds is preferable since the
-definitions will be monomorphized at compile time to use the concrete types.
+Esto nos restringe a una instancia de 'Pantalla' que tiene una lista de componentes de todos
+los tipos de `Button` o todo el tipo` TextField`. Si solo tienes colecciones
+homogeneas, utilizando genéricos y límites de rasgos es preferible ya que 
+las definiciones se monomorfizarán en el momento de la compilación para usar los tipos concretos.
 
-With the method using trait objects, on the other hand, one `Screen`
-instance can hold a `Vec` that contains a `Box<Button>` as well as a
-`Box<TextField>`. Let’s see how that works, and then talk about the runtime
-performance implications.
+Con el método que usa objetos rasgo, por otro lado, una `Pantalla`
+instancia puede contener un `Vec` que contiene una `Box<Button>` así como un
+`Box<TextField>`. Veamos cómo funciona eso, y luego hablamos sobre el tiempo de ejecución en
+implicaciones de rendimiento.
 
-### Implementing the Trait
+### Implementando el RasgoPartial (1/2) spanish translation ch17-02-trait-objects.md
 
-Now we’ll add some types that implement the `Draw` trait. We’re going to
-provide the `Button` type. Again, actually implementing a GUI library is out of
-scope of this book, so the `draw` method won’t have any useful implementation
-in its body. To imagine what the implementation might look like, a `Button`
-struct might have fields for `width`, `height`, and `label`, as shown in
-Listing 17-7:
+Ahora agregaremos algunos tipos que implementan el rasgo `Draw`. Iban a
+proporcionar el tipo de `Button`. Nuevamente, la implementación de una biblioteca GUI está fuera de
+alcance de este libro, por lo que el método `draw` no tendrá ninguna implementación útil
+en su cuerpo. Para imaginar cómo se vería la implementación, una estructura 
+`Button` podría tener campos para `width`, `weight` y `label`, como se muestra en el
+Listado 17-7:
 
 <span class="filename">Filename: src/lib.rs</span>
 
