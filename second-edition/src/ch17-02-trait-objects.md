@@ -1,68 +1,68 @@
 ## Usar objetos de rasgo que permiten valores de diferentes tipos
 
 En el Capítulo 8, mencionamos que una limitación de los vectores es que solo pueden
-almacenar elementos de un tipo. Creamos una solución alternativa en el listado 8-10 donde se
-definió una enumeración `SpreadsheetCell` que tenía variantes para contener enteros, flotantes,
+almacenar elementos de un tipo. Creamos una solución alternativa en el Listado 8-10 donde
+definimos una enumeración `SpreadsheetCell` que tenía variantes para contener enteros, flotantes,
 y texto. Esto significaba que podíamos almacenar diferentes tipos de datos en cada celda y
-todavía tiene un vector que representa una fila de celdas. Esto es perfectamente bueno para la
-solución cuando nuestros artículos intercambiables son un conjunto fijo de tipos que conocemos
+ aún así tener un vector que representaba una fila de celdas. Absolutamente, esta es una correcta
+solución para cuando nuestros elementos intercambiables son un conjunto fijo de tipos que conocemos
 cuando nuestro código se compila.
 
 A veces, sin embargo, queremos que el usuario de nuestra biblioteca pueda ampliar el
 set de tipos que son válidos en una situación particular. Para mostrar cómo podríamos
 lograr esto, crearemos un ejemplo de herramienta de interfaz gráfica de usuario que
-itera a través de una lista de elementos, llamando a un método de 'dibujar' en cada uno para dibujarlo
+itera a través de una lista de elementos, convocando una función 'draw' en cada uno para dibujarlo
 en la pantalla; una técnica común para herramientas GUI. Vamos a crear una
-caja de biblioteca que contiene la estructura de una biblioteca de GUI llamada `rust_gui`. Esta
-El cajón puede incluir algunos tipos para que las personas lo usen, como `Button` o
+cajón de biblioteca que contiene la estructura de una biblioteca de GUI llamada `rust_gui`. Este
+cajón puede incluir algunos tipos para que las personas lo usen, como `Button` o
 `TextField`. Además de esto, los usuarios de `rust_gui` querrán crear sus propios
 tipos que se pueden dibujar en la pantalla: por ejemplo, un programador podría agregar
 una `Image`, y otro agregaría una `SelectBox`.
 
 No implementaremos una biblioteca de GUI completamente desarrollada para este ejemplo, pero mostraremos
-cómo las piezas encajarían juntas En el momento de escribir la biblioteca, no podemos
-conocer y definir todos los tipos que otros programadores querrán crear. Qué hacemos al
-saber que `rust_gui` necesita hacer un seguimiento de un montón de valores que son de
-diferentes tipos, y necesita poder llamar a un método de `draw` en cada de
-estos valores de tipo diferente. No necesita saber exactamente qué será lo que
-sucede cuando llamamos al método `draw`, solo que el valor tendrá ese
-método disponible para nosotros para llamar.
+cómo las piezas encajarían juntas. En el momento de programar la biblioteca, no podemos
+conocer y definir todos los tipos que otros programadores querrán crear. Lo que conocemos
+es que `rust_gui` necesita hacer un seguimiento de un montón de valores que son de
+diferentes tipos, y necesita poder convocar a una función `draw` en cada uno de 
+estos valores de tipo diferente. Por lo que no necesita saber exactamente lo que
+sucederá cuando convocamos a una función `draw`, solo que el valor tendrá ese
+método disponible para nosotros al convocar la función.
 
 Para hacer esto en un lenguaje con herencia, podríamos definir una clase llamada
-`Component` que tiene un método llamado `draw` en el. Las otras clases como
+`Component` que tiene un método llamado `draw` en él. Las otras clases como
 `Button`, `Image`, y `SelectBox` se heredarían de `Component` y por lo tanto
-heredaría el método `draw`. Podrían anular cada uno el método `draw` para definir
+heredaría la función `draw`. Podrían anular cada uno el método `draw` para definir
 su comportamiento personalizado, pero el marco podría tratar todos los tipos como si
-fueran `Component` instancias y llamadas `draw` en ellos. Pero Rust no tiene
+fueran casos de `Component`  y convocaciones a funciones `draw` en ellos. Pero Rust no tiene
 herencia, entonces necesitamos otra manera.
 
 ### Definición de un rasgo para el comportamiento común
 
 Para implementar el comportamiento que queremos que tenga `rust_gui`, definiremos un rasgo
-llamado `Draw` que tendrá un método llamado `draw`. entonces podemos definir el
-vector que toma un *rasgo de objeto*. Un rasgo de objecto apunta a una instancia de
+llamado `Draw` que tendrá un método llamado `draw`. Entonces podemos definir un
+vector que toma un *rasgo de objeto*. Un rasgo de objecto apunta a un caso de un
 tipo que implementa el rasgo que especificamos. Creamos un objeto de rasgo 
 especificando algún tipo de puntero, como una referencia `&` o un `Box <T>` puntero
-inteligente, y luego especificando el rasgo relevante (hablaremos de la razón
-los objetos rasgo tienen que usar un puntero en el Capítulo 19 en la sección Dinámicamente
+inteligente, y luego especificando el rasgo relevante (hablaremos del por qué
+los objetos de rasgo tienen que usar un puntero en el Capítulo 19 en la sección Dinámicamente
 Tipos de tamaño). Podemos usar objetos de rasgo en lugar de un tipo genérico o concreto.
 Donde sea que usemos un objeto de rasgo, el sistema de tipos de Rust se asegurará en tiempo de compilación
-que cualquier valor utilizado en ese contexto implementará el rasgo del objeto rasgo.
+que cualquier valor utilizado en ese contexto implementará el rasgo del objeto de rasgo.
 De esta forma, no necesitamos saber todos los tipos posibles en tiempo de compilación.
 
 <!-- What will the trait object do in this case? I've taken this last part of
 the line from below, but I'm not 100% on that -->
 <!-- I've moved up more and reworded a bit, hope that clarifies /Carol -->
 
-Hemos mencionado que en Rust nos abstenemos de llamar a estructuras y enumeraciones de
-"Objetos" para distinguirlos de los objetos de otros idiomas. En una estructura o
-enum, los datos en los campos struct y el comportamiento en bloques `impl` es
-separado, mientras que en otros idiomas los datos y el comportamiento se combinaron en un
-concepto a menudo se etiquetan como un objeto. Los objetos de rasgo, sin embargo, *son* más como
+Hemos mencionado que en Rust nos abstenemos de convocar estructuras y enumeraciones de
+"Objetos" para distinguirlos de los objetos de otros lenguajes. En una estructura o
+enumeración, los datos en los campos de estructura y el comportamiento en bloques `impl` es
+separado, mientras que en otros lenguajes los datos y el comportamiento se combinaron en un
+concepto que a menudo se etiquetan como un objeto. Los objetos de rasgo, sin embargo, *son* más como
 objetos en otros idiomas, en el sentido de que combinan datos y
 comportamiento. Sin embargo, los objetos de rasgo difieren de los objetos tradicionales en que
 no puede agregar datos a un objeto de rasgo. Los objetos de rasgo no son tan útiles en general como
-objetos en otros idiomas: su propósito específico es permitir la abstracción
+objetos en otros lenguajes: su propósito específico es permitir la abstracción
 a través del comportamiento común.
 
 Listado 17-3 muestra cómo definir un rasgo llamado `Draw` con un método llamado
@@ -79,7 +79,7 @@ pub trait Draw {
 <span class="caption">Listado 17-3: Definición del rasgo `Draw`</span>
 
 Esto debería resultar familiar a partir de nuestras discusiones sobre cómo definir rasgos en
-Capítulo 10. Luego viene algo nuevo: el listado 17-4 define una estructura llamada
+Capítulo 10. Luego viene algo nuevo: el Listado 17-4 define una estructura llamada
 `Screen` que contiene un vector llamado `components`. Este vector es de tipo
 `Box<Draw>`,que es un objeto de rasgo: es un sustituto para cualquier tipo dentro de un
 `Box` que implementa el rasgo `Draw`.
@@ -106,8 +106,8 @@ pub struct Screen {
 campo de `componente` sosteniendo un vector de objetos de rasgo que implementan el rasgo
 `Draw`</span>
 
-En la estructura `Screen`, definiremos un método llamado` run` que llamará al
-`draw` método en cada uno de sus `component`, como se muestra en el Listado 17-5:
+En la estructura `Screen`, definiremos un método llamado` run` que convocará a la función
+`draw` en cada uno de sus `component`, como se muestra en el Listado 17-5:
 
 <span class="filename">Nombre de archivo: src/lib.rs</span>
 
@@ -134,9 +134,9 @@ que llama al método `draw` en cada componente</span>
 
 Esto funciona de manera diferente a la definición de una estructura que usa un parámetro de tipo genérico
 con límites de rasgos. Un parámetro de tipo genérico solo puede ser sustituido por un
-tipo concreto a la vez, mientras que los objetos rasgo permiten múltiples tipos de concreto
+tipo concreto a la vez, mientras que los objetos rasgo permiten múltiples tipos concretos
 para completar el objeto de rasgo en tiempo de ejecución. Por ejemplo, podríamos haber definido
-la estructura `Screen` usando un tipo genérico y un rasgo de rasgo como en el Listado 17-6:
+la estructura `Screen` usando un tipo genérico y un rasgo acotado como en el Listado 17-6:
 
 <span class="filename">Nombre de archivo: src/lib.rs</span>
 
@@ -162,9 +162,9 @@ impl<T> Screen<T>
 <span class="caption">Listado 17-6: Una implementación alternativa de la estructura
 'Screen' y su método `run` utilizando genéricos y límites de rasgos </ span>
 
-Esto nos restringe a una instancia de 'Pantalla' que tiene una lista de componentes de todos
+Esto nos restringe a un caso de 'Pantalla' que tiene una lista de componentes de todos
 los tipos de `Button` o todo el tipo` TextField`. Si solo tienes colecciones
-homogeneas, utilizando genéricos y límites de rasgos es preferible ya que 
+homogeneas, utilizando genéricos y rasgos acotados es preferible ya que 
 las definiciones se monomorfizarán en el momento de la compilación para usar los tipos concretos.
 
 Con el método que usa objetos rasgo, por otro lado, una `Pantalla`
