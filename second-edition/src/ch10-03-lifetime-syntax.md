@@ -1,32 +1,32 @@
-## Validating References with Lifetimes
+## Validando Referencias con sus Tiempos de Vida
 
-When we talked about references in Chapter 4, we left out an important detail:
-every reference in Rust has a *lifetime*, which is the scope for which that
-reference is valid. Most of the time lifetimes are implicit and inferred, just
-like most of the time types are inferred. Similarly to when we have to annotate
-types because multiple types are possible, there are cases where the lifetimes
-of references could be related in a few different ways, so Rust needs us to
-annotate the relationships using generic lifetime parameters so that it can
-make sure the actual references used at runtime will definitely be valid.
+Cuando hablamos de referencias en el Capítulo 4, dejamos fuera un detalle importante:
+cada referencia en Rust tienen un *tiempo de vida*,  el cual es el alcance en el que
+la referencia es válida. La mayoría de las veces, los tiempos de vida son implícitos e inferidos, así
+como la mayoría de los tipos de tiempo se infieren. De manera similar a cuando tenemos que anotar
+tipos ya que son posibles varios de estos, hay casos en los que las vidas
+de las referencias podrían relacionarse de diferentes maneras, por lo que Rust necesita
+anotar las relaciones usando parámetros genéricos de por vida para que pueda
+asegurarse de que las referencias reales utilizadas en tiempo de ejecución definitivamente son válidas.
 
-Yes, it’s a bit unusual, and will be different to tools you’ve used in other
-programming languages. Lifetimes are, in some ways, Rust’s most distinctive
-feature.
+Sí, es un poco inusual, y será diferente a las herramientas que has usado en otros
+lenguajes de programación. Los tiempos de vida son, de alguna manera, lo más distintivos de las características
+del Rust.
 
-Lifetimes are a big topic that can’t be covered in entirety in this chapter, so
-we’ll cover common ways you might encounter lifetime syntax in this chapter to
-get you familiar with the concepts. Chapter 19 will contain more advanced
-information about everything lifetimes can do.
+Los tiempos de vida son un gran tema que no se puede cubrir en su totalidad en este capítulo, por lo que
+cubriremos las formas comunes en los que puedes encontrar la sintaxis de los tiempos de vida en este capítulo para
+familiarízate con los conceptos. El Capítulo 19 contendrá información
+más avanzada sobre todo lo que las vidas pueden hacer.
 
-### Lifetimes Prevent Dangling References
+### Los Tiempos de Vida Previenen las Referencias Colgantes
 
-The main aim of lifetimes is to prevent dangling references, which will cause a
-program to reference data other than the data we’re intending to reference.
-Consider the program in Listing 10-18, with an outer scope and an inner scope.
-The outer scope declares a variable named `r` with no initial value, and the
-inner scope declares a variable named `x` with the initial value of 5. Inside
-the inner scope, we attempt to set the value of `r` as a reference to `x`. Then
-the inner scope ends, and we attempt to print out the value in `r`:
+El objetivo principal de los tiempos de vida es evitar referencias colgantes, lo que provocará que el
+programa no pueda referenciar datos que no sean los datos a los que nos referimos.
+Considere el programa en el listado 10-18, con un alcance externo y un alcance interno.
+El ámbito externo declara una variable llamada `r` sin valor inicial, y 
+el alcance interno declara una variable llamada `x` con el valor inicial de 5. Dentro
+del alcance interno, intentamos establecer el valor de `r` como una referencia a` x`. Entonces
+el alcance interno finaliza e intentamos imprimir el valor en `r`:
 
 ```rust,ignore
 {
@@ -41,17 +41,17 @@ the inner scope ends, and we attempt to print out the value in `r`:
 }
 ```
 
-<span class="caption">Listing 10-18: An attempt to use a reference whose value
-has gone out of scope</span>
+<span class="caption">Listado 10-18:Un intento de usar una referencia cuyo valor
+ha salido del alcance</span>
 
-> #### Uninitialized Variables Cannot Be Used
+> #### Las Variables Que No Se Inicien No Se Pueden Usar
 >
-> The next few examples declare variables without giving them an initial value,
-> so that the variable name exists in the outer scope. This might appear to be
-> in conflict with Rust not having null. However, if we try to use a variable
-> before giving it a value, we’ll get a compile-time error. Try it out!
+> Los siguientes ejemplos declaran variables sin darles un valor inicial,
+> para que el nombre de la variable exista en el ámbito externo. Esto podría parecer ser
+> un conflicto con Rust ya que sería nulo. Sin embargo, si tratamos de usar una variable
+> antes de darle un valor, obtendremos un error en tiempo de compilación. ¡Pruébalo!
 
-When we compile this code, we’ll get an error:
+Cuando compilamos este código, obtenemos un error:
 
 ```text
 error: `x` does not live long enough
@@ -65,19 +65,19 @@ error: `x` does not live long enough
    | - borrowed value needs to live until here
 ```
 
-The variable `x` doesn’t “live long enough.” Why not? Well, `x` is going to go
-out of scope when we hit the closing curly bracket on line 7, ending the inner
-scope. But `r` is valid for the outer scope; its scope is larger and we say
-that it “lives longer.” If Rust allowed this code to work, `r` would be
-referencing memory that was deallocated when `x` went out of scope, and
-anything we tried to do with `r` wouldn’t work correctly. So how does Rust
-determine that this code should not be allowed?
+La variablee `x` No “vivió lo suficiente.”¿Por qué no? Bueno, `x` estará
+fuera del alcance cuando lleguemos al corchete de cierre en la línea 7, terminando el alcance
+interior. Pero `r` es válido para el alcance externo; su alcance es más grande y decimos
+que "vive más tiempo". Si Rust permitiera que este código funcionara, `r` sería
+una referencia a la memoria que fue desasignada cuando `x` salió del alcance, y
+cualquier cosa que tratasemos de hacer con `r`no funcionaría correctamente. ¿Entonces como determina
+Rsut que este código no debería estar permitido?
 
-#### The Borrow Checker
+#### El Verificador
 
-The part of the compiler called the *borrow checker* compares scopes to
-determine that all borrows are valid. Listing 10-19 shows the same example from
-Listing 10-18 with annotations showing the lifetimes of the variables:
+La parte del compilador llamada *Verificador* compara scopes para
+determinar que todos los puntos son válidos El Listado 10-19 muestra el mismo ejemplo del
+Listado 10-18 con anotaciones que muestran las vidas de las variables:
 
 ```rust,ignore
 {
@@ -92,27 +92,27 @@ Listing 10-18 with annotations showing the lifetimes of the variables:
 }                         // -------+
 ```
 
-<span class="caption">Listing 10-19: Annotations of the lifetimes of `r` and
-`x`, named `'a` and `'b` respectively</span>
+<span class="caption">Listado 10-19: Anotaciones del tiempo de vida de `r` y
+`x`, llamado `'a` y `'b` respectivamente</span>
 
-<!-- Just checking I'm reading this right: the inside block is the b lifetime,
-correct? I want to leave a note for production, make sure we can make that
-clear -->
-<!-- Yes, the inside block for the `'b` lifetime starts with the `let x = 5;`
-line and ends with the first closing curly bracket on the 7th line. Do you
-think the text art comments work or should we make an SVG diagram that has
-nicer looking arrows and labels? /Carol -->
+<!-- Solo estoy comprobando que estoy leyendo esto correctamente: ¿el bloque interno es el b de por vida,
+cierto? quiero dejar una nota por producción, asegurarme de que podemos dejar esto
+claro -->
+<!-- Sí, el bloque interior de la vida de `'b` empieza con la línea
+`let x = 5;`y termina con el primer corchete de cierre en la 7ma línea. Si piensas
+que los comentarios de arte de texto funcionan o deberíamos hacer un diagrama de SVG que busca
+flechas y etiquetas más bonitas? --> /Carol
 
-We’ve annotated the lifetime of `r` with `'a` and the lifetime of `x` with
-`'b`. As you can see, the inner `'b` block is much smaller than the outer `'a`
-lifetime block. At compile time, Rust compares the size of the two lifetimes
-and sees that `r` has a lifetime of `'a`, but that it refers to an object with
-a lifetime of `'b`. The program is rejected because the lifetime `'b` is
-shorter than the lifetime of `'a`: the subject of the reference does not live
-as long as the reference.
+Hemos anotado la vida útil de `r` con`'a` y la vida útil de `x` con
+`'b`. Como puedes ver, el bloque interno `'b` es mucho más pequeño que el tiempo de vida 
+del bloque `'a`. En tiempo de compilación, Rust compara el tamaño de las dos vidas
+y ve que `r` tiene un tiempo de vida de `'a`, pero que se refiere a un objeto con
+un tiempo de vida de `'b`. El programa es rechazado porque la vida útil de `'b` es
+más pequeña que el tiempo de vida de `'a`: el sujeto de la referencia no vive
+tanto como la referencia.
 
-Let’s look at an example in Listing 10-20 that doesn’t try to make a dangling
-reference and compiles without any errors:
+Veamos un ejemplo en el listado 10-20 que no intenta hacer un balanceo
+de referencia y compila sin ningún error:
 
 ```rust
 {
@@ -125,26 +125,26 @@ reference and compiles without any errors:
 }                         // -----+
 ```
 
-<span class="caption">Listing 10-20: A valid reference because the data has a
-longer lifetime than the reference</span>
+<span class="caption">Listado 10-20: Una referencia válida porque los datos tienen una
+vida más larga que la referencia</span>
 
-Here, `x` has the lifetime `'b`, which in this case is larger than `'a`. This
-means `r` can reference `x`: Rust knows that the reference in `r` will always
-be valid while `x` is valid.
+Aquí, `x` tiene el tiempo de vida de `'b`, que en este caso es mayor que `'a`. Esto
+significa que `r` puede referenciar a `x`: Rust reconoce que la referencia en `r` siempre
+será válida mientras `x` sea válida.
 
-Now that we’ve shown where the lifetimes of references are in a concrete
-example and discussed how Rust analyzes lifetimes to ensure references will
-always be valid, let’s talk about generic lifetimes of parameters and return
-values in the context of functions.
+Ahora que hemos mostrado dónde están las vidas de las referencias en un
+ejemplo y discutido cómo Rust analiza los tiempos de vida para asegurar que las referencias
+siempre sean válidas, hablemos de vidas genéricas de parámetros y retorno
+de valores en el contexto de las funciones.
 
-### Generic Lifetimes in Functions
+### Vida de las Funciones Genéricas
 
-Let’s write a function that will return the longest of two string slices. We
-want to be able to call this function by passing it two string slices, and we
-want to get back a string slice. The code in Listing 10-21 should print `The
-longest string is abcd` once we’ve implemented the `longest` function:
+Vamos a escribir una función que devolverá el más largo de dos segmentos de cadena. 
+Queremos poder llamar a esta función pasándola a dos secciones de cadena, y
+queremos recuperar un segmento de cadena. El código en el listado 10-21 debe imprimir `La
+cadena más larga es abcd` ya que hemos implementado la función más `larga`:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre de archivo: src/main.rs</span>
 
 ```rust,ignore
 fn main() {
@@ -156,39 +156,39 @@ fn main() {
 }
 ```
 
-<span class="caption">Listing 10-21: A `main` function that calls the `longest`
-function to find the longest of two string slices</span>
+<span class="caption">Listado 10-21: Una función `principal` que se llame la función más `longest`
+`laerga` para encontrar las dos partes de la cadena más larga</span>
 
-Note that we want the function to take string slices (which are references, as
-we talked about in Chapter 4) since we don’t want the `longest` function to
-take ownership of its arguments. We want the function to be able to accept
-slices of a `String` (which is the type of the variable `string1`) as well as
-string literals (which is what variable `string2` contains).
+Tenga en cuenta que queremos que la función tome segmentos de cadena (que son referencias, como
+hemos hablado en el capítulo 4) ya que no queremos que la función más `larga` tome
+propiedad de los argumentos. Queremos que la función sea capaz de aceptar
+partes de `Cadena` (en cual es el tipo de variable `cadena1`) Así como
+literales de esta (la cual es la variable `cadena2` la que lo contiene).
 
-<!-- why is `a` a slice and `b` a literal? You mean "a" from the string "abcd"? -->
-<!-- I've changed the variable names to remove ambiguity between the variable
-name `a` and the "a" from the string "abcd". `string1` is not a slice, it's a
-`String`, but we're going to pass a slice that refers to that `String` to the
-`longest` function (`string1.as_str()` creates a slice that references the
-`String` stored in `string1`). We chose to have `string2` be a literal since
-the reader might have code with both `String`s and string literals, and the way
-most readers first get into problems with lifetimes is involving string slices,
-so we wanted to demonstrate the flexibility of taking string slices as
-arguments but the issues you might run into because string slices are
-references.
-All of the `String`/string slice/string literal concepts here are covered
-thoroughly in Chapter 4, which is why we put two back references here (above
-and below). If these topics are confusing you in this context, I'd be
-interested to know if rereading Chapter 4 clears up that confusion.
+<!-- ¿por que es `a` una parte y `b` una literal? ¿Quieres decir "a" de la cadena "abcd"? -->
+<!-- Cambié los nombres de las variables para eliminar la ambigüedad entre el nombre
+de la variable `a` y la cadena "a" de "abcd". `cadena1` no es una parte, es una
+`Cadena`, pero vamos a pasar una porción que se refiere a eso como `Cadena` a la
+función más `larga` (`cadena1.as_str()` crea un corte que hace referencia a
+`Cadena` almacenado en `cadena1`). Elegimos tener `cadena2` como una literal desde que
+el lector podría tener un código con ambas `cadenas` y literales de ellas, y la manera
+en la que la mayoría de los lectores entran en problemas con el tiempo de vida es involucrar rebanadas de cadenas,
+así que queríamos demostrar la flexibilidad de tomar partes de cadenas de
+argumentos pero los problemas que puede encontrar porque las partes de cadena llegan a ser
+referencias.
+Todo de los conceptos de `Cadena`/parte de cadena/literal de la cadena hemos cubierto
+a fondo en el Capítulo 4, por eso ponemos dos referencias atrás aquí (encima
+y debajo). Si estos temas te confunden en este contexto, estarías
+interesado en saber si la relectura del Capítulo 4 aclara esa confusión.
 /Carol -->
 
-Refer back to the “String Slices as Parameters” section of Chapter 4 for more
-discussion about why these are the arguments we want.
+Remítase a la sección "Partes de cadena como parámetros" del Capítulo 4 para obtener más información
+de la discusión sobre por qué estos son los argumentos que queremos.
 
-If we try to implement the `longest` function as shown in Listing 10-22, it
-won’t compile:
+Si tratamos de implementar la función más `larga` como mostramos en el listado 10-22, este
+no se compilará:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,ignore
 fn longest(x: &str, y: &str) -> &str {
@@ -200,38 +200,38 @@ fn longest(x: &str, y: &str) -> &str {
 }
 ```
 
-<span class="caption">Listing 10-22: An implementation of the `longest`
-function that returns the longest of two string slices, but does not yet
-compile</span>
+<span class="caption">Listado 10-22: una implementación de la función más
+`larga` que devuelve lo más largo de dos segmentos de cadena, pero aún no
+se compila</span>
 
-Instead we get the following error that talks about lifetimes:
+En cambio, obtenemos el siguiente error que habla de tiempos de vida:
 
 ```text
-error[E0106]: missing lifetime specifier
+error[E0106]: falta especificador de vida 
    |
 1  | fn longest(x: &str, y: &str) -> &str {
-   |                                 ^ expected lifetime parameter
+   |                                 ^ parámetro de vida esperado
    |
    = help: this function's return type contains a borrowed value, but the
    signature does not say whether it is borrowed from `x` or `y`
 ```
 
-The help text is telling us that the return type needs a generic lifetime
-parameter on it because Rust can’t tell if the reference being returned refers
-to `x` or `y`. Actually, we don’t know either, since the `if` block in the body
-of this function returns a reference to `x` and the `else` block returns a
-reference to `y`!
+El texto de ayuda nos dice que el tipo de devolución necesita un ciclo de vida genérico
+del parámetro en él porque Rust no puede decir si la referencia que se devuelve se refiere
+a `x` o a `y`. ¡En realidad, tampoco lo sabemos, ya que el bloque `if` en el cuerpo
+de esta función regresa la referencia a `x` y el `otro` bloque regresa la
+referencia a `y`!
 
-As we’re defining this function, we don’t know the concrete values that will be
-passed into this function, so we don’t know whether the `if` case or the `else`
-case will execute. We also don’t know the concrete lifetimes of the references
-that will be passed in, so we can’t look at the scopes like we did in Listings
-10-19 and 10-20 in order to determine that the reference we return will always
-be valid. The borrow checker can’t determine this either, because it doesn’t
+Como estamos definiendo esta función, no conocemos los valores concretos que serán
+pasadas a esta función, por lo que no sabemos si el caso `if` o` else`
+se ejecutarán. Tampoco conocemos las vidas concretas de las referencias
+ya que terminarán, por lo que no podemos mirar los ámbitos como lo hicimos en los listados
+10-19 y 10-20 para determinar que la referencia que devolvemos siempre
+sea válida. The borrow checker can’t determine this either, because it doesn’t
 know how the lifetimes of `x` and `y` relate to the lifetime of the return
 value. We’re going to add generic lifetime parameters that will define the
 relationship between the references so that the borrow checker can perform its
-analysis.
+análisis.
 
 ### Lifetime Annotation Syntax
 
