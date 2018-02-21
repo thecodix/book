@@ -1,4 +1,4 @@
-## Usando Threads Ejecutar Código Simultáneamente
+## Usando Threads Para Ejecutar Código Simultáneamente
 
 En la mayoría de los sistemas operativos actuales, el código de un programa se ejecuta en 
 un *proceso*, y el sistema operativo gestiona varios procesos a la vez. Dentro de 
@@ -9,23 +9,23 @@ Dividir el cálculo de tu programa en varios subprocesos puede mejorar el rendim
 porque el programa realiza varias tareas al mismo tiempo, pero también añade
 complejidad. Debido a que los threads pueden funcionar simultáneamente, no hay garantía
 inherente sobre el orden en el que se ejecutarán las partes de tu código en diferentes
-threads. Esto puede llevar a problemas, como:
+threads. Esto puede llevar a problemas como:
 
 * Condiciones de carrera, donde los threads están accediendo a datos o recursos en un
   orden inconsistente.
 * Bloqueos, donde dos threads se están esperando unos a otros para terminar usando un 
   recurso que tiene el otro thread, impidiendo que ambos threads continúen.
-* Bugs que sólo ocurren en ciertas situaciones y son difíciles de reproducir y arreglar
+* Errores que sólo ocurren en ciertas situaciones y son difíciles de reproducir y arreglar
   con seguridad.
 
 Rust intenta mitigar los efectos negativos del uso de threads. La programación en
-un contexto multithreaded todavía toma un pensamiento cuidadoso y requiere una estructura
+un contexto multithread todavía toma un pensamiento cuidadoso y requiere una estructura
 de código que es diferente de los programas que funcionan en un solo thread.
 
 Los lenguajes de programación implementan los thread de forma diferente. Muchos sistemas
 operativos proporcionan una API para crear nuevos threads de texto. Este modelo, en el que un
-lenguaje llama a las API del sistema operativo para crear threads, a veces es llamado *1:1*,
-un thread del sistema operativo por thread de un lenguaje.
+lenguaje llama a las API del sistema operativo para crear threads, suele llamarse *1:1*,
+un thread del sistema operativo por un thread del lenguaje.
 
 Muchos lenguajes de programación proporcionan su propia implementación especial de threads.
 Los threads proporcionados por el lenguaje de programación se conocen como threads *verdes*, y
@@ -52,8 +52,8 @@ mantener el rendimiento.
 El modelo verde subprocesado M:N requiere un mayor tiempo de ejecución del lenguaje para gestionar
 los threads. Como tal, la biblioteca estándar de Rust sólo proporciona una implementación de 
 subprocesado 1:1. Debido a que Rust es un lenguaje de tan bajo nivel, hay crates que 
-implementan el subprocesado M:N si tu prefiere cambiar los gastos generales por aspectos tales
-como un mayor control sobre qué threads corren cuando y menores costos de cambio de contexto,
+implementan el subprocesado M:N si tu prefieres cambiar los gastos generales por aspectos tales
+como un mayor control sobre qué threads corren cuando, y menores costos de cambio de contexto,
 por ejemplo.
 
 Ahora que hemos definido los threads en Rust, vamos a explorar cómo utilizar la
@@ -63,7 +63,7 @@ API relacionada con los threads que proporciona la biblioteca estándar.
 
 Para crear un nuevo thread, llamamos a la función `thread::spawn` y le pasamos un
 cierre (hemos hablado de cierres en el capítulo 13) que contiene el código que queremos 
-ejecutar en el nuevo thread. El ejemplo en el Listado 16-1 imprime un texto de un thread
+ejecutar en el nuevo thread. El ejemplo del Listado 16-1 imprime un texto de un thread
 principal y otro de un nuevo thread:
 
 <span class="filename">Nombre del archivo: src/main.rs</span>
@@ -75,7 +75,7 @@ use std::time::Duration;
 fn main() {
     thread::spawn(|| {
         for i in 1..10 {
-            println!("¡hola número {} del thread engendrado!", i);
+            println!("¡hola número {} del thread generado!", i);
             thread::sleep(Duration::from_millis(1));
         }
     });
@@ -92,46 +92,46 @@ mientras que el thread principal imprime otra cosa.</span>
 
 Ten en cuenta que con esta función, el nuevo thread se detendrá cuando termine el 
 thread principal, haya terminado o no de ejecutarse. La salida de este programa
-puede ser algo poco diferente cada vez, pero se verá similar a la 
+puede ser un poco diferente cada vez, pero se verá similar a la 
 siguiente:
 
 ```text
 ¡Hola número 1 del thread principal!
-¡Hola número 1 del thread engendrado!
+¡Hola número 1 del thread generado!
 ¡Hola número 2 del thread principal!
-¡Hola número 2 del thread engendrado!
+¡Hola número 2 del thread generado!
 ¡Hola número 3 del thread principal!
-¡Hola número 3 del thread engendrado!
+¡Hola número 3 del thread generado!
 ¡Hola número 4 del thread principal!
-¡Hola número 4 del thread engendrado!
-¡Hola número 5 del thread engendrado!
+¡Hola número 4 del thread generado!
+¡Hola número 5 del thread generado!
 ```
 
 Las llamadas a `thread::sleep` fuerzan a un thread a detener su ejecución por un corto
 periodo de tiempo, lo que permite que un thread diferente corra. Los thread probablemente
 se turnarán, pero eso no está garantizado: depende de cómo tu sistema operativo los
 programe. En esta ejecución, el thread principal se imprime primero, aunque la
-declaración de impresión del thread engendrado aparezca primero en el código. Y aunque
-le dijimos al thread engendrado que imprimiera hasta que `i` fuera 9, sólo llegó a 5 
+declaración de impresión del thread generado aparezca primero en el código. Y aunque
+le dijimos al thread generado que imprimiera hasta que `i` fuera 9, sólo llegó a 5 
 antes de que el thread principal se apagara.
  
-Si ejecutas este código y sólo ves la salida del hilo principal, o no ve ningún 
+Si ejecutas este código y sólo ves la salida del thread principal, o no ves ningún 
 solapamiento, intenta aumentar los números en los rangos para crear más oportunidades
 para que el sistema operativo cambie entre los threads.
 
 ### Esperando a que Todos los Threads Terminen con los Handles `join`
 
-El código en el Listado 16-1 no sólo detiene el thread engendrado prematuramente la mayor
+El código en el Listado 16-1 no sólo detiene el thread generado prematuramente la mayor
 parte del tiempo debido a la terminación del thread principal, sino que no hay garantía de que
-el thread engendrado vaya a funcionar en absoluto. La razón es que ¡no hay garantía en el
+el thread generado vaya a funcionar en absoluto. La razón es que ¡no hay garantía en el
 orden de ejecución de los threads!
 
-Podemos arreglar el problema del thread engendrado no consiguiendo correr, o no 
-consiguiendo correr completamente, guardando el valor de retorno de `thread::spawn` en una
+Podemos arreglar el problema del thread generado no consiguiendo correr, o no 
+consiguiendo correr completamente, y guardando el valor de retorno de `thread::spawn` en una
 variable. El tipo de retorno de `thread::spawn` es `JoinHandle`. Un `JoinHandle` es un valor
 propio que, cuando llamamos el método `join` en él, esperará a que termine su thread.
 El Listado 16-2 muestra cómo usar el `JoinHandle` del thread que creamos en el Listado 16-1
-y llamar a `join` para asegurarse de que el thread engendrado termine antes de las salidas
+y llamar a `join` para asegurarse de que el thread generado termine antes de las salidas
 `main`:
 
 <span class="filename">Nombre del archivo: src/main.rs</span>
@@ -160,7 +160,7 @@ fn main() {
 <span class="caption">Listado 16-2: Guardando un `JoinHandle` de `thread::spawn`
 para garantizar que el thread se ejecuta hasta completarse</span>
 
-Llamando `join` en los handle blocks se bloquea el thread que se está ejecutando hasta
+Llamar a `join` en el handle, bloquea el thread que se está ejecutando hasta
 que finaliza el thread representado por el handle. *Bloquear* un thread significa que
 el thread no puede trabajar o salir del mismo. Debido a que hemos puesto la llamada a
 `join` después del loop `for` del thread principal, la ejecución del Listado 16-2 debería
@@ -169,17 +169,17 @@ producir una salida similar a esta:
 ```text
 ¡hola número 1 del thread principal!
 ¡hola número 2 del thread principal!
-hola número 1 del thread engendrado!
+hola número 1 del thread generado!
 ¡hola número 3 del hilo principal!
-hola número 2 del thread engendrado!
+hola número 2 del thread generado!
 ¡hola número 4 del hilo principal!
-hola número 3 del thread engendrado!
-hola número 4 del thread engendrado!
-hola número 5 del thread engendrado!
-hola número 6 del thread engendrado!
-hola número 7 del thread engendrado!
-hola número 8 del thread engendrado!
-hola número 9 del thread engendrado!
+hola número 3 del thread generado!
+hola número 4 del thread generado!
+hola número 5 del thread generado!
+hola número 6 del thread generado!
+hola número 7 del thread generado!
+hola número 8 del thread generado!
+hola número 9 del thread generado!
 ```
 
 The two threads continue alternating, but the main thread waits because of the
