@@ -601,62 +601,62 @@ it can’t figure out lifetimes for, the compiler will stop with an error.
    assigned to all output lifetime parameters. This makes writing methods much
    nicer.
 
-Let’s pretend we’re the compiler and apply these rules to figure out what the
-lifetimes of the references in the signature of the `first_word` function in
-Listing 10-27 are. The signature starts without any lifetimes associated with
-the references:
+Imaginemos que somos el compilador y apliquemos estas reglas para descubrir qué
+vidas de las referencias en la firma de la función `first_word` en el
+Listado 10-27 son. La firma comienza sin vidas asociadas con
+las referencias:
 
 ```rust,ignore
 fn first_word(s: &str) -> &str {
 ```
 
-Then we (as the compiler) apply the first rule, which says each parameter gets
-its own lifetime. We’re going to call it `'a` as usual, so now the signature is:
+Entonces nosotros (como el compilador) aplicamos la primera regla, que dice que cada parámetro obtiene
+obtiene su propia vida. lo llamaremos `'a` como siempre, ahora la firma es:
 
 ```rust,ignore
 fn first_word<'a>(s: &'a str) -> &str {
 ```
 
-On to the second rule, which applies because there is exactly one input
-lifetime. The second rule says the lifetime of the one input parameter gets
-assigned to the output lifetime, so now the signature is:
+En la segunda regla, que se aplica porque hay exactamente una entrada
+de vida. La segunda regla dice que la vida del parámetro de entrada se vuelve
+asignada a la vida útil de salida, por lo que ahora la firma es:
 
 ```rust,ignore
 fn first_word<'a>(s: &'a str) -> &'a str {
 ```
 
-Now all the references in this function signature have lifetimes, and the
-compiler can continue its analysis without needing the programmer to annotate
-the lifetimes in this function signature.
+Ahora todas las referencias en esta firma de función tienen vidas, y el
+el compilador puede continuar su análisis sin necesidad de que el programador anote
+las vidas en esta firma de función.
 
-Let’s do another example, this time with the `longest` function that had no
-lifetime parameters when we started working with in Listing 10-22:
+Hagamos otro ejemplo, esta vez con la función `longest` que no tenía
+parámetros de vida cuando comenzamos a trabajar en el Listado 10-22:
 
 ```rust,ignore
 fn longest(x: &str, y: &str) -> &str {
 ```
 
-Pretending we’re the compiler again, let’s apply the first rule: each parameter
-gets its own lifetime. This time we have two parameters, so we have two
-lifetimes:
+Fingiendo que somos el compilador de nuevo, apliquemos la primera regla: cada parámetro
+obtiene su propia vida. Esta vez tenemos dos parámetros, entonces tenemos dos
+vidas:
 
 ```rust,ignore
 fn longest<'a, 'b>(x: &'a str, y: &'b str) -> &str {
 ```
 
-Looking at the second rule, it doesn’t apply since there is more than one input
-lifetime. Looking at the third rule, this also does not apply because this is a
-function rather than a method, so none of the parameters are `self`. So we’re
-out of rules, but we haven’t figured out what the return type’s lifetime is.
-This is why we got an error trying to compile the code from Listing 10-22: the
-compiler worked through the lifetime elision rules it knows, but still can’t
-figure out all the lifetimes of the references in the signature.
+En cuanto a la segunda regla, no se aplica ya que hay más de una entrada
+de vida. En cuanto a la tercera regla, esto tampoco se aplica porque se trata de una
+función en lugar de un método, por lo que ninguno de los parámetros es `self`. Así que estamos
+fuera de las reglas, pero no hemos descubierto cuál es la duración del tipo de devolución.
+Es por eso que obtuvimos un error al intentar compilar el código del Listado 10-22: el
+compilador trabajó a través de las reglas de elisión de vida que conoce, pero todavía no puede
+descifrar todas las vidas de las referencias en la firma.
 
-Because the third rule only really applies in method signatures, let’s look at
-lifetimes in that context now, and see why the third rule means we don’t have
-to annotate lifetimes in method signatures very often.
+Debido a que la tercera regla solo se aplica realmente a las firmas de métodos, veamos
+las vidas en ese contexto ahora, y ver por qué la tercera regla significa que no tenemos
+que anotar vidas en firmas de métodos muy a menudo.
 
-### Lifetime Annotations in Method Definitions
+### Anotaciones de Vida en las Definiciones de Métodos
 
 <!-- Is this different to the reference lifetime annotations, or just a
 finalized explanation? -->
@@ -666,24 +666,24 @@ parameters need to be declared and used since the lifetime parameters could go
 with the struct's fields or with references passed into or returned from
 methods. /Carol -->
 
-When we implement methods on a struct with lifetimes, the syntax is again the
-same as that of generic type parameters that we showed in Listing 10-11: the
-place that lifetime parameters are declared and used depends on whether the
-lifetime parameter is related to the struct fields or the method arguments and
-return values.
+Cuando implementamos métodos en una estructura con tiempos de vida, la sintaxis es nuevamente la
+misma que los parámetros de tipo genérico que mostramos en el listado 10-11: al
+colocar que los parámetros de vida se declaran y usan dependen de si el
+parámetro de vida está relacionado con los campos de estructura o los argumentos del método y
+valores de retorno.
 
-Lifetime names for struct fields always need to be declared after the `impl`
-keyword and then used after the struct’s name, since those lifetimes are part
-of the struct’s type.
+Los nombres de por vida para los campos de estructura siempre deben declararse después del `impl`
+palabra clave y luego se usa después del nombre de la estructura, ya que esas vidas son parte
+del tipo de la estructura.
 
-In method signatures inside the `impl` block, references might be tied to the
-lifetime of references in the struct’s fields, or they might be independent. In
-addition, the lifetime elision rules often make it so that lifetime annotations
-aren’t necessary in method signatures. Let’s look at some examples using the
-struct named `ImportantExcerpt` that we defined in Listing 10-26.
+En las firmas de métodos dentro del bloque `impl`, las referencias pueden estar vinculadas a
+el tiempo de vida de las referencias en los campos de la estructura, o pueden ser independientes. En
+adición, las reglas de elisión de por vida a menudo lo hacen de modo que las anotaciones de vida
+no son necesarios en las firmas de métodos. Veamos algunos ejemplos usando la
+estructura llamada `ImportantExcerpt` que definimos en el listado 10-26:
 
-First, here’s a method named `level`. The only parameter is a reference to
-`self`, and the return value is just an `i32`, not a reference to anything:
+Primero, aquí hay un método llamado `level`. El único parámetro es una referencia a
+`self`, y el valor de retorno es solo un `i32`, no una referencia a nada:
 
 ```rust
 # struct ImportantExcerpt<'a> {
@@ -697,11 +697,11 @@ impl<'a> ImportantExcerpt<'a> {
 }
 ```
 
-The lifetime parameter declaration after `impl` and use after the type name is
-required, but we’re not required to annotate the lifetime of the reference to
-`self` because of the first elision rule.
+La declaración del parámetro de vida después de `impl` y su uso después del nombre del tipo es
+requerida, pero no estamos obligados a anotar el tiempo de vida de la referencia a
+`self` debido a la primera regla de elisión.
 
-Here’s an example where the third lifetime elision rule applies:
+Aquí hay un ejemplo donde se aplica la tercera regla de elisión de vida:
 
 ```rust
 # struct ImportantExcerpt<'a> {
@@ -716,40 +716,40 @@ impl<'a> ImportantExcerpt<'a> {
 }
 ```
 
-There are two input lifetimes, so Rust applies the first lifetime elision rule
-and gives both `&self` and `announcement` their own lifetimes. Then, because
-one of the parameters is `&self`, the return type gets the lifetime of `&self`,
-and all lifetimes have been accounted for.
+Hay dos tiempos de vida de entrada, por lo que Rust aplica la primera regla de elisión de por vida
+y le da a ambos `&self` y `announcement` sus propias vidas. Entonces, porque
+uno de los parámetros es `& self`, el tipo de retorno obtiene la vida útil de `&self`,
+y todas las vidas han sido contabilizadas.
 
-### The Static Lifetime
+### La vida estática
 
-There is *one* special lifetime we need to discuss: `'static`. The `'static`
-lifetime is the entire duration of the program. All string literals have the
-`'static` lifetime, which we can choose to annotate as follows:
+Hay *una* vida especial que necesitamos discutir: `'static`. La vida 
+`'static` es toda la duración del programa. Todos los literales de cadena tienen
+la vida `'static`, que podemos elegir anotar de la siguiente manera:
 
 ```rust
 let s: &'static str = "I have a static lifetime.";
 ```
 
-The text of this string is stored directly in the binary of your program and
-the binary of your program is always available. Therefore, the lifetime of all
-string literals is `'static`.
+El texto de esta cadena se almacena directamente en el binario de su programa y
+el binario de tu programa siempre está disponible. Por lo tanto, la vida de todos
+las cuerdas literales es `'static`.
 
 <!-- How would you add a static lifetime (below)? -->
 <!-- Just like you'd specify any lifetime, see above where it shows `&'static str`. /Carol -->
 
-You may see suggestions to use the `'static` lifetime in error message help
-text, but before specifying `'static` as the lifetime for a reference, think
-about whether the reference you have is one that actually lives the entire
-lifetime of your program or not (or even if you want it to live that long, if
-it could). Most of the time, the problem in the code is an attempt to create a
-dangling reference or a mismatch of the available lifetimes, and the solution
-is fixing those problems, not specifying the `'static` lifetime.
+Puede ver sugerencias para usar la vida `'static` en mensaje de texto de error y ayuda,
+pero antes de especificar `'static` como la vida para una referencia, piense
+acerca de si la referencia que tiene es una que realmente vive la totalidad de la
+vida útil de su programa o no (o incluso si desea que viva tanto tiempo, si
+se pudede). La mayoría de las veces, el problema en el código es un intento de crear una
+referencia oscilante o una falta de coincidencia de las vidas útiles disponibles, y la solución
+está arreglando esos problemas, sin especificar la vida de `'static`.
 
-### Generic Type Parameters, Trait Bounds, and Lifetimes Together
+### Parámetros Genéricos de Tipo, Límites de Rasgos y Tiempos de Vida Juntos
 
-Let’s briefly look at the syntax of specifying generic type parameters, trait
-bounds, and lifetimes all in one function!
+Veamos brevemente la sintaxis de especificar los parámetros de tipo genérico, rasgos de
+límites, y vidas ¡todo en una función!
 
 ```rust
 use std::fmt::Display;
@@ -766,31 +766,31 @@ fn longest_with_an_announcement<'a, T>(x: &'a str, y: &'a str, ann: T) -> &'a st
 }
 ```
 
-This is the `longest` function from Listing 10-23 that returns the longest of
-two string slices, but with an extra argument named `ann`. The type of `ann` is
-the generic type `T`, which may be filled in by any type that implements the
-`Display` trait as specified by the `where` clause. This extra argument will be
-printed out before the function compares the lengths of the string slices,
-which is why the `Display` trait bound is necessary. Because lifetimes are a
-type of generic, the declarations of both the lifetime parameter `'a` and the
-generic type parameter `T` go in the same list within the angle brackets after
-the function name.
+Este es la funcióm `longest` del listado 10-23 que devuelve la mayor cantidad de
+dos secciones de cadena, pero con un argumento adicional llamado `ann`. El tipo de `ann` es
+el tipo genérico `T`, que puede rellenarse por cualquier tipo que implemente el
+rasgo `Display` según lo especificado por la cláusula `where`. Este argumento adicional será
+impreso antes de que la función compare las longitudes de las partes de cuerda,
+por lo que es necesario el límite de rasgo `Display`. Porque las vidas son un
+tipo genérico, las declaraciones del parámetro de duración ''a'y el
+parámetro genérico tipo `T` van en la misma lista dentro de los corchetes angulares después
+del nombre de la función.
 
-## Summary
+## Resúmen
 
-We covered a lot in this chapter! Now that you know about generic type
-parameters, traits and trait bounds, and generic lifetime parameters, you’re
-ready to write code that isn’t duplicated but can be used in many different
-situations. Generic type parameters mean the code can be applied to different
-types. Traits and trait bounds ensure that even though the types are generic,
-those types will have the behavior the code needs. Relationships between the
-lifetimes of references specified by lifetime annotations ensure that this
-flexible code won’t have any dangling references. And all of this happens at
-compile time so that run-time performance isn’t affected!
+Cubrimos mucho en este capítulo! Ahora que sabes sobre parámetros del tipo 
+genérico, rasgos y límites de rasgos, y parámetros genéricos de vida, estás
+listo para escribir código que no está duplicado pero que puede usarse de muchas maneras en diferentes
+situaciones Los parámetros de tipo genérico significan que el código se puede aplicar a diferentes
+tipos. Los rasgos y los límites de rasgos aseguran que, aunque los tipos son genéricos,
+esos tipos tendrán el comportamiento que el código necesita. Relaciones entre las
+vidas de referencias especificadas por anotaciones de por vida aseguran que este
+código flexible no tendrá ninguna referencia colgante. Y todo esto sucede en el
+tiempo de compilación para que el rendimiento en tiempo de ejecución no se vea afectado.
 
-Believe it or not, there’s even more to learn in these areas: Chapter 17 will
-discuss trait objects, which are another way to use traits. Chapter 19 will be
-covering more complex scenarios involving lifetime annotations. Chapter 20 will
-get to some advanced type system features. Up next, though, let’s talk about
-how to write tests in Rust so that we can make sure our code using all these
-features is working the way we want it to!
+Lo creas o no, hay mucho más que aprender en estas áreas: En el Capítulo 17
+discutirá los objetos de rasgo, que son otra forma de usar rasgos. El Capítulo 19 será
+cubrier escenarios más complejos que involucran anotaciones de vida. El Capítulo 20 lo hará
+llegar a algunas características avanzadas del sistema de tipo. Hasta el próximo, sin embargo, hablemos de
+cómo escribir pruebas en Rust para que podamos asegurarnos de que tu código use todos estas
+aplicaciones, ¡para que funcione de la manera que nosotros queremos!
