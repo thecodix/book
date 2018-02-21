@@ -143,7 +143,7 @@ es otro valor `Cons` que tiene `2` y otro valor `List`. Este valor `List`
 es un valor más `Cons` que tiene `3` y un valor `List`, que es finalmente
 `Nil`, la variante no recursiva que señala el final de la lista.
 
-Si intentamos compilar el código en el Listado 15-3, obtenemos el error mostardo
+Si intentamos compilar el código en el Listado 15-3, obtenemos el error mostrado
 en el Listado 15-4:
 
 ```texto
