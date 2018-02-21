@@ -1,55 +1,55 @@
-## ## Los Vectores Almacenan Listas de Valores
+## Vectors Store Lists of Values
 
-El primer tipo de colección que veremos es `Vec <T>`, también conocido como * vector *.
-Los vectores nos permiten almacenar más de un valor en una única estructura de datos que
-pone todos los valores uno al lado del otro en la memoria. Los vectores solo pueden almacenar valores
-del mismo tipo. Son útiles en situaciones en las que tiene una lista de
-elementos, como las líneas de texto en un archivo o los precios de los artículos en una carro 
-de compra.
+The first collection type we’ll look at is `Vec<T>`, also known as a *vector*.
+Vectors allow us to store more than one value in a single data structure that
+puts all the values next to each other in memory. Vectors can only store values
+of the same type. They are useful in situations in which you have a list of
+items, such as the lines of text in a file or the prices of items in a shopping
+cart.
 
-### Creando un Nuevo Vector
+### Creating a New Vector
 
-Para crear un nuevo vector vacío, podemos llamar a la función `Vec :: new` como se muestra en
-Listado 8-1:
+To create a new, empty vector, we can call the `Vec::new` function as shown in
+Listing 8-1:
 
 ```rust
 let v: Vec<i32> = Vec::new();
 ```
 
-<span class="caption">Listando 8-1: Creando un nuevo vector vacío para guardar valores
-del tipo `i32`</span>
+<span class="caption">Listing 8-1: Creating a new, empty vector to hold values
+of type `i32`</span>
 
-Tenga en cuenta que agregamos una anotación de tipo aquí. Porque no estamos insertando ningun
-valores en este vector, Rust no sabe qué tipo de elementos pretendemos
-almacenar. Éste es un punto importante. Los vectores se implementan usando genéricos;
-cubriremos cómo usar genéricos con sus propios tipos en el Capítulo 10. Por ahora,
-sepa que el tipo `Vec <T>` proporcionado por la biblioteca estándar puede contener cualquier tipo,
-y cuando un vector específico tiene un tipo específico, el tipo se especifica dentro de
-paréntesis angulares. En el listado 8-1, le hemos dicho a Rust que el `Vec <T>` en `v`
-contiene elementos del tipo `i32`.
+Note that we added a type annotation here. Because we aren’t inserting any
+values into this vector, Rust doesn’t know what kind of elements we intend to
+store. This is an important point. Vectors are implemented using generics;
+we’ll cover how to use generics with your own types in Chapter 10. For now,
+know that the `Vec<T>` type provided by the standard library can hold any type,
+and when a specific vector holds a specific type, the type is specified within
+angle brackets. In Listing 8-1, we’ve told Rust that the `Vec<T>` in `v` will
+hold elements of the `i32` type.
 
-En un código más realista, Rust a menudo puede inferir el tipo de valor que queremos almacenar
-una vez que insertemos los valores, rara vez necesita hacer esta anotación de tipo. Es más
-comunmente para crear un `Vec <T>` que tiene valores iniciales, y Rust proporciona el
-macro `vec!` por conveniencia. La macro creará un nuevo vector que contiene el
-valores que le damos. El listado 8-2 crea un nuevo `Vec <i32>` que contiene los valores
-`1`, `2`, y `3`:
+In more realistic code, Rust can often infer the type of value we want to store
+once we insert values, so you rarely need to do this type annotation. It’s more
+common to create a `Vec<T>` that has initial values, and Rust provides the
+`vec!` macro for convenience. The macro will create a new vector that holds the
+values we give it. Listing 8-2 creates a new `Vec<i32>` that holds the values
+`1`, `2`, and `3`:
 
 ```rust
 let v = vec![1, 2, 3];
 ```
 
-<span class="caption">Listando 8-2:Creando un nuevo vector que contiene
+<span class="caption">Listing 8-2: Creating a new vector containing
 values</span>
 
-Debido a que hemos dado valores iniciales de `i32`, Rust puede inferir que el tipo de` v`
-es `Vec <i32>`, y la anotación de tipo no es necesaria. A continuación, veremos cómo
-para modificar un vector.
+Because we’ve given initial `i32` values, Rust can infer that the type of `v`
+is `Vec<i32>`, and the type annotation isn’t necessary. Next, we’ll look at how
+to modify a vector.
 
-### Actualizando un Vector
+### Updating a Vector
 
-Para crear un vector y luego agregarle elementos, podemos usar el método `push` como
-mostrado en el Listado 8-3:
+To create a vector and then add elements to it, we can use the `push` method as
+shown in Listing 8-3:
 
 ```rust
 let mut v = Vec::new();
@@ -60,18 +60,18 @@ v.push(7);
 v.push(8);
 ```
 
-<span class="caption">Lisando 8-3: Usando el método `push` para agregar valores a un
+<span class="caption">Listing 8-3: Using the `push` method to add values to a
 vector</span>
 
-Como con cualquier variable, como se discutió en el Capítulo 3, si queremos ser capaces de
-cambiar su valor, tenemos que hacerlo mutable usando la palabra clave `mut`. 
-los números que colocamos dentro son todos de tipo `i32`, y Rust infiere esto de los
-datos, por lo que no necesitamos la anotación `Vec <i32>`.
+As with any variable, as discussed in Chapter 3, if we want to be able to
+change its value, we need to make it mutable using the `mut` keyword. The
+numbers we place inside are all of type `i32`, and Rust infers this from the
+data, so we don’t need the `Vec<i32>` annotation.
 
-### Dejar caer un vector Cae sus elementos
+### Dropping a Vector Drops Its Elements
 
-Al igual que cualquier otra `struct`, un vector se liberará cuando salga del alcance, como
-anotandolo en el Listado 8-4:
+Like any other `struct`, a vector will be freed when it goes out of scope, as
+annotated in Listing 8-4:
 
 ```rust
 {
@@ -82,23 +82,23 @@ anotandolo en el Listado 8-4:
 } // <- v goes out of scope and is freed here
 ```
 
-<span class="caption">Listando 8-4: Mostrando donde el vector y sus elementos
-son descartados</span>
+<span class="caption">Listing 8-4: Showing where the vector and its elements
+are dropped</span>
 
-Cuando el vector se descarta, todos sus contenidos también se descartarán, lo que significa que
-esos enteros que contiene serán limpiados. Esto puede parecer como un
-punto directo, pero puede ser un poco más complicado cuando comenzamos a
-introducir referencias a los elementos del vector. ¡Vamos a abordar eso enseguida!
+When the vector gets dropped, all of its contents will also be dropped, meaning
+those integers it holds will be cleaned up. This may seem like a
+straightforward point but can get a bit more complicated when we start to
+introduce references to the elements of the vector. Let’s tackle that next!
 
-### Lectura de elementos de vectores
+### Reading Elements of Vectors
 
-Ahora que sabe cómo crear, actualizar y destruir vectores, saber cómo
-leer sus contenidos es un buen paso siguiente. Hay dos formas de hacer referencia a un
-valor almacenado en un vector. En los ejemplos, hemos anotado los tipos de
-valores que se devuelven de estas funciones para mayor claridad.
+Now that you know how to create, update, and destroy vectors, knowing how to
+read their contents is a good next step. There are two ways to reference a
+value stored in a vector. In the examples, we’ve annotated the types of the
+values that are returned from these functions for extra clarity.
 
-El Listado 8-5 muestra ambos métodos para acceder a un valor en un vector con
-sintaxis de indexación o el método `get`:
+Listing 8-5 shows both methods of accessing a value in a vector either with
+indexing syntax or the `get` method:
 
 ```rust
 let v = vec![1, 2, 3, 4, 5];
@@ -107,20 +107,20 @@ let third: &i32 = &v[2];
 let third: Option<&i32> = v.get(2);
 ```
 
-<span class="caption">Listando 8-5: Usando la sintaxis de índices o el método `get` para
-acceder a un elemento en un vector</span>
+<span class="caption">Listing 8-5: Using indexing syntax or the `get` method to
+access an item in a vector</span>
 
-Tenga en cuenta dos detalles aquí. Primero, usamos el valor de índice de `2` para obtener el tercer
-elemento: los vectores están en los índices por números, comenzando por cero. En segundo lugar, los dos tienen
-diferentes formas de obtener el tercer elemento usando `&` y `[]`, que da
-una referencia, o usando el método `get` con el índice pasado como
-argumento, que nos da una `Opción <& T>`.
+Note two details here. First, we use the index value of `2` to get the third
+element: vectors are indexed by number, starting at zero. Second, the two
+different ways to get the third element are by using `&` and `[]`, which gives
+us a reference, or by using the `get` method with the index passed as an
+argument, which gives us an `Option<&T>`.
 
-La razón por la que Rust tiene dos formas de hacer referencia a un elemento es para que pueda elegir cómo
-el programa se comporta cuando intenta usar un valor de índice que el vector no
-tiene un elemento para ello. Como ejemplo, veamos qué hará un programa si tiene
-un vector que contiene cinco elementos y luego intenta acceder a un elemento en el índice
-100, como se muestra en el Listado 8-6:
+The reason Rust has two ways to reference an element is so you can choose how
+the program behaves when you try to use an index value that the vector doesn’t
+have an element for. As an example, let’s see what a program will do if it has
+a vector that holds five elements and then tries to access an element at index
+100, as shown in Listing 8-6:
 
 ```rust,should_panic
 let v = vec![1, 2, 3, 4, 5];
@@ -129,33 +129,33 @@ let does_not_exist = &v[100];
 let does_not_exist = v.get(100);
 ```
 
-<span class="caption">Listando 8-6: Intentando acceder al elemento en el índice
-100 en un vector que contiene 5 elementos </ span>
+<span class="caption">Listing 8-6: Attempting to access the element at index
+100 in a vector containing 5 elements</span>
 
-Cuando ejecutes este código, el primer método `[]` causará `panic!` por que este
-hace referencia a un elemento inexistente. Este método podría usarse de una mejor manera
-si quiere que su programa pueda considerar el acceder a un elemento que está más allá del final del vector
-ya que sería un grave error si el programa llegara a bloquearse.
+When you run this code, the first `[]` method will cause a `panic!` because it
+references a nonexistent element. This method is best used when you want your
+program to consider an attempt to access an element past the end of the vector
+to be a fatal error that crashes the program.
 
-Cuando el método `get` se pasa un índice que está fuera del vector, regresa al
-`None` sin entrar en pánico. Deberías usar este método si accedes a un elemento
-más allá del rango del vector ocurre ocasionalmente bajo circunstancias normales.
-Su código tendrá lógica para manejar tener `Some (& element)` o
-`None`, como se discutió en el Capítulo 6. Por ejemplo, el índice podría venir de
-una persona que ingresa un número. Si ingresan accidentalmente un número que también es
-grande y el programa obtiene un valor 'Ninguno', podría decirle al usuario cuántos
-artículos están en el vector actual y les da otra oportunidad de ingresar un valor
-válido. Eso sería más fácil de usar que estrellar el programa debido a un error tipográfico.
+When the `get` method is passed an index that is outside the vector, it returns
+`None` without panicking. You would use this method if accessing an element
+beyond the range of the vector happens occasionally under normal circumstances.
+Your code will then have logic to handle having either `Some(&element)` or
+`None`, as discussed in Chapter 6. For example, the index could be coming from
+a person entering a number. If they accidentally enter a number that’s too
+large and the program gets a `None` value, you could tell the user how many
+items are in the current vector and give them another chance to enter a valid
+value. That would be more user-friendly than crashing the program due to a typo!
 
-#### Referencias inválidas
+#### Invalid References
 
-Cuando el programa tiene una referencia válida, el comprobador de préstamos impone las
-reglas de propiedad y de endeudamiento (cubiertas en el Capítulo 4) para asegurar esta referencia
-y cualquier otra referencia a los contenidos del vector sigue siendo válida. Recuerda la
-regla que establece que no podemos tener referencias mutables e inmutables en el mismo
-alcance. Esa regla se aplica en el Listado 8-7 donde tenemos una referencia inmutable a
-el primer elemento en un vector e intenta agregar un elemento al final, que no
-hace el trabajo:
+When the program has a valid reference, the borrow checker enforces the
+ownership and borrowing rules (covered in Chapter 4) to ensure this reference
+and any other references to the contents of the vector remain valid. Recall the
+rule that states we can’t have mutable and immutable references in the same
+scope. That rule applies in Listing 8-7 where we hold an immutable reference to
+the first element in a vector and try to add an element to the end, which won’t
+work:
 
 ```rust,ignore
 let mut v = vec![1, 2, 3, 4, 5];
