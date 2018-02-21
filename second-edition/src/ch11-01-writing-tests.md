@@ -18,7 +18,7 @@ De la manera más simple, un test en Rust es una función que está anotada con 
 Los atributos son datos metas sobre piezas del código Rust; un ejemplo es
 el atributo `derive` que usamos con las estructuras en el capítulo 5. Para cambiar una función
 a una función de prueba, agregamos `#[test]` en la línea anterior a `fn`. Cuando corremos nuestras 
-pruenas con el comando `cargo test` Rust construye un binario que ejecute la prueba que corre
+pruenas con el comando `cargo test` Rust construye un binario que ejecute el test que corre
 las funciones anotadas con el atributo `test` y reporta si cada 
 función de test aprueba o falla.
 
@@ -61,16 +61,16 @@ automáticamente por `cargo new`</span>
 
 Por ahora, ignoremos las dos lineas superiores y enfoquémonos en la función para ver cómo
 funciona. Nota que la anotación `#[test]` está antes de la linea `fn`: este atributo
-indica que esta es una función de test, así que el ejecutador de la prueba sabe cómo tratar esta 
+indica que esta es una función de test, así que el ejecutador de el test sabe cómo tratar esta 
 función como un test. Podríamos tener funciones que no son de test en el módulo `tests` 
 para que nos ayuden a crear escenarios comunes o realizar operaciones comunes, así que necesitamos 
 indicarle qué funciones son de test usando el atributo `#[test]`.
 
 La función del cuerpo usa el macro `assert_eq!` para asegurar que 2 + 2 es igual a 4.
 Esta afirmación sirve como un ejemplo del formato para el test típico. Vamos a correrla
-para ver que esta prueba la aprueba.
+para ver que este test lo aprueba.
 
-El comando `cargo test` corre todas las pruebas en nuestro proyecto, como lo muestra el listado
+El comando `cargo test` corre todos los test en nuestro proyecto, como lo muestra el listado
 11-2:
 
 ```text
@@ -91,7 +91,7 @@ running 0 tests
 test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-<span class="caption">Listado 11-2: La respuesta de correr la prueba automáticamente 
+<span class="caption">Listado 11-2: La respuesta de correr el test automáticamente 
 generada</span>
 
 Cargo compiló y corrió el test. Después de las lineas `Compiling`, `Finished`, y
@@ -101,7 +101,7 @@ ese test, `ok`. El resumen completo de el test ejecutado es lo siguiente que apa
 texto `test result: ok.` significa que todos los test han sido aprobadas, y que la porción que 
 lee `1 passed; 0 failed` es el total del número de tests que han sido aprobadas o fallidas.
 
-Ya que no tenemos ningun test que tengamos marcada como ignorada, el resumen muestra `0
+Ya que no tenemos ningun test que tengamos marcado como ignorado, el resumen muestra `0
 ignored`. Nosotros tampoco hemos filtrado los test que se están ejecutando, así que el final del
 resumen muestra `0 filtered out`. Hablaremos del ignorar y filtrar
 pruebas en la siguiente sección, “Controlando cómo son ejecutados los tests.”
@@ -114,7 +114,7 @@ La siguiente parte de la respuesta de el test, la cual comienza con `Doc-tests a
 los resultados de cualquier test de documentación. No tenemos ningun test de documentación
 por ahora, pero Rust puede compilar cualquier ejemplo de códigos que aparezcan en nuestra documentación
 API. ¡Esta caracteristica nos ayuda a mantener nuestros documentos y nuestro código en sincronización! Discutiremos
-cómo escribir pruebas de documentación en la sección 
+cómo escribir tests de documentación en la sección 
 “Comentarios de documentación” del capítulo 14. Por ahora, ignoraremos la respuesta `Doc-tests`.
 
 Cambiemos el nombre de nuestra prueba para ver cómo eso cambia el resultado de la misma.
@@ -145,8 +145,8 @@ test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 
 Añadamos otro test, pero esta vez haremos un test que falle! Los tests fallan
 cuando algo dentro de la función de test entra en pánico. Cada test es ejecutada en un nuevo hilo,
-y cuando el hilo principal ve que un hilo de prueba ha muerto, la prueba es marcada 
-como fallida. Hablamos sobre la manera más simple para causar pánico en el capítulo 9,
+y cuando el hilo principal ve que un hilo de prueba ha muerto, el test es marcado 
+como fallido. Hablamos sobre la manera más simple para causar pánico en el capítulo 9,
 la cual es llamar al macro `panic!`. Ingresa en el nuevo test, `another`, para que tu archivo
 *src/lib.rs* luzca como el del listado 11-3:
 
@@ -192,7 +192,7 @@ test result: FAILED. 1 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out
 error: test failed
 ```
 
-<span class="caption">Listado 11-4: Los resultados de los tests cuando uno pasa la prueba y uno
+<span class="caption">Listado 11-4: Los resultados de los tests cuando uno pasa el test y uno
 falla el test</span>
 
 En vez de `ok`, la linea `test tests::another` muestra `FAILED`. Dos nuevas
