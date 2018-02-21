@@ -1,24 +1,24 @@
-## Tipos de datos genéricos
+## Generic Data Types
 
-Usando los genéricos donde usualmente ponemos tipos, como en firmas de función
-o estructuras, nos deja crear definiciones que podemos usar para tipos 
-de datos concretos. Miremos cómo definir funciones, estructuras, enum y
-métodos usando genéricos, y al final de esta sección discutiremos el
-desempeño del código usando genéricos.
+Using generics where we usually place types, like in function signatures or
+structs, lets us create definitions that we can use for many different concrete
+data types. Let’s take a look at how to define functions, structs, enums, and
+methods using generics, and at the end of this section we’ll discuss the
+performance of code using generics.
 
-### Usando Tipos de Datos Genéricos en la Definición de Funciones
+### Using Generic Data Types in Function Definitions
 
-Podemos definir funciones que usan genéricos en la firma de la función
-donde los tipos de datos de los parametros y los valores de respuesta van. De esta manera,
-el código que escribimos puede ser más flexible y proveer más funcionalidad a los llamados de
-nuestra función, aunque no introduzcamos una duplicación de código.
+We can define functions that use generics in the signature of the function
+where the data types of the parameters and return value go. In this way, the
+code we write can be more flexible and provide more functionality to callers of
+our function, while not introducing code duplication.
 
-Continuando con nuestra función `largest`, el listado 10-4 muestra dos funciones
-que proveen la misma funcionalidad para encontrar el valor más grande en un pedazo. La
-primera función es la que extrajimos en el listado 10-3 que encuentra el más grande
-`i32` en un pedazo. La segunda función encuentra el más grande `char` en un pedazo:
+Continuing with our `largest` function, Listing 10-4 shows two functions
+providing the same functionality to find the largest value in a slice. The
+first function is the one we extracted in Listing 10-3 that finds the largest
+`i32` in a slice. The second function finds the largest `char` in a slice:
 
-<span class="filename">Nombre del archivo: src/main.rs</span>
+<span class="filename">Filename: src/main.rs</span>
 
 ```rust
 fn largest_i32(list: &[i32]) -> i32 {
@@ -60,46 +60,46 @@ fn main() {
 }
 ```
 
-<span class="caption">Listado 10-4: Dos funciones que difieren solo en sus
-nombres y los tipos en sus firmas</span>
+<span class="caption">Listing 10-4: Two functions that differ only in their
+names and the types in their signatures</span>
 
-Aquí, las funciones `largest_i32` y `largest_char` tienen exactamente el mismo cuerpo,
-así que sería bueno si pudieramos convertir estas dos funciones en una y eliminar
-la duplicación. Afortunadamente, ¡Podemos hacer eso introduciendo un parámetro de un tipo
-genérico!
+Here, the functions `largest_i32` and `largest_char` have the exact same body,
+so it would be nice if we could turn these two functions into one and get rid
+of the duplication. Luckily, we can do that by introducing a generic type
+parameter!
 
-Para parametrizar los tipos en las firmas de una función, vamos a
-definir, necesitamos crear un nombre para el tipo de parámetro, justo como nosotros le damos
-nombres para los valores del parametro de una función. Vamos a escoger el nombre
-`T`. Cualquier identificador puede ser usado como el nombre para un tipo de parametro, pero escogeremos
-`T` porque la convención de nombres de Rust es Camelcase. Los parámetros de nombre genéricos
-también tienden a ser cortos por conveniencia, usualmente solo una letra. Diminutivo para
-“type”, `T` es la opción por defecto para la mayoría de los programadores de Rust.
+To parameterize the types in the signature of the one function we’re going to
+define, we need to create a name for the type parameter, just like how we give
+names for the value parameters to a function. We’re going to choose the name
+`T`. Any identifier can be used as a type parameter name, but we’re choosing
+`T` because Rust’s type naming convention is CamelCase. Generic type parameter
+names also tend to be short by convention, often just one letter. Short for
+“type”, `T` is the default choice of most Rust programmers.
 
-Cuando usamos un parametro en el cuerpo de la función, debemos declarar el
-parametro en la firma para que el compilador sepa qué es lo que ese nombre en el
-cuerpo significa. De manera similar, cuando usamos un nombre de tipo de parametro en una 
-firma de función, debemos declarar el nombre de tipo de parametro antes de que lo usemos. Las declaraciones
-de los nombres de los tipos van en paréntesis angulares entre el nombre de la función y
-la lista de parametros.
+When we use a parameter in the body of the function, we have to declare the
+parameter in the signature so that the compiler knows what that name in the
+body means. Similarly, when we use a type parameter name in a function
+signature, we have to declare the type parameter name before we use it. Type
+name declarations go in angle brackets between the name of the function and the
+parameter list.
 
-La firma de la función de la función genérica `largest` que vamos a definir 
-lucirá así:
+The function signature of the generic `largest` function we’re going to define
+will look like this:
 
 ```rust,ignore
 fn largest<T>(list: &[T]) -> T {
 ```
 
-Leeríamos esto como: la función `largest` es genérica sobre un tipo `T`. 
-Tiene un parámetro llamado `list`, y el tipo de `list` es un pedazo de valores del
-tipo `T`. La función `largest` dará un valor del mismo tipo `T`.
+We would read this as: the function `largest` is generic over some type `T`. It
+has one parameter named `list`, and the type of `list` is a slice of values of
+type `T`. The `largest` function will return a value of the same type `T`.
 
-El listado 10-5 muestra la función unificada de `largest` usando tipos de datos genéricos
-en su firma, y muestra cómo podríamos llamar a `largest` con
-un pedazo de los valores de  `i32` o los valores de `char`. ¡Nota que este código no
-compilará aun!
+Listing 10-5 shows the unified `largest` function definition using the generic
+data type in its signature, and shows how we’ll be able to call `largest` with
+either a slice of `i32` values or `char` values. Note that this code won’t
+compile yet!
 
-<span class="filename">Nombre del archivo: src/main.rs</span>
+<span class="filename">Filename: src/main.rs</span>
 
 ```rust,ignore
 fn largest<T>(list: &[T]) -> T {
@@ -127,10 +127,10 @@ fn main() {
 }
 ```
 
-<span class="caption">Listado 10-5: Una definición de la función `largest` que 
-usa tipos de parametros genéricos pero no compila aun</span>
+<span class="caption">Listing 10-5: A definition of the `largest` function that
+uses generic type parameters but doesn’t compile yet</span>
 
-Si tratásemos de compilar este código ahora mismo, nos daría este error:
+If we try to compile this code right now, we’ll get this error:
 
 ```text
 error[E0369]: binary operation `>` cannot be applied to type `T`
@@ -141,15 +141,15 @@ error[E0369]: binary operation `>` cannot be applied to type `T`
 note: an implementation of `std::cmp::PartialOrd` might be missing for `T`
 ```
 
-La nota menciona `std::cmp::PartialOrd`, el cual es un *rasgo*. Vamos a 
-hablar sobre los rasgos en la siguiente sección, pero brevemente, lo que el error dice
-es que el cuerpo de `largest` no trabajará por todos los tipos posibles que `T` podría 
-ser; ya que nosotros queremos comparar los valores del tipo `T` en el cuerpo, solo podemos usar
-tipos que sepan como ser ordenados. La libreria estandar ha definido el rasgo
-`std::cmp::PartialOrd` que los tipos pueden implementar para habilitar las comparaciones. 
-Volveremos a hablar de los rasgos y como especificar que un tipo genérico tiene un 
-rasgo particular en la siguiente sección, pero veamos este ejemplo por un momento y
-explorar otros lugares en donde podemos usar los tipos genéricos de parametros primero.
+The note mentions `std::cmp::PartialOrd`, which is a *trait*. We’re going to
+talk about traits in the next section, but briefly, what this error is saying
+is that the body of `largest` won’t work for all possible types that `T` could
+be; since we want to compare values of type `T` in the body, we can only use
+types that know how to be ordered. The standard library has defined the trait
+`std::cmp::PartialOrd` that types can implement to enable comparisons. We’ll
+come back to traits and how to specify that a generic type has a particular
+trait in the next section, but let’s set this example aside for a moment and
+explore other places we can use generic type parameters first.
 
 <!-- Liz: this is the reason we had the topics in the order we did in the first
 draft of this chapter; it's hard to do anything interesting with generic types
@@ -159,13 +159,13 @@ ordering could work out okay, though, and keep a stronger thread with the
 not-yet-compiling example here, which I know isn't ideal either. Let us know
 what you think. /Carol -->
 
-### Usando tipos de datos genéricos en definiciones de estructuras
+### Using Generic Data Types in Struct Definitions
 
-Podemos definir estructuras para usar tipos de parametros genericos en uno o más de los
-campos de estructura con la sintaxis `<>` también. El listado 10-6 muestra la definición y
-el uso de una estructura `Point` que pueda albergar los valores de cordenadas `x` y `y` de cada tipo:
+We can define structs to use a generic type parameter in one or more of the
+struct’s fields with the `<>` syntax too. Listing 10-6 shows the definition and
+use of a `Point` struct that can hold `x` and `y` coordinate values of any type:
 
-<span class="filename">Nombre del archivo: src/main.rs</span>
+<span class="filename">Filename: src/main.rs</span>
 
 ```rust
 struct Point<T> {
@@ -179,21 +179,21 @@ fn main() {
 }
 ```
 
-<span class="caption">Listado 10-6: A `Point` estructura que `x` y `y`
-albergan los valores del tipo `T`</span>
+<span class="caption">Listing 10-6: A `Point` struct that holds `x` and `y`
+values of type `T`</span>
 
-La sintaxis es similar a usar genéricos en definiciones de funciones. Primero, tenemos
-que declarar el nombre del tipo de parametro dentro de parentesis angulares justo luego del
-nombre de la estructura. Entonces podemos usar el tipo genérico en la definición de la estructura
-donde especificariamos tipos de datos concretos.
+The syntax is similar to using generics in function definitions. First, we have
+to declare the name of the type parameter within angle brackets just after the
+name of the struct. Then we can use the generic type in the struct definition
+where we would specify concrete data types.
 
-Nota que ya que solo hemos usado un tipo genérico en la definición de 
-`Point`, lo que estamos diciendo es que la estructura `Point` es genérica sobre un tipo
-`T`, y los campos `x` y `y` son *ambos* ese mismo tipo, como sea que termine
-siendo. Si tratamos de crear una instancia de un `Point` que tenga valores de
-diferentes tipos, como en el listado 10-7, nuestro codigo no compilara:
+Note that because we’ve only used one generic type in the definition of
+`Point`, what we’re saying is that the `Point` struct is generic over some type
+`T`, and the fields `x` and `y` are *both* that same type, whatever it ends up
+being. If we try to create an instance of a `Point` that has values of
+different types, as in Listing 10-7, our code won’t compile:
 
-<span class="filename">Nombre de archivo: src/main.rs</span>
+<span class="filename">Filename: src/main.rs</span>
 
 ```rust,ignore
 struct Point<T> {
@@ -206,10 +206,10 @@ fn main() {
 }
 ```
 
-<span class="caption">Listado 10-7: Los campos `x` y `y` deberan ser los mismos
-tipos porque ambos tienen el mismo tipo de dato genérico `T`</span>
+<span class="caption">Listing 10-7: The fields `x` and `y` must be the same
+type because both have the same generic data type `T`</span>
 
-Si tratasemos de compilar esto, nos daría el siguiente error:
+If we try to compile this, we’ll get the following error:
 
 ```text
 error[E0308]: mismatched types
@@ -223,18 +223,18 @@ error[E0308]: mismatched types
   = note:    found type `{float}`
 ```
 
-Cuando le asignamos un valor entero de 5 a `x`, el compilador entonces sabe que para esta 
-instancia de `Point` que el tipo genérico `T` será un número entero. Entonces nosotros
-especificamos 4.0 para `y`, lo que es definido para que tenga el mismo tipo `x`, entonces tenemos un
-error de desajuste de tipos.
+When we assigned the integer value 5 to `x`, the compiler then knows for this
+instance of `Point` that the generic type `T` will be an integer. Then when we
+specified 4.0 for `y`, which is defined to have the same type as `x`, we get a
+type mismatch error.
 
-Si quisieramos definir una estructura `Point` donde `x` y `y` pudieran tener diferentes
-tipos pero aun haría que esos tipos fueran genéricos, podemos usar multiples parametros de tipos
-genéricos. En el listado 10-8, hemos cambiado la definición de `Point` para que fuese
-generica sobre tipos `T` y `U`. El campo `x` es de tipo `T`, y el campo `y`
-es de tipo `U`:
+If we wanted to define a `Point` struct where `x` and `y` could have different
+types but still have those types be generic, we can use multiple generic type
+parameters. In listing 10-8, we’ve changed the definition of `Point` to be
+generic over types `T` and `U`. The field `x` is of type `T`, and the field `y`
+is of type `U`:
 
-<span class="filename">Nombre del archivo: src/main.rs</span>
+<span class="filename">Filename: src/main.rs</span>
 
 ```rust
 struct Point<T, U> {
@@ -249,14 +249,14 @@ fn main() {
 }
 ```
 
-<span class="caption">Listado 10-8: Un `Point` genérico sobre dos tipos para que 
-`x` y `y` puedan ser valores de dos tipos diferentes</span>
+<span class="caption">Listing 10-8: A `Point` generic over two types so that
+`x` and `y` may be values of different types</span>
 
-¡Ahora todas estas instancias de `Point` están permitidas! Podrás usar cuantos tipos de parámetros
-de tipo genérico quieras en una definición, pero el usar más de unos cuantos se hace
-dificil de leer y entender. Si llegas al punto de necesitar muchos tipos
-genéricos, es probablemente un signo de que tu código podría necesitar un poco de reestructuración para
-ser separado en piezas más pequeñas.
+Now all of these instances of `Point` are allowed! You can use as many generic
+type parameters in a definition as you want, but using more than a few gets
+hard to read and understand. If you get to a point of needing lots of generic
+types, it’s probably a sign that your code could use some restructuring to be
+separated into smaller pieces.
 
 ### Usando Tipos de Datos Genéricos en Definiciones Enum
 
