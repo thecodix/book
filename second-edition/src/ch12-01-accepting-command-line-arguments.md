@@ -1,4 +1,4 @@
-## Aceptación de Argumentos de Línea de Comandos
+## Aceptando Argumentos de Línea de Comandos
 
 Vamos a crear un nuevo proyecto con, como siempre, `cargo new`. Llamaremos a nuestro proyecto 
 `minigrep` para distinguirlo de la herramienta `grep` que ya tienes 
@@ -93,7 +93,7 @@ $ cargo run needle haystack
 ["target/debug/minigrep", "needle", "haystack"]
 ```
 
-Nota que el primer valor en el vector es `"target/debug/minigrep"`, que es el
+Ten en cuenta que el primer valor en el vector es `"target/debug/minigrep"`, que es el
 nombre de nuestro binario. Esto coincide con el comportamiento de la lista de argumentos
 en C, permitiendo a los programas usar el nombre con el que fueron invocados en su ejecución.
 A menudo es conveniente tener acceso al nombre del programa en caso de que queramos 
@@ -119,8 +119,8 @@ fn main() {
     let query = &args[1];
     let filename = &args[2];
 
-    println!("Searching for {}", query);
-    println!("In file {}", filename);
+    println!("Buscando {}", consulta);
+    println!("En el Archivo {}", nombre del archivo);
 }
 ```
 
