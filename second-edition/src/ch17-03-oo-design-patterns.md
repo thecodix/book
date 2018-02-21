@@ -1,40 +1,40 @@
-## Implementing an Object-Oriented Design Pattern
+## Implementando un patrón de diseño orientado a objetos
 
-The *state pattern* is an object-oriented design pattern. The crux of the
-pattern is that a value has some internal state, represented by a set of *state
-objects*, and the value’s behavior changes based on the internal state. The
-state objects share functionality--in Rust, of course, we use structs and
-traits rather than objects and inheritance. Each state object representing the
-state is responsible for its own behavior and for governing when it should
-change into another state. The value that holds a state object knows nothing
-about the different behavior of the states or when to transition between states.
+El *patrón de estado* es un patrón de diseño orientado a objetos. El meollo del
+patrón es que un valor tiene un estado interno, representado por un conjunto de *objetos
+de estado*, y el comportamiento del valor cambia dependiendo del estado interno. los
+objetos de estado comparten funcionalidad--en Rust, por supuesto, usamos estructuras y
+rasgos más que objetos y sucesión. Cada objeto de estado representando al
+estado es responsable de su propio comportamiento y de gobernar cuando 
+debería cambiar a otro estado. El valor que alberga un objeto de estado desconoce
+los diferentes comportamientos de los estados o cuando hacer la transición entre estados.
 
 <!-- Below -- requirements for what, for what we need the value for? -->
 <!-- I've clarified /Carol -->
 
-Using the state pattern means when the business requirements of the program
-change, we won’t need to change the code of the value holding the state or the
-code that uses the value. We’ll only need to update the code inside one of the
-state objects to change its rules, or perhaps add more state objects. Let’s
-look at an example of the state design pattern and how to use it in Rust.
+El usar los patrones de estado significa que cuando los requerimientos del negocio del programa 
+cambián, no necesitaremos cambiar el código del valor que alberga el estado o el
+código que usa el valor. Sólo tendremos que actualizar el códito dentro de uno de los
+objetos de estados para cambiar sus reglas, o quizás agregar más objetos de estado. 
+Miremos un ejemplo del diseño del patrón de estado y cómo usarlo en Rust.
 
-To explore this idea, we’ll implement a blog post workflow in an incremental
-way. The blog’s final functionality will look like this:
+Para explorar esta idea, implementaremos una publicación de blog de ritmo de trabajo en una manera
+incremental. La funcionalidad definitiva del blog lucirá así:
 
-1. A blog post starts as an empty draft.
-2. Once the draft is done, a review of the post is requested.
-3. Once the post is approved, it gets published.
-4. Only published blog posts return content to print, so unapproved posts can’t
-   accidentally be published.
+1. Una publicación de blog inicia como un borrador vacío.
+2. Una vez el borrador esté hecho, una revisión de la publicación es requerida.
+3. Una vez la publicación sea aprobada, es publicada.
+4. Sólo las publicaciones de blogs que han sido publicadas devuelven contenido para emitir, así que publicaciones que no hayan sido aprobadas no pueden
+publicarse accidentalmente.
 
-Any other changes attempted on a post should have no effect. For example, if we
-try to approve a draft blog post before we’ve requested a review, the post
-should stay an unpublished draft.
+Cualquier otro cambio efectuado a una publicación no debería tener efecto. Por ejemplo, si 
+intentásemos aprobar un borrador de publicación de blog antes de que pidieramos una revisión, la publicación
+debería permanecer como un borrador sin publicar.
 
-Listing 17-11 shows this workflow in code form. This is an example usage of the
-API we’re going to implement in a library crate named `blog`:
+El listado 17-11 muestra este ritmo de trabajo en forma de código. Éste es un uso de ejemplo del
+API que vamos a implementar en una caja de biblioteca llamada `blog`:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,ignore
 extern crate blog;
@@ -54,21 +54,21 @@ fn main() {
 }
 ```
 
-<span class="caption">Listing 17-11: Code that demonstrates the desired
-behavior we want our `blog` crate to have</span>
+<span class="caption">Listado 17-11: Código que demuestra el comportamiento
+deseado que queremos que tenga nuestra caja `blog` </span>
 
-We want to allow the user to create a new draft blog post with `Post::new`.
-Then, we want to allow text to be added to the blog post while it’s in the
-draft state. If we try to get the post’s content immediately, before
-approval, nothing should happen because the post is still a draft. We’ve added
-an `assert_eq!` here for demonstration purposes. An excellent unit test for
-this would be to assert that a draft blog post returns an empty string from the
-`content` method, but we’re not going to write tests for this example.
+Queremos permitir que el usuario cree un nuevo borrador de publicación en el blog con `Post::new`.
+Entonces, queremos permitir que el texto sea añadido a la publicación  mientras está
+en estado de borrador. Si intentamos obtener el contenido de esta publicación inmediatamente, antes
+de su aprobación, nada debería pasar porque la publicación es todavía un borrador. Hemos añadido
+un `assert_eq!` aquí para propósitos demonstrativos. Una unidad de prueba para
+esto sería el afirmar que un borrador de publicación de blog devuelve un hilo vacío desde el
+método `content`, pero no vamos a escribir pruebas para este ejemplo.
 
-Next, we want to enable a request for a review of the post, and we want
-`content` to return an empty string while waiting for the review. Lastly, when
-the post receives approval, it should get published, meaning the text of the
-post will be returned when `content` is called.
+Ahora, queremos habilitar una petición para una revisión de la publicación, y queremos que
+`content` devuelva un hilo vacío mientras esperamos por la revisión. Finalmente, cuando
+el post recibe la aprobación, debería publicarse, significando esto que el texto de la
+publicación será devuelto cuando `content` sea llamado.
 
 <!-- Below -- so this is where we'll implement the state pattern? If so, can
 you make that explicit, just to be clear! I've added some text to the second
@@ -76,33 +76,33 @@ line, not sure if that's accurate though -->
 <!-- Yes, the state pattern will be implemented within the `Post` type. I've
 tweaked the wording a bit but you've pretty much got it! /Carol-->
 
-Notice that the only type we’re interacting with from the crate is the `Post`
-type. This type will use the state pattern and will hold a value that will be
-one of three state objects representing the various states a post can be
-in---draft, waiting for review, or published. Changing from one state to
-another will be managed internally within the `Post` type. The states change in
-response to the methods users of our library call on the `Post` instance, but
-they don’t have to manage the state changes directly. This also means users
-can’t make a mistake with the states, like publishing a post before it is
-reviewed.
+Nota que el unico tipo con el que interactuamos de la caja es el tipo`Post`.
+Este tipo usará el patrón de estado y albergará un valor que será
+uno de tres objetos de estado representando los varios estados en los que una publicación puede estar
+---borrador, en la espera de una revisión, o publicado. El cambio de un estado a
+otro será administrado internamente dentro del tipo `Post`. Los estados cambian en 
+respuesta a los usuarios de métodos en nuestro llamado de biblioteca en la instancia `Post`, pero
+no tienen que ser administrar los cambios de estado directamente. Esto también significa que los usuarios
+no pueden cometer un error en los estados, como publicar una publicación antes de que sea
+revisada.
 
-### Defining `Post` and Creating a New Instance in the Draft State
+### Definiendo `Post` y creando una nueva instancia en el estado de borradores
 
-Let’s get started on the implementation of the library! We know we need a
-public `Post` struct that holds some content, so let’s start with the
-definition of the struct and an associated public `new` function to create an
-instance of `Post`, as shown in Listing 17-12. We’ll also make a private
-`State` trait. Then `Post` will hold a trait object of `Box<State>` inside an
-`Option` in a private field named `state`. We’ll see why the `Option` is
-necessary in a bit.
+¡Comencemos con la implementación de la biblioteca! Sabemos que necesitamos una
+estructura pública que albergue algun contenido, así que vamos a comenzar con la
+definición de la estructura y una función pública asociada `new` para crear una 
+instancia de `Post`, como se muestra en el listado 17-12. Tambien debemos hacer un rasgo
+`State` privado. Entonces `Post` albergará un rasgo de objeto de `Box<State>` dentro de un
+`Option` en un campo privado llamado `state`. Veremos por qué el `Option` es
+necesario en unos instantes.
 
-The `State` trait defines the behavior shared by different post states, and the
-`Draft`, `PendingReview`, and `Published` states will all implement the `State`
-trait. For now, the trait does not have any methods, and we’re going to start
-by defining just the `Draft` state since that’s the state we want a post to
-start in:
+El rasgo `State` define el comportamiento compartido por diferentes estados de publicación, y los estados
+`Draft`, `PendingReview` y `Published` también implementarán el rasgo `State`.
+Por ahora, el rasgo no tiene ningun método, y vamos a empezar 
+por definir solo el estado `Draft` ya que ese es el estado en el que queremos la publicación
+para empezar:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 pub struct Post {
@@ -126,28 +126,28 @@ struct Draft {}
 impl State for Draft {}
 ```
 
-<span class="caption">Listing 17-12: Definition of a `Post` struct and a `new`
-function that creates a new `Post` instance, a `State` trait, and a `Draft`
-struct</span>
+<span class="caption">Listado 17-12: Definición de una estructura `Post` y una función `new`
+que crea una nueva instancia `Post`, un rasgo `State`, y una estructura `Draft`
+</span>
 
-When we create a new `Post`, we set its `state` field to a `Some` value that
-holds a `Box`. This `Box` points to a new instance of the `Draft` struct. This
-ensures whenever we create a new instance of `Post`, it’ll start out as a
-draft. Because the `state` field of `Post` is private, there’s no way to create
-a `Post` in any other state!
+Cuando creamos una nueva `Post`, establecemos su campo `state` a un valor `Some` que 
+albergue una `Box`. Este `Box` apunta a una nueva instancia de la estructura `Draft`. Esto
+asegura que cada vez que qcreamos una nueva instancia de `Post`, sea creada como un
+borrador. Ya que el campo `state` de `Post` es privado, ¡no hay manera de crear
+un `Post` en ningun otro estado!
 
-### Storing the Text of the Post Content
+### Guardando el texto del contenido de la publicación
 
-In the `Post::new` function, we set the `content` field to a new, empty
-`String`. Listing 17-11 showed that we want to be able to call a method named
-`add_text` and pass it a `&str` that’s then added to the text content of the
-blog post. We implement this as a method rather than exposing the `content`
-field as `pub`. This means we can implement a method later that will control
-how the `content` field’s data is read. The `add_text` method is pretty
-straightforward, so let’s add the implementation in Listing 17-13 to the `impl
-Post` block:
+En la función `Post::new`, establecemos el campo `content` a un nuevo, vacío
+`String`. El listado 17-11 muestra que queremos ser capaces de llamar un método llamado
+`add_text` y pasarlo a `&str` que es entonces añadido al contenido del texto de la
+publicación del blog. Implementamos esto como un método en vez de exponer el campo `content`
+como `pub`. Esto significa que podemos implementar un método después que controle
+cómo se leen en el campo `content` los datos. El método `add_text` es bastante 
+directo, así que vamos a añadir la implementación del listado 17-13 al bloque `impl
+Post`:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust
 # pub struct Post {
@@ -162,27 +162,27 @@ impl Post {
 }
 ```
 
-<span class="caption">Listing 17-13: Implementing the `add_text` method to add
-text to a post’s `content`</span>
+<span class="caption">Listado 17-13: Implementando el método `add_text` para añadir
+texto al `content` de la publicación</span>
 
-`add_text` takes a mutable reference to `self`, since we’re changing the `Post`
-instance that we’re calling `add_text` on. We then call `push_str` on the
-`String` in `content` and pass the `text` argument to add to the saved
-`content`. This behavior doesn’t depend on the state the post is in so it’s not
-part of the state pattern. The `add_text` method doesn’t interact with the
-`state` field at all, but it is part of the behavior we want to support.
+`add_text` toma una referencia mutable a `self`, ya que estamos cambiando la instancia `Post`
+a la cual llamamos en `add_text`. Cuando llamamos `push_str` en el 
+`String` en `content` y pasamos el argumento `text` para añadir al
+`content` guardado. Este comportamiento no depende del estado en el que esté la publicación así que no es
+parte del patrón de estado. El método `add_text` no interactua con el 
+campo `state` para nada, pero es parte del comportamiento que queremos respaldar.
 
-### Ensuring the Content of a Draft Post is Empty
+### Asegurando que el contenido del borrador de una publicación esté vacío
 
-Even after we’ve called `add_text` and added some content to our post, we still
-want the `content` method to return an empty string slice since the post is
-still in the draft state, as shown on line 8 of Listing 17-11. For now, let’s
-implement the `content` method with the simplest thing that will fulfill this
-requirement: always returning an empty string slice. We’re going to change this
-later once we implement the ability to change a post’s state so it can be
-published. So far, though, posts can only be in the draft state, so the post
-content should always be empty. Listing 17-14 shows this placeholder
-implementation:
+Incluso después de que hemos llamado `add_text` y añadido algun contenido a nuestra publicación, aun
+queremos que el método `content` devuelva un pedazo de hilo vacío ya que la publicación aun
+está en el estado de borrador, como se muestra en la linea 8 del listado 17-11. Por ahora, vamos
+a implementar el método `content` con la cosa más sencilla que realizará este
+requerimiento: siempre devolviendo un pedazo vacío de hilo. Vamos a cambiar esto
+luego una vez que implementemos la habilidad para cambiar el estado de una publicación para que así pueda ser
+publicada. Hasta ahora, las publicaciones sólo pueden estar en estado de borrador, así que el contenido
+de la publicación debería estar siempre vacío. El listado 17-14 muestra esta implementación
+de marcador:
 
 <span class="filename">Filename: src/lib.rs</span>
 
