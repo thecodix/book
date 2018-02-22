@@ -1,4 +1,4 @@
-## `Box<T>` apunta a los datos en Heap y tiene un tamaño conocido
+## `Box<T>` apunta a los datos en el montón y tiene un tamaño conocido
 
 El puntero inteligente más sencillo es un *recuadro*, cuyo tipo está escrito
 `Box<T>`. Los recuadros te permiten almacenar datos en el montón en vez de en la
