@@ -1,14 +1,14 @@
-## Reading a File
+## Leyendo un Archivo
 
-Now we’ll add functionality to read the file that is specified in the
-`filename` command line argument. First, we need a sample file to test it with:
-the best kind of file to use to make sure `minigrep` is working is one with a
-small amount of text over multiple lines with some repeated words. Listing 12-3
-has an Emily Dickinson poem that will work well! Create a file called
-*poem.txt* at the root level of your project, and enter the poem “I’m Nobody!
-Who are you?”
+Ahora añadiremos funcionalidad para leer el archivo especificado en el argumento de la 
+línea de comandos `filename`. Primero, necesitamos un archivo de muestra para probarlo con: 
+el mejor tipo de archivo a utilizar para asegurarnos de que `minigrep` está funcionando es uno 
+con una pequeña cantidad de texto sobre múltiples líneas con algunas palabras repetidas. El 
+Listado 12-3 tiene un poema de Emily Dickinson que funcionará ¡bien! Crea un archivo llamado
+*poem.txt* en el nivel raíz de tu proyecto e introduce el poema "¡No soy nadie!
+¿Quién eres tú?"
 
-<span class="filename">Filename: poem.txt</span>
+<span class="filename">Nombre del Archivo: poem.txt</span>
 
 ```text
 I’m nobody! Who are you?
@@ -22,13 +22,13 @@ To tell your name the livelong day
 To an admiring bog!
 ```
 
-<span class="caption">Listing 12-3: A poem by Emily Dickinson will make a good
-test case.</span>
+<span class="caption">Listado 12-3: Un poema de Emily Dickinson será un buen
+caso de prueba.</span>
 
-With the text in place, edit *src/main.rs* and add code to open the file, as
-shown in Listing 12-4:
+Con el texto en su lugar, edita *src/main.rs* y añade código para abrir el archivo, como 
+se muestra en Listado 12-4:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,should_panic
 use std::env;
@@ -55,32 +55,32 @@ fn main() {
 }
 ```
 
-<span class="caption">Listing 12-4: Reading the contents of the file specified
-by the second argument</span>
+<span class="caption">Listado 12-4: Lectura del contenido del archivo especificado
+por el segundo argumento</span>
 
-First, we add some more `use` statements to bring in relevant parts of the
-standard library: we need `std::fs::File` to handle files, and
-`std::io::prelude::*` contains various useful traits for doing I/O, including
-file I/O. In the same way that Rust has a general prelude that brings certain
-types and functions into scope automatically, the `std::io` module has its own
-prelude of common types and functions you’ll need when working with I/O. Unlike
-the default prelude, we must explicitly add a `use` statement for the prelude
-from `std::io`.
+En primer lugar, añadimos algunas declaraciones `use` más para traer partes relevantes de la
+biblioteca estándar: necesitamos `std::fs::File` para manejar archivos, y 
+`std::io::prelude::*` contiene varios rasgos útiles para hacer E/S, incluyendo
+el archivo E/S. De la misma manera que Rust tiene un preludio general que pone automáticamente
+a tu alcance ciertos tipos y funciones, el módulo `std::io` tiene su propio preludio
+de los tipos y funciones comunes que necesitarás cuando trabajes con E/S. A diferencia 
+del preludio por defecto, debemos añadir explícitamente una declaración de  `use` para el preludio 
+de `std::io`.
 
-In `main`, we’ve added three statements: first, we get a mutable handle to the
-file by calling the `File::open` function and passing it the value of the
-`filename` variable. Second, we create a variable called `contents` and set it
-to a mutable, empty `String`. This will hold the content of the file after we
-read it in. Third, we call `read_to_string` on our file handle and pass a
-mutable reference to `contents` as an argument.
+En `main`, hemos añadido tres enunciados: primero, obtenemos un control mutable del 
+archivo llamando a la función `File::open` y pasándole el valor de la variable 
+`filename`. En segundo lugar, creamos una variable llamada `contents` y la ponemos en
+una `String` vacía y mutable. Esto retendrá el contenido del archivo después de que lo 
+hayamos leído. Tercero, llamamos `read_to_string` en nuestro gestor de archivos y pasamos
+una referencia mutable a `contents` como argumento.
 
-After those lines, we’ve again added a temporary `println!` statement that
-prints the value of `contents` after the file is read, so we can check that the
-program is working so far.
+Después de esas líneas, volvimos a añadir una declaración temporal `println!` que 
+imprime el valor de `contents` después de que se lea el archivo, así podemos comprobar
+que el programa está funcionando hasta el momento.
 
-Let’s run this code with any string as the first command line argument (because
-we haven’t implemented the searching part yet) and the *poem.txt* file as the
-second argument:
+Ejecutemos este código con cualquier cadena como primer argumento de línea de comandos
+(porque aún no hemos implementado la parte de búsqueda) y el archivo *poem.txt* como
+segundo argumento:
 
 ```text
 $ cargo run the poem.txt
@@ -101,11 +101,11 @@ To tell your name the livelong day
 To an admiring bog!
 ```
 
-Great! The code read and then printed the content of the file. But the code has
-a few flaws. The `main` function has multiple responsibilities: generally,
-functions are clearer and easier to maintain if each function is responsible
-for only one idea. The other problem is that we’re not handling errors as well
-as we could be. The program is still small so these flaws aren’t a big problem,
-but as the program grows, it will be harder to fix them cleanly. It’s good
-practice to begin refactoring early on when developing a program, because it’s
-much easier to refactor smaller amounts of code. We’ll do that next.
+¡Genial! El código se leyó e imprimió el contenido del archivo. Pero el código tiene
+algunos defectos. La función `main` tiene múltiples responsabilidades: en general, 
+las funciones son más claras y fáciles de mantener si cada función es responsable
+de una sola idea. El otro problema es que no estamos manejando los errores tan bien
+como podríamos hacerlo. El programa sigue siendo pequeño, por lo que estos defectos no
+son un gran problema, pero a medida que el programa crezca, será más difícil corregirlos limpiamente.
+Es una buena práctica empezar a refactorizar tempranamente cuando se desarrolla un programa, 
+porque es mucho más fácil refactorizar cantidades más pequeñas de código. Lo haremos después.
