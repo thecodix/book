@@ -1,11 +1,11 @@
-## `Box<T>` apunta a los datos en el montón y tiene un tamaño conocido
+## `Box<T>` apunta a los datos en la zona libre y tiene un tamaño conocido
 
 El puntero inteligente más sencillo es un *recuadro*, cuyo tipo está escrito
-`Box<T>`. Los recuadros te permiten almacenar datos en el montón en vez de en la
-pila. Lo que queda en la pila es el puntero en el montón de datos. Consulta el
-capítulo 4 para ver la diferencia entre la pila y el montón.
+`Box<T>`. Los recuadros te permiten almacenar datos en la zona libre en vez de en la
+pila. Lo que queda en la pila es el puntero en la zona libre de datos. Consulta el
+capítulo 4 para ver la diferencia entre la pila y la zona libre.
 
-Los cuadros no tienen sobrecarga, además de almacenar sus datos en el montón
+Los cuadros no tienen sobrecarga, además de almacenar sus datos en la zona libre
 en vez de en la pila. Pero no tienen muchas capacidades extras tampoco.
 Los usarás más a menudo en estas situaciones:
 
@@ -20,19 +20,19 @@ Vamos a demostrar la primera situación en esta sección. Pero antes de hacer es
 elaboraremos un poco más las otras dos situaciones: en el segundo caso,
 transferir la propiedad de una gran cantidad de datos puede tomar mucho tiempo porque
 los datos se copian cerca de la pila. Para mejorar el rendimiento en esta 
-situación, podemos almacenar la gran cantidad de datos en el montón en un recuadro. Entonces,
+situación, podemos almacenar la gran cantidad de datos en la zona libre en un recuadro. Entonces,
 solo la cantidad pequeña de datos del puntero son copiadas en la pila, y los 
-datos permanecen en un lugar en el montón. El tercer caso es conocido como un *trait
+datos permanecen en un lugar en la zona libre. El tercer caso es conocido como un *trait
 object*, y el capítulo 17 le dedica una sección completa a ese tema. Asique, lo que
 aprendas aquí lo aplicarás de nuevo en el capítulo 17!
 
 
-### Uso de `Box<T>` para almacenar datos en el montón
+### Uso de `Box<T>` para almacenar datos en la zona libre
 
 Antes de discutir este caso de uso para `Box<T>`, cubriremos la sintaxis y como
 interactuar con valores almacenados dentro de un `Box<T>`.
 
-El listado 15-1 muestra como usar un recuadro para almacenar un valor `i32` en el montón:
+El listado 15-1 muestra como usar un recuadro para almacenar un valor `i32` en la zona libre:
 
 <span class="filename">Nombre del archivo: src/main.rs</span>
 
@@ -42,19 +42,19 @@ fn main() {
     println!("b = {}", b);
 }
 ```
-<span class="caption">Listado 15-1: Almacenando un valor `i32` en el montón usando
+<span class="caption">Listado 15-1: Almacenando un valor `i32` en la zona libre usando
 un recuadro</span>
 
 Definimos la variable `b` para tener el valor de un `Box` que apunta al valor
- `5`, que es asignado en el montón. Este programa imprimirá `b = 5`; en
+ `5`, que es asignado en la zona libre. Este programa imprimirá `b = 5`; en
 este caso, podemos ingresar los datos en un recuadro en una forma similar como
 lo hariamos si los datos estuvieran en la pila. Al igual que cualquier valor propio,
 cuando un recuadro sale del alcance como `b` se hace al final de `main`, será desasignado. La
 designación ocurre para el recuadro (almacenada en la pila) y los datos que apuntan a
-(almacenado en el montón).
+(almacenado en la zona libre).
 
 
-Poner un solo valor en el montón no es muy útil, por lo que no usarás recuadros
+Poner un solo valor en la zona libre no es muy útil, por lo que no usarás recuadros
 por si mismos de esta manera muy seguido. Teniendo valores como un solo `i32` en
 la pila, donde son almacenadas por defecto, es más apropiado en la mayoría de las
 situaciones. Veamos un caso donde los recuadros nos permiten definir tipos que 
