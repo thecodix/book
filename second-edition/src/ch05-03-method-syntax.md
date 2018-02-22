@@ -1,18 +1,18 @@
-## Sintaxis de Método (method)
+## Method Syntax
 
-Los *métodos* son similares a las funciones: se declaran con la palabra clave `fn` y
-su nombre, pueden tener parámetros y un valor de retorno, y contienen algún
-código que se ejecuta cuando son llamados desde otro lugar. Sin embargo, los métodos son 
-diferentes a las funciones en que se definen dentro del contexto de una estructura
-(o una enumeración o un objeto de rasgo, que cubrimos en los capítulos 6 y 17,
-respectivamente), y su primer parámetro es siempre `self`, que representa la
-instancia de la estructura en la que se está llamando el método.
+*Methods* are similar to functions: they’re declared with the `fn` keyword and
+their name, they can have parameters and a return value, and they contain some
+code that is run when they’re called from somewhere else. However, methods are
+different from functions in that they’re defined within the context of a struct
+(or an enum or a trait object, which we cover in Chapters 6 and 17,
+respectively), and their first parameter is always `self`, which represents the
+instance of the struct the method is being called on.
 
-### Definiendo Métodos
+### Defining Methods
 
-Cambiemos la función `área` que tiene una instancia de `Rectangle` como parámetro 
-y hagamos en su lugar un método de `area` definido en la estructura `Rectangle`, como se muestra 
-en el Listado 5-13:
+Let’s change the `area` function that has a `Rectangle` instance as a parameter
+and instead make an `area` method defined on the `Rectangle` struct, as shown
+in Listing 5-13:
 
 <span class="filename">Filename: src/main.rs</span>
 
@@ -39,24 +39,24 @@ fn main() {
 }
 ```
 
-<span class="caption">Listado 5-13: Definiendo un método de `area` en la
-estructura de `Rectangle`</span>
+<span class="caption">Listing 5-13: Defining an `area` method on the
+`Rectangle` struct</span>
 
-Para definir la función dentro del contexto de `Rectangle`, se inicia un bloque
-`impl` (*implementación*). Luego movemos la función `area` dentro de las llaves
-`impl` y cambiamos el primer (y solo en este caso) parámetro para que sea 
-`self` en la firma y en todas partes dentro del cuerpo. En `main`, donde 
-llamamos a la función `area` y pasamos `rect1` como argumento, podemos usar en 
-su lugar *method syntax* para llamar al método `area` en nuestra instancia `Rectangulo`.
-La sintaxis del método va después de una instancia: añadimos un punto seguido del nombre del 
-método, paréntesis y cualquier argumento.
+To define the function within the context of `Rectangle`, we start an `impl`
+(*implementation*) block. Then we move the `area` function within the `impl`
+curly brackets and change the first (and in this case, only) parameter to be
+`self` in the signature and everywhere within the body. In `main` where we
+called the `area` function and passed `rect1` as an argument, we can instead
+use *method syntax* to call the `area` method on our `Rectangle` instance.
+The method syntax goes after an instance: we add a dot followed by the method
+name, parentheses, and any arguments.
 
-En la firma para `área`, usamos `&self` en lugar de `rectangle: &Rectangle`
-porque Rust sabe que el tipo de `self` es `Rectangle` debido a que este método está 
-dentro del contexto `impl Rectangle`. Nota que todavía necesitamos usar el `&` 
-antes de `self`, tal como hicimos en `&Rectangle`. Los métodos pueden tomar posesión de
-`self`, prestar a `self` inmutablemente como lo hemos hecho aquí, o prestar a `self` mutablemente, 
-como cualquier otro parámetro.
+In the signature for `area`, we use `&self` instead of `rectangle: &Rectangle`
+because Rust knows the type of `self` is `Rectangle` due to this method being
+inside the `impl Rectangle` context. Note that we still need to use the `&`
+before `self`, just like we did in `&Rectangle`. Methods can take ownership of
+`self`, borrow `self` immutably as we’ve done here, or borrow `self` mutably,
+just like any other parameter.
 
 Hemos escogido el `self` por la misma razón que usamos el `&Rectangle` en la 
 versión funcional: no queremos tomar posesión, y sólo queremos leer los 
