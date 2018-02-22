@@ -1,36 +1,35 @@
-<! - Este es un capítulo largo! Estaba considerando dividirlo, y
-si es así, donde --- la única solución que pude encontrar fue dividirlo en
-cinco temas principales: Inseguro, Vidas, Rasgos, Tipos, Funciones y
-Cierres Sin embargo, no estoy convencido de que sea ideal, así que pensé que podríamos
-incluir un ToC en la parte superior de este capítulo para que el lector pueda usarlo como
-referencia cuando encuentren algo que no puedan descifrar. ¿Qué es lo que tú
-piensas? ->
-<! - Un ToC para hacer que este capítulo sea más fácil de usar como referencia
-suena bien, Sin embargo, ¿sería redundante el ToC este al comienzo de todo el libro?
-¿O este ToC sería más detallado que el comienzo del libro? Verdad solo agregue 
-números de página a los puntos de viñeta después del primer párrafo? Tenemos 
-curiosidad acerca de la implementación :) / Carol ->
+<!-- This is a long chapter! I was trying to consider whether to split it, and
+if so where --- the only solution I could come up with was to split it into the
+five main subjects: Unsafe, Lifetimes, Traits, Types, and Functions and
+Closures. However, I'm not convinced that's ideal, so I thought we might
+include a ToC at the top of this chapter in print so the reader can use it as a
+reference when they come across something they can't figure out. What do you
+think? -->
+<!-- A ToC to make this chapter more easily used as a reference sounds okay,
+would it be redundant with the ToC at the beginning of the whole book though?
+Or would this ToC be more detailed than the beginning of the book? Would it
+just be adding page numbers to the bullet points after the first paragraph?
+We're curious about implementation :) /Carol -->
 
-# Características avanzadas
+# Advanced Features
 
-¡Hemos recorrido un largo camino! Por ahora, has aprendido el 99% de las
-cosas que necesitarás para saber escribir Rust. Antes de hacer un proyecto
-más en el Capítulo 20, hablemos sobre algunas cosas con las que te puedes
-encontrar en ese último 1% del tiempo. Siéntase libre de usar este capítulo
-como referencia para cuando te encuentras con algo desconocid; las características
-que aprenderá a usar aquí son útiles en muy específicas situaciones, 
-no queremos dejar estas características afuera, porque no las encontrará
-usted mismo muy a menudo tratando de buscarlas.
+We’ve come a long way! By now, you’ve learned 99% of the things you’ll need to
+know when writing Rust. Before we do one more project in Chapter 20, let’s talk
+about a few things you may run into that last 1% of the time. Feel free to use
+this chapter as a reference for when you run into something unknown in the
+wild; the features you’ll learn to use here are useful in very specific
+situations. We don’t want to leave these features out, but you won’t find
+yourself reaching for them often.
 
-En este capítulo, vamos a cubrir:
+In this chapter, we’re going to cover:
 
-* Unsafe Rust (Rust inseguro): para cuando tiene que optar por salir de algunas de 
-las garantías de Rust y hacerse responsable de mantener las garantías en su lugar 
-* Advanced Lifetimes (Vida útil avanzada): sintaxis para situaciones complejas de por vida 
-* Advanced Traits (Rasgos avanzados): Tipos asociados, parámetros de tipo por defecto, 
-completamente calificado sintaxis, supertraits y el nuevo patrón de tipo en relación con los rasgos 
-* Advanced Types (Tipos avanzados): algunos más sobre el patrón newtype, tipo alias, 
-el   Tipo "never" y tipos de tamaño dinámico 
-* Advanced Functions and Closures (Funciones y cierres avanzados): indicadores de función y cierres de retorno
+* Unsafe Rust: for when you need to opt out of some of Rust’s guarantees and
+  make yourself responsible for upholding the guarantees instead
+* Advanced Lifetimes: syntax for complex lifetime situations
+* Advanced Traits: Associated Types, default type parameters, fully qualified
+  syntax, supertraits, and the newtype pattern in relation to traits
+* Advanced Types: some more about the newtype pattern, type aliases, the
+  “never” type, and dynamically sized types
+* Advanced Functions and Closures: function pointers and returning closures
 
-¡Es una colección de características de Rust con algo para todos! ¡Vamos a sumergirnos!
+It’s a panoply of Rust features with something for everyone! Let’s dive in!
