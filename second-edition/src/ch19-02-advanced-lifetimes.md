@@ -441,18 +441,20 @@ referencias que viven para siempre; ambos son iguales para el propósito de
 determinar si una referencia tiene o no una vida más corta que la que tiene.
 
 
-### Inference of Trait Object Lifetimes
+### Inferencia en los tiempos de vida del objeto de rasgo
 
-In Chapter 17 in the “Using Trait Objects that Allow for Values of Different
-Types” section, we discussed trait objects, consisting of a trait behind a
-reference, that allow us to use dynamic dispatch. We haven’t yet discussed what
-happens if the type implementing the trait in the trait object has a lifetime
-of its own. Consider Listing 19-19, where we have a trait `Red` and a struct
-`Ball`. `Ball` holds a reference (and thus has a lifetime parameter) and also
-implements trait `Red`. We want to use an instance of `Ball` as the trait
-object `Box<Red>`:
 
-<span class="filename">Filename: src/main.rs</span>
+En el Capítulo 17 el "Uso de objetos de rasgo que permiten valores de diferentes
+Tipos de sección”, discutimos los objetos de rasgo, que consisten en un rasgo 
+detrás de una referencia y nos permiten usar el despacho dinámico. 
+Todavía no hemos discutido qué sucede si el tipo que implementa el rasgo en 
+el objeto de rasgo tiene vida propia. Considere el Listado 19-19, donde tenemos
+un rasgo `Red` y una estructura `Ball`. `Ball` contiene una referencia 
+(y por lo tanto tiene un parámetro de por vida) y también implementa el rasgo 
+`Red`. Queremos usar una instancia de `Ball` como un objeto de rasgo `Box<Red>`:
+
+
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust
 trait Red { }
@@ -470,23 +472,23 @@ fn main() {
 }
 ```
 
-<span class="caption">Listing 19-19: Using a type that has a lifetime parameter
-with a trait object</span>
+<span class="caption">Listado 19-19: Usar un tipo que tiene un parámetro de 
+por vida con un objeto de rasgo</span>
 
-This code compiles without any errors, even though we haven’t said anything
-explicit about the lifetimes involved in `obj`. This works because there are
-rules having to do with lifetimes and trait objects:
+Este código compila sin ningún error, aunque no hayamos dicho nada 
+explícito sobre las vidas involucradas en `obj`. Esto funciona porque
+hay reglas que tienen que ver con el tiempo de vida y los objetos de rasgo:
 
-* The default lifetime of a trait object is `'static`.
-* With `&'a Trait` or `&'a mut Trait`, the default lifetime is `'a`.
-* With a single `T: 'a` clause, the default lifetime is `'a`.
-* With multiple `T: 'a`-like clauses, there is no default; we must
-  be explicit.
+* La vida útil por defecto de un objeto de rasgo es `'static'. 
+* Con `& 'a Trait` o` &' a mut Trait`, la duración predeterminada es `'a`. 
+* Con una sola cláusula `T: 'a`, la duración predeterminada es `'a`. 
+* Con múltiples cláusulas tipo `T: 'a`, no habrá ningún defecto; debemos ser explícitos.
 
-When we must be explicit, we can add a lifetime bound on a trait object like
-`Box<Red>` with the syntax `Box<Red + 'a>` or `Box<Red + 'static>`, depending
-on what’s needed. Just as with the other bounds, this means that any
-implementor of the `Red` trait that has references inside must have the
-same lifetime specified in the trait object bounds as those references.
+Cuando debemos ser explícitos, podemos agregar un límite de por vida en un objeto de rasgo como 
+`Box <Red>` con la sintaxis `Box <Red + 'a>` o `Box <Red +' static>`, 
+dependiendo de lo que se necesita, al igual que con los otros límites, 
+esto significa que cualquier implementador del rasgo `Rojo` que tiene 
+referencias internas debe tener la misma duración especificada en los 
+límites del objeto de rasgo como esas referencias.
 
-Next, let’s take a look at some other advanced features dealing with traits!
+A continuación, echemos un vistazo a algunas otras características avanzadas relacionadas con los rasgos.
