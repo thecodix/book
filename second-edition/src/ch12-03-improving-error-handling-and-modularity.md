@@ -215,16 +215,16 @@ relationship should be conveyed in our code. We then added a `Config` struct to
 name the related purpose of `query` and `filename`, and to be able to return
 the values’ names as struct field names from the `parse_config` function.
 
-So now that the purpose of the `parse_config` function is to create a `Config`
-instance, we can change `parse_config` from being a plain function to a
-function named `new` that is associated with the `Config` struct. Making this
-change will make the code more idiomatic: we can create instances of types in
-the standard library, such as `String`, by calling `String::new`, and by
-changing `parse_config` into a `new` function associated with `Config`, we’ll
-be able to create instances of `Config` by calling `Config::new`. Listing 12-7
-shows the changes we need to make:
+Así que ahora que el propósito de la función `parse_config` es crear una instancia 
+`Config`, podemos cambiar `parse_config` de ser una función plana a una función
+llamada `nueva` que está asociada con la estructura `Config`. Haciendo este cambio
+haremos que el código sea más idiomático: podemos crear instancias de tipos en 
+la librería estándar, como `String`, llamando a `String::new`, y al cambiar
+`parse_config` en una función `new` asociada a `Config`, seremos capaces de
+crear instancias de `Config` llamando a `Config::new`. El listado 12-7 muestra
+los cambios que necesitamos hacer:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,should_panic
 # use std::env;
@@ -254,20 +254,20 @@ impl Config {
 }
 ```
 
-<span class="caption">Listing 12-7: Changing `parse_config` into
-`Config::new`</span>
+<span class="caption">Listado 12-7: Cambiando `parse_config` en 
+`Config::nuevo`.</span>
 
-We’ve updated `main` where we were calling `parse_config` to instead call
-`Config::new`. We’ve changed the name of `parse_config` to `new` and moved it
-within an `impl` block, which associates the `new` function with `Config`. Try
-compiling this code again to make sure it works.
+Hemos actualizado `main` donde llamábamos `parse_config` para en su lugar llamar
+a `Config::new`. Hemos cambiado el nombre de `parse_config` por `new` y lo hemos
+movido dentro de un bloque `impl`, que asocia la función `new` con `Config`. Intenta
+compilar este código de nuevo para asegurarte de que funciona.
 
-### Fixing the Error Handling
+### Reparando el Manejo de Errores
 
-Now we’ll work on fixing our error handling. Recall that attempting to access
-the values in the `args` vector at index `1` or index `2` will cause the
-program to panic if the vector contains fewer than three items. Try running the
-program without any arguments; it will look like this:
+Ahora trabajaremos en arreglar nuestro manejo de errores. Recuerda que intentar acceder 
+a los valores en el vector `args` del índice `1` o el índice `2` causará pánico en el 
+programa si el vector contiene menos de tres ítems. Intenta ejecutar el programa sin
+ningún tipo de argumento; se verá así:
 
 ```text
 $ cargo run
@@ -279,18 +279,18 @@ but the index is 1', src/main.rs:29:21
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
 ```
 
-The line `index out of bounds: the len is 1 but the index is 1` is an error
-message intended for programmers. It won’t help our end users understand what
-happened and what they should do instead. Let’s fix that now.
+La línea `index out of bounds: the len is 1 but the index is 1` es un mensaje de
+error destinado a los programadores. Esto no ayudará a que nuestros usuarios finales
+entiendan lo que sucedió y lo que deberían hacer en su lugar. Arreglemos eso ahora.
 
-#### Improving the Error Message
+#### Mejorando el Mensaje de Error
 
-In Listing 12-8, we add a check in the `new` function that will verify that the
-slice is long enough before accessing index `1` and `2`. If the slice isn’t
-long enough, the program panics and displays a better error message than the
-`index out of bounds` message:
+En el Listado 12-8, añadimos un check in en la función `new` que verificará que la 
+slice es lo suficientemente larga antes de acceder a los índices `1` y `2`. Si la slice es
+lo suficientemente larga, el programa entra en pánico y muestra un mensaje de error mejor
+que el mensaje `index out of bounds`:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,ignore
 // --snip--
@@ -301,19 +301,19 @@ fn new(args: &[String]) -> Config {
     // --snip--
 ```
 
-<span class="caption">Listing 12-8: Adding a check for the number of
-arguments</span>
+<span class="caption">Listado 12-8: Añadir un cheque por el número de
+argumentos</span>
 
-This code is similar to the `Guess::new` function we wrote in Listing 9-9 where
-we called `panic!` when the `value` argument was out of the range of valid
-values. Instead of checking for a range of values here, we’re checking that the
-length of `args` is at least `3` and the rest of the function can operate under
-the assumption that this condition has been met. If `args` has fewer than three
-items, this condition will be true, and we call the `panic!` macro to end the
-program immediately.
+Este código es similar a la función `Guess::new` que escribimos en el Listado 9-9 donde 
+llamamos a `panic!` cuando el argumento `value` estaba fuera del rango de valores 
+válidos. En lugar de comprobar un rango de valores aquí, estamos comprobando que la
+longitud de `args` es por lo menos `3` y el resto de la función puede funcionar bajo
+la suposición de que esta condición se ha cumplido. Si `args` tiene menos de tres ítems,
+esta condición será verdadera, y llamamos a la macro `panic!` para terminar el 
+programa inmediatamente.
 
-With these extra few lines of code in `new`, let’s run the program without any
-arguments again to see what the error looks like now:
+Con estas pocas líneas de código extra en `new`, vamos a ejecutar el programa sin
+argumentos de nuevo para ver cómo se ve el error ahora:
 
 ```text
 $ cargo run
@@ -324,29 +324,29 @@ thread 'main' panicked at 'not enough arguments', src/main.rs:30:12
 note: Run with `RUST_BACKTRACE=1` for a backtrace.
 ```
 
-This output is better: we now have a reasonable error message. However, we also
-have extraneous information we don’t want to give to our users. Perhaps using
-the technique we used in Listing 9-9 isn’t the best to use here: a call to
-`panic!` is more appropriate for a programming problem rather than a usage
-problem, as discussed in Chapter 9. Instead, we can use the other technique you
-learned about in Chapter 9—returning a `Result` that indicates either success
-or an error.
+Este resultado es mejor: ahora tenemos un mensaje de error razonable. Sin embargo, también 
+tenemos información externa que no queremos dar a nuestros usuarios. Tal vez el uso de la
+técnica que usamos en el Listado 9-9 no es la mejor para usar aquí: una llamada a 
+`¡panic!` es más apropiado para un problema de programación que para un problema de uso,
+como se discutió en el Capítulo 9. En lugar de ello, podemos usar la otra técnica que 
+aprendiste en el Capítulo 9-devolviendo un `Resultado` que indica éxito
+o error.
 
-#### Returning a `Result` from `new` Instead of Calling `panic!`
+#### Devolviendo un `Result` de `New` en lugar de llamar a un `panic!`
 
-We can instead return a `Result` value that will contain a `Config` instance in
-the successful case and will describe the problem in the error case. When
-`Config::new` is communicating to `main`, we can use the `Result` type to
-signal there was a problem. Then we can change `main` to convert an `Err`
-variant into a more practical error for our users without the surrounding text
-about `thread 'main'` and `RUST_BACKTRACE` that a call to `panic!` causes.
+En su lugar, podemos devolver un valor `Result` que contendrá una instancia `Config` en
+caso de exito y describirá el problema en caso de error. Cuando `Config::new`
+se comunica con `main`, podemos usar el tipo `Result` para señalar que hubo un
+problema. Entonces podemos cambiar `main` para convertir una variante `Err` en un
+error más práctico para nuestros usuarios sin el texto circundante acerca de 
+`thread 'main'` y `RUST_BACKTRACE` que causa una llamada a `panic!`.
 
-Listing 12-9 shows the changes we need to make to the return value of
-`Config::new` and the body of the function needed to return a `Result`. Note
-that this won’t compile until we update `main` as well, which we’ll do in the
-next listing:
+El listado 12-9 muestra los cambios que necesitamos hacer al valor de retorno de 
+`Config::new` y el cuerpo de la función necesaria para devolver un `Result`. También 
+ten en cuenta que esto no se compilará hasta que actualicemos `main`, lo que haremos 
+en el siguiente listado:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,ignore
 impl Config {
@@ -363,33 +363,33 @@ impl Config {
 }
 ```
 
-<span class="caption">Listing 12-9: Returning a `Result` from
+<span class="caption">Listado 12-9: Retorno de un `Result` de 
 `Config::new`</span>
 
-Our `new` function now returns a `Result` with a `Config` instance in the
-success case and a `&'static str` in the error case. Recall from “The Static
-Lifetime” section in Chapter 10 that `&'static str` is the type of string
-literals, which is our error message type for now.
+Nuestra función `new` ahora devuelve un `Result` con una instancia `Config` en
+caso de éxito y un `&'static str` en caso de error. Recordemos de la sección "La Vida 
+Útil Estática" en el capítulo 10 que `&'static str` es el tipo de cadenas literales,
+el que es nuestro tipo de mensaje de error por ahora.
 
-We’ve made two changes in the body of the `new` function: instead of calling
-`panic!` when the user doesn’t pass enough arguments, we now return an `Err`
-value, and we’ve wrapped the `Config` return value in an `Ok`. These changes
-make the function conform to its new type signature.
+Hemos hecho dos cambios en el cuerpo de la función `new`: en lugar de llamar 
+a `panic!` cuando el usuario no pasa suficientes argumentos, ahora devolvemos un 
+valor `Err`, y hemos envuelto el valor de retorno `Config` en un `Ok`. Estos cambios
+hacen que la función se ajuste a su nuevo tipo de firma.
 
-Returning an `Err` value from `Config::new` allows the `main` function to
-handle the `Result` value returned from the `new` function and exit the process
-more cleanly in the error case.
+Devolver un valor `Err` de `Config::new` permite a la función `main` 
+manejar el valor `Result` devuelto de la función `new` y salir del proceso 
+de forma más limpia en caso de error.
 
-#### Calling `Config::new` and Handling Errors
+#### Llamada a `Config::new` y Manejo de Errores
 
-To handle the error case and print a user-friendly message, we need to update
-`main` to handle the `Result` being returned by `Config::new`, as shown in
-Listing 12-10. We’ll also take the responsibility of exiting the command line
-tool with a nonzero error code from `panic!` and implement it by hand. A
-nonzero exit status is a convention to signal to the process that called our
-program that the program exited with an error state.
+Para manejar el caso de error e imprimir un mensaje amigable, necesitamos actualizar 
+`main` para manejar el `Result` que está siendo devuelto por `Config::new`, como se muestra
+en el Listado 12-10. También asumiremos la responsabilidad de salir de la herramienta de línea
+de comandos con un código de error no cero de `panic!` e implementarlo a mano. Un estado
+de salida no cero es una convención para señalar al proceso que llamó a nuestro programa
+que el programa salió con un estado de error.
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre de Archivo: src/main.rs</span>
 
 ```rust,ignore
 use std::process;
@@ -405,13 +405,13 @@ fn main() {
     // --snip--
 ```
 
-<span class="caption">Listing 12-10: Exiting with an error code if creating a
-new `Config` fails</span>
+<span class="caption">Listado 12-10: Saliendo con un código de error si la creación de una 
+nueva `Config` falla</span>
 
-In this listing, we’ve used a method we haven’t covered before:
-`unwrap_or_else`, which is defined on `Result<T, E>` by the standard library.
-Using `unwrap_or_else` allows us to define some custom, non-`panic!` error
-handling. If the `Result` is an `Ok` value, this method’s behavior is similar
+En este listado, hemos utilizado un método que no hemos tratado antes: 
+`unwrap_or_else`, que se define en `Result<T, E>` de la biblioteca estándar.
+El uso de `unwrap_or_else` nos permite definir un manejo de errores personalizado y errores 
+a mano no-`panic!` Si el valor `Result` es un valor `Ok`, el comportamiento de este método es similar
 to `unwrap`: it returns the inner value `Ok` is wrapping. However, if the value
 is an `Err` value, this method calls the code in the *closure*, which is an
 anonymous function we define and pass as an argument to `unwrap_or_else`. We’ll
