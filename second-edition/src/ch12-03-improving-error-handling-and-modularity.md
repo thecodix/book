@@ -1,50 +1,50 @@
-## Refactoring to Improve Modularity and Error Handling
+## Refactorizando para Mejorar la Modularidad y el Manejo de Errores
 
-To improve our program, we’ll fix four problems that have to do with the
-program’s structure and how it’s handling potential errors.
+Para mejorar nuestro programa, arreglaremos cuatro problemas que tienen que ver con la
+estructura del programa y cómo está manejando errores potenciales.
 
-First, our `main` function now performs two tasks: it parses arguments and
-opens files. For such a small function, this isn’t a major problem. However, if
-we continue to grow our program inside `main`, the number of separate tasks the
-`main` function handles will increase. As a function gains responsibilities, it
-becomes more difficult to reason about, harder to test, and harder to change
-without breaking one of its parts. It’s best to separate functionality so each
-function is responsible for one task.
+En primer lugar, nuestra función `main` realiza ahora dos tareas: analiza argumentos y 
+abre archivos. Para una función tan pequeña, esto no es un problema importante. Sin embargo, si
+continuamos ampliando nuestro programa dentro de `main`, la cantidad de tareas separadas
+que maneja la función `main` aumentará. A medida que una función adquiere responsabilidades, se
+vuelve más difícil de analizar, más difícil de probar y más difícil de cambiar sin romper 
+una de sus partes. Es mejor separar la funcionalidad para que cada función sea
+responsable de una tarea.
 
-This issue also ties into the second problem: although `query` and `filename`
-are configuration variables to our program, variables like `f` and `contents`
-are used to perform the program’s logic. The longer `main` becomes, the more
-variables we’ll need to bring into scope; the more variables we have in scope,
-the harder it will be to keep track of the purpose of each. It’s best to group
-the configuration variables into one structure to make their purpose clear.
+Esta cuestión también se relaciona con el segundo problema: aunque `query` y `filename` 
+son variables de configuración de nuestro programa, variables como `f` y `contents` se 
+utilizan para ejecutar la lógica del programa. Cuanto más largo sea `main`, más 
+variables tendremos que poner en scope; mientras más variables tengamos en scope,
+más difícil será seguir la pista del propósito de cada una. Es mejor agrupar las 
+variables de configuración en una sola estructura para dejar claro su propósito.
 
-The third problem is that we’ve used `expect` to print an error message when
-opening the file fails, but the error message just prints `file not found`.
-Opening a file can fail in a number of ways besides the file being missing: for
-example, the file might exist, but we might not have permission to open it.
-Right now, if we’re in that situation, we’d print the `file not found` error
-message that would give the user the wrong information!
+El tercer problema es que hemos usado `expect` para imprimir un mensaje de error cuando
+falla abrir el archivo, pero el mensaje de error simplemente imprime `file not found`.
+Abrir un archivo puede fallar de varias maneras, además de que el archivo falte: por 
+ejemplo, el archivo puede existir, pero es posible que no tengamos permiso para abrirlo. 
+Ahora mismo, si estamos en esa situación, imprimiríamos el mensaje de error `file not found`
+que daría al usuario la información ¡incorrecta!
 
-Fourth, we use `expect` repeatedly to handle different errors, and if the user
-runs our program without specifying enough arguments, they’ll get an `index out
-of bounds` error from Rust that doesn’t clearly explain the problem. It would
-be best if all the error handling code was in one place so future maintainers
-have only one place to consult in the code if the error handling logic needs to
-change. Having all the error handling code in one place will also ensure that
-we’re printing messages that will be meaningful to our end users.
+Cuarto, usamos `expect` repetidamente para manejar diferentes errores, y si el usuario
+ejecuta nuestro programa sin especificar suficientes argumentos, obtendrá un error `index
+out of bounds` de Rust, que no explica claramente el problema. Sería mejor si
+todo el código de manejo de errores estuviera en un solo lugar para que los futuros mantenedores
+tengan sólo un lugar para consultar en el código si la lógica de manejo de errores necesita 
+cambiarse. Tener todo el código de manejo de errores en un solo lugar también asegurará que 
+estamos imprimiendo mensajes que serán significativos para nuestros usuarios finales.
 
-Let’s address these four problems by refactoring our project.
+Abordemos estos cuatro problemas refactorizando nuestro proyecto.
 
-### Separation of Concerns for Binary Projects
+### Separación de Concerns Para Proyectos Binarios
 
-The organizational problem of allocating responsibility for multiple tasks to
-the `main` function is common to many binary projects. As a result, the Rust
-community has developed a type of guideline process for splitting the separate
-concerns of a binary program when `main` starts getting large. The process has
-the following steps:
+El problema organizativo de asignar la responsabilidad de múltiples tareas a la
+función `main` es común en muchos proyectos binarios. Como resultado, la comunidad 
+de Rust ha desarrollado un tipo de proceso guía para separar los concerns
+de un programa binario cuando `main` comienza a hacerse grande. El proceso tiene
+los siguientes pasos:
 
-* Split your program into a *main.rs* and a *lib.rs*, and move your program’s
-logic to *lib.rs*.
+ * Divide tu programa en *main.rs* y *lib.rs*, y mueva la lógica de tu
+programa a *lib.rs*.
 * While your command line parsing logic is small, it can remain in *main.rs*.
 * When the command line parsing logic starts getting complicated, extract it
 from *main.rs* and move it to *lib.rs*.
