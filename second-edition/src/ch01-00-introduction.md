@@ -9,7 +9,7 @@ se opone a eso, Rust le ofrece la opción de controlar detalles de bajo-nivel
 (como el uso de memoria) sin la molestia que está tradicionalmente asociada
 con ese control.
 
-## Para Quién Es Rust
+## Para Quién es Rust
 
 Rust es perfecto para muchas personas por una variedad de razones. Discutamos
 algunos de los grupos más importantes.
@@ -68,8 +68,8 @@ que nos ayudaras con el lenguaje Rust.
 Por velocidad, nos referimos a la velocidad de los programas que Rust le permite
 crear y la velocidad con la cual Rust le permite escribirlos. Las comprobaciones
 del compilador de Rust aseguran estabilidad a través de la añadición de
-características y la refactorización, a diferencia del código heredado
-quebrantable en lenguajes sin estas comprobaciones que los desarrolladores
+características y la refactorización, a diferencia del legado de códigos
+quebrantables en lenguajes sin estas comprobaciones que los desarrolladores
 temen modificar. Al esforzarse por abstracciones de costo-cero, características
 de niveles más altos que compilan códigos de niveles más bajos de códigos tan
 rápidos como códigos escritos manualmente, Rust intenta hacer que hacer códigos
@@ -123,7 +123,7 @@ en proceso.
 Finalmente, hay algunos apéndices. Estos contienen información útil sobre los
 lenguajes en un formato más referenciado.
 
-## Contribuir A Este libro
+## Contribuir a este libro
 
 Este es un libro de código abierto. Si encuentras un error por favor no dudes en
 crear un _issue_ o enviar una _pull request_ [a Github]. Mira el [CONTRIBUTING.md]
