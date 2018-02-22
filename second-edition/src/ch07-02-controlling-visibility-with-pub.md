@@ -1,11 +1,11 @@
-## Controlar la Visibilidad con `pub`
+## Controlling Visibility with `pub`
 
-Resolvimos los mensajes de error mostrados en el Listado 7-5 moviendo el código `network` y 
-`network::server` a los archivos *src/network/mod.rs* y 
-*src/network/server.rs*, respectivamente. En ese momento, `cargo build` fue
-capaz de construir nuestro proyecto, pero aún así recibimos mensajes de advertencia sobre las
-funciones `client::connect`, `network::connect`, y `network::server::connect` 
-que no se usaban:
+We resolved the error messages shown in Listing 7-5 by moving the `network` and
+`network::server` code into the *src/network/mod.rs* and
+*src/network/server.rs* files, respectively. At that point, `cargo build` was
+able to build our project, but we still get warning messages about the
+`client::connect`, `network::connect`, and `network::server::connect` functions
+not being used:
 
 ```text
 warning: function is never used: `connect`
@@ -32,18 +32,18 @@ warning: function is never used: `connect`
   | |_^
 ```
 
-¿Por qué recibimos estas advertencias? Después de todo, estamos construyendo una biblioteca
-con funciones que están pensadas para ser usadas por nuestros *usuarios*, no necesariamente por
-nosotros dentro de nuestro propio proyecto, así que no debería importar que estas funciones de
-`connect` no se utilicen. El punto de crearlas es que serán utilizadas por
-otro proyecto, no por el nuestro.
+So why are we receiving these warnings? After all, we’re building a library
+with functions that are intended to be used by our *users*, not necessarily by
+us within our own project, so it shouldn’t matter that these `connect`
+functions go unused. The point of creating them is that they will be used by
+another project, not our own.
 
-Para entender por qué este programa invoca estas advertencias, intentemos usar la
-biblioteca `connect` de otro proyecto, llamándola externamente. Para ello, 
-crearemos un crate binario en el mismo directorio que nuestra biblioteca 
-haciendo un archivo *src/main.rs* que contenga este código:
+To understand why this program invokes these warnings, let’s try using the
+`connect` library from another project, calling it externally. To do that,
+we’ll create a binary crate in the same directory as our library crate by
+making a *src/main.rs* file containing this code:
 
-<span class="filename">Nombre del archivo: src/main.rs</span>
+<span class="filename">Filename: src/main.rs</span>
 
 ```rust,ignore
 extern crate communicator;
@@ -53,27 +53,27 @@ fn main() {
 }
 ```
 
-Usamos el comando `extern crate` para llevar el crate de la biblioteca del `comunicador`
-al alcance. Nuestro paquete ahora contiene *dos* cajones. Cargo trata *src/main.rs*
-como el archivo raíz de un crate binario, que está separado del crate de la biblioteca existente
-cuyo archivo raíz es *src/lib.rs*. Este patrón es bastante común para
-proyectos ejecutables: la mayoría de las funciones se encuentran en un crate de biblioteca, y el crate
-binario usa ese crate de biblioteca. Como resultado, otros programas también pueden usar el
-crate de la biblioteca, y es una buena separación de preocupaciones.
+We use the `extern crate` command to bring the `communicator` library crate
+into scope. Our package now contains *two* crates. Cargo treats *src/main.rs*
+as the root file of a binary crate, which is separate from the existing library
+crate whose root file is *src/lib.rs*. This pattern is quite common for
+executable projects: most functionality is in a library crate, and the binary
+crate uses that library crate. As a result, other programs can also use the
+library crate, and it’s a nice separation of concerns.
 
-Desde el punto de vista de un crate fuera de la biblioteca del `comunicator` 
-mirando, todos los módulos que hemos estado creando están dentro de un módulo que tiene el mismo
-nombre que el crate, `comunicator`. Llamamos al módulo de nivel superior de un crate el
-*módulo raíz*.
+From the point of view of a crate outside the `communicator` library looking
+in, all the modules we’ve been creating are within a module that has the same
+name as the crate, `communicator`. We call the top-level module of a crate the
+*root module*.
 
-También ten en cuenta que incluso si estamos usando un crate externa dentro de un submódulo de
-nuestro proyecto, el `crate extern` debería ir en nuestro módulo raíz (también en *src/main.rs*
-o *src/lib.rs*). A continuación, en nuestros submódulos, podemos referirnos a los artículos de cajones
-externos como si se tratara de módulos de primer nivel.
+Also note that even if we’re using an external crate within a submodule of our
+project, the `extern crate` should go in our root module (so in *src/main.rs*
+or *src/lib.rs*). Then, in our submodules, we can refer to items from external
+crates as if the items are top-level modules.
 
-En este momento, nuestr crate binario sólo llama a la función `connect` de
-nuestra biblioteca desde el módulo `client`. Sin embargo, invocando `cargo build` ahora nos dará un error
-después de las advertencias:
+Right now, our binary crate just calls our library’s `connect` function from
+the `client` module. However, invoking `cargo build` will now give us an error
+after the warnings:
 
 ```text
 error[E0603]: module `client` is private
@@ -83,32 +83,32 @@ error[E0603]: module `client` is private
   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ```
 
-¡Ah ha! Este error nos dice que el módulo `client` es privado, que es el punto
-crucial de las advertencias. Es también la primera vez que nos encontramos con los conceptos de
-*public* y *private* en el contexto de Rust. El estado predeterminado de todo el código en 
-Rust es privado: nadie más puede usar el código. Si tu no usas una 
-función privada dentro de tu programa, porque tu programa es el único código
-permitido para usar esa función, Rust te advertirá que la función no se ha
-usado.
+Ah ha! This error tells us that the `client` module is private, which is the
+crux of the warnings. It’s also the first time we’ve run into the concepts of
+*public* and *private* in the context of Rust. The default state of all code in
+Rust is private: no one else is allowed to use the code. If you don’t use a
+private function within your program, because your program is the only code
+allowed to use that function, Rust will warn you that the function has gone
+unused.
 
-Después de especificar que una función como `client::connect` es pública, no sólo 
-se permitirá nuestro llamado a esa función desde nuestra crate binario, sino que 
-la advertencia de que la función no se utiliza desaparecerá. Marcar una función como pública
-le permite a Rust saber que la función será usada por código fuera de nuestro programa.
-Rust considera el uso externo teórico que ahora es posible como la 
-función "en uso". Por lo tanto, cuando una función está marcada como pública, Rust no 
-requerirá que se utilice en nuestro programa y dejará de advertir que la función no se 
-utiliza.
+After we specify that a function like `client::connect` is public, not only
+will our call to that function from our binary crate be allowed, but the
+warning that the function is unused will go away. Marking a function as public
+lets Rust know that the function will be used by code outside of our program.
+Rust considers the theoretical external usage that’s now possible as the
+function “being used.” Thus, when a function is marked public, Rust will not
+require that it be used in our program and will stop warning that the function
+is unused.
 
-### Haciendo una Función Pública
+### Making a Function Public
 
-Para decirle a Rust que haga pública una función, añadimos la palabra clave `pub` al inicio
-de la declaración. Nos centraremos en arreglar la advertencia que indica 
-`cliente::connect` ha quedado sin usar por ahora, así como el `` módule `client` is
-private `` de nuestr crate binario. Modifica *src/lib.rs* para hacer que
-el módulo `client` sea público, así:
+To tell Rust to make a function public, we add the `pub` keyword to the start
+of the declaration. We’ll focus on fixing the warning that indicates
+`client::connect` has gone unused for now, as well as the `` module `client` is
+private `` error from our binary crate. Modify *src/lib.rs* to make the
+`client` module public, like so:
 
-<span class="filename">Nombre del archivo: src/lib.rs</span>
+<span class="filename">Filename: src/lib.rs</span>
 
 ```rust,ignore
 pub mod client;
