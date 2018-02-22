@@ -157,13 +157,13 @@ usuarios de tu biblioteca piensen sobre el dominio de tu proyecto. Utiliza las t
 aquí para crear módulos lado a lado y módulos anidados en cualquier estructura
 que desees.
 
-### Moviendo Módulos a Otros Archivos
+### Moving Modules to Other Files
 
-Los módulos forman una estructura jerárquica, muy parecida a otra estructura de computación
-a la que estás acostumbrado: ¡los sistemas de archivos! Podemos usar el sistema de módulos de Rust junto con
-múltiples archivos para dividir los proyectos de Rust para que no todos vivan en
-*src/lib.rs* o *src/main.rs*. Para este ejemplo, comencemos con el código en
-Listado 7-3:
+Modules form a hierarchical structure, much like another structure in computing
+that you’re used to: filesystems! We can use Rust’s module system along with
+multiple files to split up Rust projects so not everything lives in
+*src/lib.rs* or *src/main.rs*. For this example, let’s start with the code in
+Listing 7-3:
 
 <span class="filename">Filename: src/lib.rs</span>
 
@@ -184,10 +184,10 @@ mod network {
 }
 ```
 
-<span class="caption">Listado 7-3: Tres módulos,`client`,`network` y 
-`network::server`, todos definidos en *src/lib.rs*.</span>
+<span class="caption">Listing 7-3: Three modules, `client`, `network`, and
+`network::server`, all defined in *src/lib.rs*</span>
 
-El fichero *src/lib.rs* tiene esta jerarquía de módulos:
+The file *src/lib.rs* has this module hierarchy:
 
 ```text
 communicator
@@ -196,15 +196,15 @@ communicator
      └── server
 ```
 
-Si estos módulos tuvieran muchas funciones, y esas funciones se estuvieran haciendo largas,
-sería difícil desplazarse por este archivo para encontrar el código con el que 
-queríamos trabajar. Debido a que las funciones están anidadas dentro de uno o más bloques `mod`,
-las líneas de código dentro de las funciones también empezarán a alargarse.
-Estas serían buenas razones para separar los módulos `client`,`network` y `server`
-de *src/lib.rs* y colocarlos en sus propios archivos.
+If these modules had many functions, and those functions were becoming lengthy,
+it would be difficult to scroll through this file to find the code we wanted to
+work with. Because the functions are nested inside one or more `mod` blocks,
+the lines of code inside the functions will start getting lengthy as well.
+These would be good reasons to separate the `client`, `network`, and `server`
+modules from *src/lib.rs* and place them into their own files.
 
-En primer lugar, reemplaza el código de módulo `client` por sólo la declaración del 
-módulo `client`, de modo que tu *src/lib.rs* se parezca al código mostrado en el Listado 7-4:
+First, replace the `client` module code with only the declaration of the
+`client` module, so that your *src/lib.rs* looks like code shown in Listing 7-4:
 
 <span class="filename">Filename: src/lib.rs</span>
 
@@ -222,12 +222,12 @@ mod network {
 }
 ```
 
-<span class="caption">Listado 7-4: Extracción del contenido del módulo `client` pero dejando la declaración en *src/lib.rs*</span>
+<span class="caption">Listing 7-4: Extracting the contents of the `client` module but leaving the declaration in *src/lib.rs*</span>
 
-Todavía estamos *declarando* el módulo `client` aquí, pero reemplazando el bloque
-por un punto y coma, le estamos diciendo a Rust que busque en otra ubicación el código 
-definido dentro del alcance del módulo `client`. En otras palabras, la línea `mod
-cliente`; significa:
+We’re still *declaring* the `client` module here, but by replacing the block
+with a semicolon, we’re telling Rust to look in another location for the code
+defined within the scope of the `client` module. In other words, the line `mod
+client;` means:
 
 ```rust,ignore
 mod client {
@@ -235,10 +235,10 @@ mod client {
 }
 ```
 
-Ahora tenemos que crear el archivo externo con ese nombre de módulo. Crea un
-archivo *client.rs* en tu directorio *src/* y ábrelo. A continuación, introduce
-lo siguiente, que es la función `connect` en el módulo `client` que
-eliminamos en el paso anterior:
+Now we need to create the external file with that module name. Create a
+*client.rs* file in your *src/* directory and open it. Then enter the
+following, which is the `connect` function in the `client` module that we
+removed in the previous step:
 
 <span class="filename">Filename: src/client.rs</span>
 
@@ -247,19 +247,19 @@ fn connect() {
 }
 ```
 
-Ten en cuenta que no necesitamos una declaración `mod` en este archivo porque ya hemos
-declarado el módulo `client` con `mod` en *src/lib.rs*. Este archivo sólo
-proporciona los *contenidos* del módulo `client`. Si pusiéramos un `mod client` aquí, 
-estaríamos dando al módulo de `client` su propio submódulo llamado `client`!
+Note that we don’t need a `mod` declaration in this file because we already
+declared the `client` module with `mod` in *src/lib.rs*. This file just
+provides the *contents* of the `client` module. If we put a `mod client` here,
+we’d be giving the `client` module its own submodule named `client`!
 
-Rust por defecto sólo sabe mirar en *src/lib.rs*. Si queremos añadir más
-archivos a nuestro proyecto, necesitamos decirle a Rust en *src/lib.rs* que busque en otros 
-archivos; por eso es necesario definir `mod client` en *src/lib.rs* y no se puede
-definir en *src/client.rs*.
+Rust only knows to look in *src/lib.rs* by default. If we want to add more
+files to our project, we need to tell Rust in *src/lib.rs* to look in other
+files; this is why `mod client` needs to be defined in *src/lib.rs* and can’t
+be defined in *src/client.rs*.
 
-Ahora el proyecto debería compilar con éxito, aunque obtendrás algunas
-advertencias. Recuerde usar `cargo build` en lugar de `cargo run` porque tenemos
-un cajón de biblioteca en lugar de un cajon binario:
+Now the project should compile successfully, although you’ll get a few
+warnings. Remember to use `cargo build` instead of `cargo run` because we have
+a library crate rather than a binary crate:
 
 ```text
 $ cargo build
@@ -288,14 +288,14 @@ warning: function is never used: `connect`
   | |_________^
 ```
 
-Estas advertencias nos dicen que tenemos funciones que nunca se utilizan. No te preocupes
-por estas advertencias por ahora; las trataremos más adelante en este capítulo en la
-sección "Controlar la visibilidad con `pub`". La buena noticia es que son sólo 
-advertencias, ¡nuestro proyecto se construyó con éxito!
+These warnings tell us that we have functions that are never used. Don’t worry
+about these warnings for now; we’ll address them later in this chapter in the
+“Controlling Visibility with `pub`” section. The good news is that they’re just
+warnings; our project built successfully!
 
-A continuación, extraigamos el módulo `network` en su propio archivo usando el mismo
-patrón. En *src/lib.rs*, borra el cuerpo del módulo `network` y añade un
-punto y coma a la declaración, así:
+Next, let’s extract the `network` module into its own file using the same
+pattern. In *src/lib.rs*, delete the body of the `network` module and add a
+semicolon to the declaration, like so:
 
 <span class="filename">Filename: src/lib.rs</span>
 
@@ -305,7 +305,7 @@ mod client;
 mod network;
 ```
 
-A continuación, crea un nuevo archivo *src/network.rs* e introduce lo siguiente:
+Then create a new *src/network.rs* file and enter the following:
 
 <span class="filename">Filename: src/network.rs</span>
 
@@ -319,14 +319,14 @@ mod server {
 }
 ```
 
-Nota que todavía tenemos una declaración `mod` dentro de este archivo de módulo; esto es
-porque todavía queremos que el `server` sea un submódulo de `network`.
+Notice that we still have a `mod` declaration within this module file; this is
+because we still want `server` to be a submodule of `network`.
 
-Ejecuta `cargo build` de nuevo. Éxito! Tenemos un módulo más para extraer: `server`.
-Porque es un submódulo, es decir,  un módulo dentro de un módulo, nuestra táctica
-actual de extraer un módulo en un archivo nombrado después de ese módulo no funcionará. Lo
-intentaremos de todos modos para que puedas ver el error. Primero, cambia *src/network.rs* para tener 
-`mod server;` en lugar del contenido del módulo `server`:
+Run `cargo build` again. Success! We have one more module to extract: `server`.
+Because it’s a submodule—that is, a module within a module—our current tactic
+of extracting a module into a file named after that module won’t work. We’ll
+try anyway so you can see the error. First, change *src/network.rs* to have
+`mod server;` instead of the `server` module’s contents:
 
 <span class="filename">Filename: src/network.rs</span>
 
@@ -337,8 +337,8 @@ fn connect() {
 mod server;
 ```
 
-Luego crea un archivo *src/server.rs* e introduce el contenido del módulo `server` 
-que hemos extraído:
+Then create a *src/server.rs* file and enter the contents of the `server`
+module that we extracted:
 
 <span class="filename">Filename: src/server.rs</span>
 
@@ -347,7 +347,7 @@ fn connect() {
 }
 ```
 
-Cuando intentemos `cargo build`, tendremos el error mostrado en Listing 7-5:
+When we try to `cargo build`, we’ll get the error shown in Listing 7-5:
 
 ```text
 $ cargo build
@@ -370,30 +370,30 @@ note: ... or maybe `use` the module `server` instead of possibly redeclaring it
   |     ^^^^^^
 ```
 
-<span class="caption">Listado 7-5: Error al intentar extraer el submódulo `server`
-en *src/server.rs</span>
+<span class="caption">Listing 7-5: Error when trying to extract the `server`
+submodule into *src/server.rs*</span>
 
-El error dice que `cannot declare a new module at this location` y está
-apuntando a `mod server; `linea en *src/network.rs*. Así que *src/network.rs* es
-diferente a *src/lib.rs* de alguna manera: sigue leyendo para entender por qué.
+The error says we `cannot declare a new module at this location` and is
+pointing to the `mod server;` line in *src/network.rs*. So *src/network.rs* is
+different than *src/lib.rs* somehow: keep reading to understand why.
 
-La nota en medio del Listado 7-5 es realmente muy útil porque 
-señala algo por hacer de lo que que aún no hemos hablado:
+The note in the middle of Listing 7-5 is actually very helpful because it
+points out something we haven’t yet talked about doing:
 
 ```text
 note: maybe move this module `network` to its own directory via
 `network/mod.rs`
 ```
 
-En lugar de seguir el mismo patrón de nombres de archivo que usamos 
-anteriormente, podemos hacer lo que la nota sugiere:
+Instead of continuing to follow the same file naming pattern we used
+previously, we can do what the note suggests:
 
-1. Haz un nuevo *directory* llamado *network*, el nombre del módulo padre.
-2. Mueve el archivo *src/network.rs* en el nuevo directorio *network* y 
-   renómbralo a *src/network/mod.rs*.
-3. Mueve el archivo del submódulo *src/server.rs* en el directorio *network*.
+1. Make a new *directory* named *network*, the parent module’s name.
+2. Move the *src/network.rs* file into the new *network* directory, and
+   rename it to *src/network/mod.rs*.
+3. Move the submodule file *src/server.rs* into the *network* directory.
 
-Aquí están los comandos para llevar a cabo estos pasos:
+Here are commands to carry out these steps:
 
 ```text
 $ mkdir src/network
@@ -401,9 +401,9 @@ $ mv src/network.rs src/network/mod.rs
 $ mv src/server.rs src/network
 ```
 
-Ahora, cuando intentemos ejecutar `cargo build`, la compilación funcionará (aunque seguiremos 
-teniendo advertencias). Nuestro diseño de módulo todavía se ve así, que es exactamente
-igual que cuando teníamos todo el código en *src/lib.rs* en Listado 7-3:
+Now when we try to run `cargo build`, compilation will work (we’ll still have
+warnings though). Our module layout still looks like this, which is exactly the
+same as it did when we had all the code in *src/lib.rs* in Listing 7-3:
 
 ```text
 communicator
@@ -412,7 +412,7 @@ communicator
      └── server
 ```
 
-El diseño de archivo correspondiente ahora se ve así:
+The corresponding file layout now looks like this:
 
 ```text
 ├── src
