@@ -608,7 +608,7 @@ The contents of *src/lib.rs* should have the signatures shown in Listing 12-13
 (we’ve omitted the bodies of the functions for brevity). Note that this won't
 compile until we modify *src/main.rs* in the listing after this one:
 
-<span class="filename">Filename: src/lib.rs</span>
+<span class="filename">Nombre del archivo: src/lib.rs</span>
 
 ```rust,ignore
 use std::error::Error;
@@ -630,18 +630,18 @@ pub fn run(config: Config) -> Result<(), Box<Error>> {
     // --snip--
 }
 ```
-
-<span class="caption">Listing 12-13: Moving `Config` and `run` into
+ 
+<span class="caption">Listado 12-13: Moviendo `Config` y` run` en
 *src/lib.rs*</span>
 
-We’ve made liberal use of `pub` here: on `Config`, its fields and its `new`
-method, and on the `run` function. We now have a library crate that has a
-public API that we can test!
+Aquií hemos hecho un uso liberal de `pub`: en `Config`, sus campos y su método
+`new`, y en la función `run`. Ahora tenemos un crate de la biblioteca que tiene una
+API pública que ¡podemos probar!
 
-Now we need to bring the code we moved to *src/lib.rs* into the scope of the
-binary crate in *src/main.rs*, as shown in Listing 12-14:
+Ahora tenemos que introducir el código que hemos movido a *src/lib.rs* en scope de la
+caja binaria en *src/main.rs*, como se muestra en en Listado 12-14:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,ignore
 extern crate minigrep;
@@ -659,19 +659,19 @@ fn main() {
 }
 ```
 
-<span class="caption">Listing 12-14: Bringing the `minigrep` crate into the
-scope of *src/main.rs*</span>
+<span class="caption">Listado 12-14: Trayendo la crate "minigrep" en 
+scope de *src/main. rs*.</span>
 
-To bring the library crate into the binary crate, we use `extern crate
-minigrep`. Then we’ll add a `use minigrep::Config` line to bring the `Config`
-type into scope, and we’ll prefix the `run` function with our crate name. Now
-all the functionality should be connected and should work. Run the program with
-`cargo run` and make sure everything works correctly.
+Para introducir el crate de la biblioteca en la crate binaria, utilizamos `extern crate
+minigrep`. Luego añadiremos una línea `use minigrep::Config` para poner el tipo `Config`
+en scope, y prefijaremos la función `run` con el nombre de nuestra crate. Ahora
+toda la funcionalidad debería estar conectada y debería funcionar. Ejecuta el programa con
+`cargo run` y asegúrate de que todo funciona correctamente.
 
-Whew! That was a lot of work, but we’ve set ourselves up for success in the
-future. Now it’s much easier to handle errors, and we’ve made the code more
-modular. Almost all of our work will be done in *src/lib.rs* from here on out.
+¡Uf! Eso fue mucho trabajo, pero nos hemos preparado para el éxito en 
+el futuro. Ahora es mucho más fácil manejar errores, y hemos hecho el código más
+modular. A partir de ahora casi todo nuestro trabajo se hará en *src/lib.rs*.
 
-Let’s take advantage of this newfound modularity by doing something that would
-have been difficult with the old code but is easy with the new code: we’ll
-write some tests!
+Aprovechemos esta nueva modularidad haciendo algo que habría sido
+difícil con el código antiguo, pero es fácil con el nuevo código: 
+¡escribiremos algunas pruebas!
