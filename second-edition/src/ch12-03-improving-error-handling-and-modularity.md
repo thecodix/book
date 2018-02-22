@@ -45,32 +45,32 @@ the following steps:
 
 * Split your program into a *main.rs* and a *lib.rs*, and move your program’s
 logic to *lib.rs*.
-* While your command line parsing logic is small, it can remain in *main.rs*.
-* When the command line parsing logic starts getting complicated, extract it
-from *main.rs* and move it to *lib.rs*.
-* The responsibilities that remain in the `main` function after this process
-should be limited to:
+* Mientras que tu lógica de análisis de línea de comandos es pequeña, puede permanecer en *main.rs*.
+* Cuando la lógica de análisis de la línea de comandos empiece a complicarse, extráela de
+*main.rs* y muevela a *lib.rs*.
+* Las responsabilidades que permanecen en la función `main` después de este proceso
+  deben limitarse a:
+  
+* Llamar a la lógica de análisis de línea de comandos con los valores del argumento
+* Configurar cualquier otra configuración
+* Llamar a una función de `run` en *lib.rs*
+* Manejar el error si `run` devuelve un error
 
-  * Calling the command line parsing logic with the argument values
-  * Setting up any other configuration
-  * Calling a `run` function in *lib.rs*
-  * Handling the error if `run` returns an error
+Este patrón trata de separar los concerns: *main.rs* maneja la ejecución del 
+programa, y *lib.rs* maneja toda la lógica de la tarea a mano. Debido a que no
+podemos probar la función `main` directamente, esta estructura nos permite probar toda
+la lógica de nuestro programa moviéndola a funciones en *lib.rs*. El único código que 
+queda en *main.rs* será lo suficientemente pequeño como para verificar su exactitud al 
+leerlo. Repasemos nuestro programa siguiendo este proceso.
 
-This pattern is about separating concerns: *main.rs* handles running the
-program, and *lib.rs* handles all the logic of the task at hand. Because we
-can’t test the `main` function directly, this structure lets us test all of our
-program’s logic by moving it into functions in *lib.rs*. The only code that
-remains in *main.rs* will be small enough to verify its correctness by reading
-it. Let’s rework our program by following this process.
+#### Extracción del Analizador de Argumentos (Argument Parser)
 
-#### Extracting the Argument Parser
+Extraeremos la funcionalidad para analizar argumentos en una función
+que `main` llamará a preparar para mover el análisis lógico de línea
+de comandos a *src/lib.rs*. El listado 12-5 muestra el nuevo inicio de `main`
+que llama a una nueva función `parse_config`, que definiremos en *src/main.rs* por el momento.
 
-We’ll extract the functionality for parsing arguments into a function that
-`main` will call to prepare for moving the command line parsing logic to
-*src/lib.rs*. Listing 12-5 shows the new start of `main` that calls a new
-function `parse_config`, which we’ll define in *src/main.rs* for the moment.
-
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,ignore
 fn main() {
@@ -89,50 +89,50 @@ fn parse_config(args: &[String]) -> (&str, &str) {
 }
 ```
 
-<span class="caption">Listing 12-5: Extracting a `parse_config` function from
-`main`</span>
+<span class="caption">Listado 12-5: Extracción de una función `parse_config` de 
+`main`.</span>
 
-We’re still collecting the command line arguments into a vector, but instead of
-assigning the argument value at index `1` to the variable `query` and the
-argument value at index `2` to the variable `filename` within the `main`
-function, we pass the whole vector to the `parse_config` function. The
-`parse_config` function then holds the logic that determines which argument
-goes in which variable and passes the values back to `main`. We still create
-the `query` and `filename` variables in `main`, but `main` no longer has the
-responsibility of determining how the command line arguments and variables
-correspond.
+Seguimos recopilando los argumentos de la línea de comandos en un vector, pero en lugar de
+asignar el valor del argumento en el índice `1` a la variable `query` y el 
+valor del argumento en el índice `2` a la variable `filename` dentro de la función
+`main`, pasamos el vector entero a la función `parse_config`. La función `parse_config` 
+mantiene entonces la lógica que determina qué argumento va en qué variable,
+y devuelve los valores a `main`. Seguimos creando las variables `query` 
+y `filename` en `main`, pero `main` ya no tiene la responsabilidad de
+determinar cómo se corresponden los argumentos y las variables de la 
+línea de comandos.
 
-This rework may seem like overkill for our small program, but we’re refactoring
-in small, incremental steps. After making this change, run the program again to
-verify that the argument parsing still works. It’s good to check your progress
-often, because that will help you identify the cause of problems when they
-occur.
+Este retrabajo puede parecer exagerado para nuestro pequeño programa, pero estamos refactorizando
+en pequeños pasos incrementales. Después de hacer este cambio, ejecuta el programa nuevamente para
+verificar que el análisis de argumentos sigue funcionando. Es bueno revisar tu progreso  
+frecuentemente, porque eso te ayudará a identificar la causa de los problemas cuando 
+ocurran.
 
-#### Grouping Configuration Values
+#### Clasificación de Valores de Configuración
 
-We can take another small step to improve the `parse_config` function further.
-At the moment, we’re returning a tuple, but then we immediately break that
-tuple into individual parts again. This is a sign that perhaps we don’t have
-the right abstraction yet.
+Podemos dar otro pequeño paso para mejorar aún más la función `parse_config`.
+Por el momento, estamos devolviendo una tupla, pero de inmediato la dividimos
+en partes individuales. Esta es una señal de que quizás todavía no tenemos la
+abstracción correcta.
 
-Another indicator that shows there’s room for improvement is the `config` part
-of `parse_config`, which implies that the two values we return are related and
-are both part of one configuration value. We’re not currently conveying this
-meaning in the structure of the data other than grouping the two values into a
-tuple: we could put the two values into one struct and give each of the struct
-fields a meaningful name. Doing so will make it easier for future maintainers
-of this code to understand how the different values relate to each other and
-what their purpose is.
+Otro indicador que muestra que hay espacio para mejorar es la parte `config` 
+de `parse_config`, lo que implica que los dos valores que devolvemos están relacionados
+y forman parte de un valor de configuración. Actualmente no estamos transmitiendo este
+significado en la estructura de los datos más que agrupando los dos valores en una 
+tupla: podríamos poner los dos valores en una sola estructura y darle a cada uno de los campos
+de la estructura un nombre significativo. Hacerlo así facilitará a los futuros mantenedores
+de este código entender cómo se relacionan los diferentes valores entre sí y 
+cuál es su propósito.
 
-> Note: Some people call this anti-pattern of using primitive values when a
-> complex type would be more appropriate *primitive obsession*.
+> Nota: Algunas personas llaman a este anti-patrón de usar valores primitivos cuando  
+> sería mas apropiado un tipo complejo *obsesión primitiva*.
 
-Listing 12-6 shows the addition of a struct named `Config` defined to have
-fields named `query` and `filename`. We’ve also changed the `parse_config`
-function to return an instance of the `Config` struct and updated `main` to use
-the struct fields rather than having separate variables:
+El listado 12-6 muestra la adición de una estructura llamada `Config` definida para tener 
+campos con el nombre `query` y `filename`. También hemos cambiado la función `parse_config` 
+para devolver una instancia de la `Config` estructurada y actualizada `main` para usar los
+campos de estructura en lugar de tener variables separadas:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,should_panic
 # use std::env;
@@ -143,8 +143,8 @@ fn main() {
 
     let config = parse_config(&args);
 
-    println!("Searching for {}", config.query);
-    println!("In file {}", config.filename);
+    println!("buscando {}", config.query);
+    println!("En el archivo {}", config.filename);
 
     let mut f = File::open(config.filename).expect("file not found");
 
@@ -164,56 +164,56 @@ fn parse_config(args: &[String]) -> Config {
 }
 ```
 
-<span class="caption">Listing 12-6: Refactoring `parse_config` to return an
-instance of a `Config` struct</span>
+<span class="caption">Listado 12-6: Refactorizando `parse_config` para devolver 
+una instancia de una estructura `Config`.</span>
 
-The signature of `parse_config` now indicates that it returns a `Config` value.
-In the body of `parse_config`, where we used to return string slices that
-reference `String` values in `args`, we now define `Config` to contain owned
-`String` values. The `args` variable in `main` is the owner of the argument
-values and is only letting the `parse_config` function borrow them, which means
-we’d violate Rust’s borrowing rules if `Config` tried to take ownership of the
-values in `args`.
+La firma de `parse_config` ahora indica que devuelve un valor `Config`.
+En el cuerpo de `parse_config`, donde solíamos devolver las slices de cadena que
+hacen referencia a los valores `String` en `args`, ahora definimos `Config` para contener 
+los valores propios de `String`. La variable `args` en `main` es la dueña de los valores 
+del argumento y sólo deja que la función `parse_config` los tome prestados, lo que significa 
+que violaríamos las reglas de préstamo de Rust si `Config` intentara tomar posesión de los
+valores en `args`.
 
-We could manage the `String` data in a number of different ways, but the
-easiest, though somewhat inefficient, route is to call the `clone` method on
-the values. This will make a full copy of the data for the `Config` instance to
-own, which takes more time and memory than storing a reference to the string
-data. However, cloning the data also makes our code very straightforward
-because we don’t have to manage the lifetimes of the references; in this
-circumstance, giving up a little performance to gain simplicity is a worthwhile
-trade-off.
+Podríamos manejar los datos de `String` de varias maneras diferentes, pero la
+ruta más fácil, aunque algo ineficiente, es llamar al método `clone` en los
+valores. Esto hará una copia completa de los datos para que la instancia `Config` los 
+posea, lo que toma más tiempo y memoria que almacenar una referencia a los datos de
+la cadena. Sin embargo, la clonación de los datos también hace que nuestro código sea
+muy sencillo, porque no tenemos que gestionar la vida útil de las referencias; en esta
+circunstancia, renunciar a un poco de rendimiento para ganar simplicidad es un compromiso
+que vale la pena.
 
-> ### The Trade-Offs of Using `clone`
+> ### Las Ventajas y Desventajas de Usar `clone`.
 >
-> There’s a tendency among many Rustaceans to avoid using `clone` to fix
-> ownership problems because of its runtime cost. In Chapter 13, you’ll learn
-> how to use more efficient methods in this type of situation. But for now,
-> it’s okay to copy a few strings to continue making progress because we’ll
-> make these copies only once, and our filename and query string are very
-> small. It’s better to have a working program that’s a bit inefficient than to
-> try to hyperoptimize code on your first pass. As you become more experienced
-> with Rust, it’ll be easier to start with the most efficient solution, but for
-> now, it’s perfectly acceptable to call `clone`.
+> Hay una tendencia entre muchos rustaceos a evitar el uso de `clone` para arreglar
+> problemas de posesión debido a su costo de tiempo de ejecución. En el Capítulo 13, aprenderás
+> a usar métodos más eficientes en este tipo de situaciones. Pero por ahora, está bien
+> copiar unas cuantas cadenas para seguir progresando porque vamos a hacer estas
+> copias sólo una vez, y nuestro nombre de archivo y la cadena de consulta son muy 
+> pequeños. Es mejor tener un programa de trabajo que es un poco ineficiente que tratar
+> de hiperoptimizar el código en tu primera pasada. A medida que tengas más experiencia 
+> con Rust, será más fácil empezar con la solución más eficiente, pero por ahora, es 
+> perfectamente aceptable llamar a `clone`.
 
-We’ve updated `main` so it places the instance of `Config` returned by
-`parse_config` into a variable named `config`, and we updated the code that
-previously used the separate `query` and `filename` variables so it now uses
-the fields on the `Config` struct instead.
+Hemos actualizado `main` para que coloque la instancia de `Config` devuelta por
+`parse_config` en una variable llamada `config`, y hemos actualizado el código que
+antes utilizaba las variables `query` y `filename` separadas, por lo que ahora usa
+los campos de la estructura `Config`.
 
-Now our code more clearly conveys that `query` and `filename` are related, and
-their purpose is to configure how the program will work. Any code that uses
-these values knows to find them in the `config` instance in the fields named
-for their purpose.
+Ahora nuestro código transmite con más claridad que `query` y `filename` están relacionados, 
+y su propósito es configurar cómo funcionará el programa. Cualquier código que utilice 
+estos valores sabe que los encontrará en la instancia `config` en los campos nombrados 
+para su propósito.
 
-#### Creating a Constructor for `Config`
+#### Creación de un Constructor para `Config`.
 
-So far, we’ve extracted the logic responsible for parsing the command line
-arguments from `main` and placed it in the `parse_config` function, which
-helped us to see that the `query` and `filename` values were related and that
-relationship should be conveyed in our code. We then added a `Config` struct to
-name the related purpose of `query` and `filename`, and to be able to return
-the values’ names as struct field names from the `parse_config` function.
+Hasta ahora, hemos extraído la lógica responsable de analizar los argumentos 
+de la línea de comandos de `main` y la hemos colocado en la función `parse_config`, que
+nos ayudó a ver que los valores `query` y `filename` estaban relacionados y que la 
+relación debería ser transmitida en nuestro código. Luego añadimos una estructura `Config`
+para nombrar el propósito relacionado de `query` y `filename`, y para poder devolver los
+nombres de los valores como nombres de campo de estructura desde la función `parse_config`.
 
 So now that the purpose of the `parse_config` function is to create a `Config`
 instance, we can change `parse_config` from being a plain function to a
