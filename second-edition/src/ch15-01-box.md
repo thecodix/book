@@ -121,10 +121,11 @@ represent a cons list data structure of `i32` values</span>
 > discussed in Chapter 10, to define a cons list type that could store values of
 > any type.
 
-Using the `List` type to store the list `1, 2, 3` would look like the code in
-Listing 15-3:
 
-<span class="filename">Filename: src/main.rs</span>
+Usar el tipo `List` para almacenar la lista `1, 2, 3` se vería como el código
+en el Listado 15-3:
+
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,ignore
 use List::{Cons, Nil};
@@ -134,44 +135,45 @@ fn main() {
 }
 ```
 
-<span class="caption">Listing 15-3: Using the `List` enum to store the list `1,
-2, 3`</span>
+<span class="caption">Listado 15-3: Usando la enumeración `List` para almacenar la
+lista `1, 2, 3`</span>
 
-The first `Cons` value holds `1` and another `List` value. This `List` value is
-another `Cons` value that holds `2` and another `List` value. This `List` value
-is one more `Cons` value that holds `3` and a `List` value, which is finally
-`Nil`, the non-recursive variant that signals the end of the list.
+El primer valor `Cons` tiene `1` y otro valor de `List`. Este valor `List` 
+es otro valor `Cons` que tiene `2` y otro valor `List`. Este valor `List` 
+es un valor más `Cons` que tiene `3` y un valor `List`, que es finalmente
+`Nil`, la variante no recursiva que señala el final de la lista.
 
-If we try to compile the code in Listing 15-3, we get the error shown in
-Listing 15-4:
+Si intentamos compilar el código en el Listado 15-3, obtenemos el error mostrado
+en el Listado 15-4:
 
-```text
-error[E0072]: recursive type `List` has infinite size
+```texto
+error[E0072]: el tipo recursivo `List` tiene tamaño infinito
  --> src/main.rs:1:1
   |
 1 | enum List {
-  | ^^^^^^^^^ recursive type has infinite size
+  | ^^^^^^^^^ el tipo recursivo tiene tamaño infinito
 2 |     Cons(i32, List),
-  |               ----- recursive without indirection
+  |               ----- recursivo sin indirección
   |
-  = help: insert indirection (e.g., a `Box`, `Rc`, or `&`) at some point to
-  make `List` representable
+  = ayuda: insertar indireccionamiento (e.g., a `Box`, `Rc`, or `&`) en algún punto
+  para hacer `List` representable
 ```
+<span class="caption">Listado 15-4: El error que obtenemos cuando intentamos definir
+una enumeración recursiva</span>
 
-<span class="caption">Listing 15-4: The error we get when attempting to define
-a recursive enum</span>
+El error que muestra este tipo “tiene tamaño infinito.” La razón es que hemos
+definido `List` con una variante que es recursiva: tiene otro valor de sí mismo
+directamente. Como resultado, Rust no puede calcular cuanto tamaño necesita para
+almacenar un valor `List`. Analicemos un poco porque obtenemos este error: primero, 
+veamos como Rust decide cuanto espacio necesita para almacenar un valor de un tipo
+no recursivo.
 
-The error shows this type “has infinite size.” The reason is that we’ve defined
-`List` with a variant that is recursive: it holds another value of itself
-directly. As a result, Rust can’t figure out how much space it needs to store a
-`List` value. Let’s break down why we get this error a bit: first, let’s look
-at how Rust decides how much space it needs to store a value of a non-recursive
-type.
 
-#### Computing the Size of a Non-Recursive Type
 
-Recall the `Message` enum we defined in Listing 6-2 when we discussed enum
-definitions in Chapter 6:
+#### Calcular el tamaño de un tipo No Recursivo
+
+Recuerda la enumeración `Message` que definimos en el Listado 6-2 cuando discutimos
+definiciones de enumeraciones en el Capítulo 6:
 
 ```rust
 enum Message {
@@ -182,55 +184,58 @@ enum Message {
 }
 ```
 
-To determine how much space to allocate for a `Message` value, Rust goes
-through each of the variants to see which variant needs the most space. Rust
-sees that `Message::Quit` doesn’t need any space, `Message::Move` needs enough
-space to store two `i32` values, and so forth. Because only one variant will be
-used, the most space a `Message` value will need is the space it would take to
-store the largest of its variants.
+Para determinar cuanto espacio asignar para un valor `Message`, Rust va
+a través de cada variante para ver cual necesita más espacio. Rust
+ve que `Message::Quit` no necesita ningún espacio, `Message::Move` necesita suficiente
+espacio para almacenar dos valores `i32`, etcétera. Porque solo una variante será usada,
+el mayor espacio que un valor `Message` necesitará es el espacio que le tomaría almacenar
+la más grande de sus variantes.
 
-Contrast this to what happens when Rust tries to determine how much space a
-recursive type like the `List` enum in Listing 15-2 needs. The compiler starts
-by looking at the `Cons` variant, which holds a value of type `i32` and a value
-of type `List`. Therefore, `Cons` needs an amount of space equal to the size of
-an `i32` plus the size of a `List`. To figure out how much memory the `List`
-type needs, the compiler looks at the variants, starting with the `Cons`
-variant. The `Cons` variant holds a value of type `i32` and a value of type
-`List`, and this process continues infinitely, as shown in Figure 15-1:
+Contrasta esto con lo que pasa cuando Rust intenta determinar cuanto espacio
+un tipo recursivo como la enumeración `List` en el Listado 15-2 necesita. El comilador comienza
+mirando a al variante `Cons`, que mantiene un valor de tipo `i32` y un valor de
+tipo `List`. Por lo tanto, `Cons` necesita una cantidad de espacio igual al tamaño de
+un `i32` sumado al tamaño de una `List`. Para averiguar cuanta memoria el tipo `List`
+necesita, el compilador mira las variantes, comenzando con la variante `Cons`.
+La variante `Cons` tiene un valor de tipo `i32` y un valor de tipo
+`List`, y este proceso continúa infinitamente, como es mostrado en la figura 15-1:
+
 
 <img alt="An infinite Cons list" src="img/trpl15-01.svg" class="center" style="width: 50%;" />
 
-<span class="caption">Figure 15-1: An infinite `List` consisting of infinite
-`Cons` variants</span>
+<span class="caption">Figura 15-1: Una `Lista` infinita consiste en infinitas
+variantes `Cons` </span>
 
-#### Using `Box<T>` to Get a Recursive Type with a Known Size
+#### Usando `Box<T>` para obtener un Tipo Recursivo con un Tamaño Conocido
 
-Rust can’t figure out how much space to allocate for recursively defined types,
-so the compiler gives the error in Listing 15-4. But the error does include
-this helpful suggestion:
+Rust no puede averiguar cuanto espacio asignar para los tipos definidos
+recursivamente, por lo que el compilador da el error en el Listado 15-4.
+Pero el error incluye esta sugerencia de ayuda:
 
-```text
-  = help: insert indirection (e.g., a `Box`, `Rc`, or `&`) at some point to
-  make `List` representable
+```texto
+  = ayuda: inserte indirección (e.g., a `Box`, `Rc`, or `&`) en algún punto
+  para hacer `List` representable
 ```
 
-In this suggestion, “indirection” means that instead of storing a value
-directly, we’ll change the data structure to store the value indirectly by
-storing a pointer to the value instead.
+En esta sugerencia, “indirección” significa que en lugar de almacenar un valor
+directamente, cambiaremos la estructura de datos para almacenar el valor indirectamente
+almacenando un puntero al valor en su lugar.
 
-Because a `Box<T>` is a pointer, Rust always knows how much space a `Box<T>`
-needs: a pointer’s size doesn’t change based on the amount of data it’s
-pointing to. This means we can put a `Box<T>` inside the `Cons` variant instead
-of another `List` value directly. The `Box<T>` will point to the next `List`
-value that will be on the heap rather than inside the `Cons` variant.
-Conceptually, we still have a list, created with lists “holding” other lists,
-but this implementation is now more like the items being next to one another
-rather than inside one another.
 
-We can change the definition of the `List` enum in Listing 15-2 and the usage
-of the `List` in Listing 15-3 to the code in Listing 15-5, which will compile:
+Ya que `Box<T>` es un puntero, Rust cuanto espacio un `Box<T>` 
+necesita: el tamaño de un puntero no cambia basado en la cantidad de datos
+a los que se apuntan. Esto significa que podemos poner un `Box<T>` adentro de
+la variante `Cons` en lugar de otro valor `List` directamente. The `Box<T>` 
+apuntará al siguiente valor de `List` que estará en el montón en lugar de adentro
+la variante `Cons`. 
+Conceptualmente, aún tenemos una lista, creada con listas “manteniendo” otras listas,
+pero esta implementacíón ahora es más como los elementos que estan uno al ladro del otro
+en vez de uno adentro de otro.
 
-<span class="filename">Filename: src/main.rs</span>
+Podemos cambiar la definición de la enumeración `List` en el Listado 15-2 y el uso
+de la `List` en el Listado 15-3 al código en el Listado 15-5, que compilará:
+
+<span class="filename">Nombre de archivo: src/main.rs</span>
 
 ```rust
 enum List {
@@ -248,33 +253,33 @@ fn main() {
 }
 ```
 
-<span class="caption">Listing 15-5: Definition of `List` that uses `Box<T>` in
-order to have a known size</span>
+<span class="caption">Listado 15-5: Definición de `List` que usa `Box<T>` para
+tener un tamaño conocido</span>
 
-The `Cons` variant will need the size of an `i32` plus the space to store the
-box’s pointer data. The `Nil` variant stores no values, so it needs less space
-than the `Cons` variant. We now know that any `List` value will take up the
-size of an `i32` plus the size of a box’s pointer data. By using a box, we’ve
-broken the infinite, recursive chain, so the compiler can figure out the size
-it needs to store a `List` value. Figure 15-2 shows what the `Cons` variant
-looks like now:
+La variante `Cons` necesitará el tamaño de un `i32` más el espacio para almacenar
+los datos del puntero del recuadro. La variante `Nil` no almacena valores, por lo
+que necesita menos espacio que la variante `Cons`. Ahora sabemos que ningún valor `List`
+tomará el tamaño de un `i32` más el tamaño de datos de un puntero de recuadro.
+Usando un recuadro, rompemos la cadena recursiva e infinita, por lo que el compilador
+puede averiguar el tamaño que necesita para almacenar un valor `List`. La figura 15-2
+muestra que la variante `Cons` ahora se ve como:
 
 <img alt="A finite Cons list" src="img/trpl15-02.svg" class="center" />
 
-<span class="caption">Figure 15-2: A `List` that is not infinitely sized
-because `Cons` holds a `Box`</span>
+<span class="caption">Figura 15-2: Una `List` que no tiene un tamaño infinito
+porque `Cons` contiene un `Box`</span>
 
-Boxes only provide the indirection and heap allocation; they don’t have any
-other special capabilities, like those we’ll see with the other smart pointer
-types. They also don’t have any performance overhead that these special
-capabilities incur, so they can be useful in cases like the cons list where the
-indirection is the only feature we need. We’ll look at more use cases for boxes
-in Chapter 17, too.
+Los recuadros solo proveen la asignación indirecta y del montón; no tienen
+otras capacidades especiales, como las que veremos con los otros tipos de punteros
+inteligentes. Tampoco tienen ninguna sobrecarga de rendimiento que estas capacidades
+especiales incurren, por lo que pueden ser útiles en casos como la lista de constructores
+donde la indirección es la única característica que necesitamos. Miraremos más casos de uso
+para recuadros en el Capítulo 17, también.
 
-The `Box<T>` type is a smart pointer because it implements the `Deref` trait,
-which allows `Box<T>` values to be treated like references. When a `Box<T>`
-value goes out of scope, the heap data that the box is pointing to is cleaned
-up as well because of the `Drop` trait implementation. Let’s explore these two
-traits in more detail. These two traits will be even more important to the
-functionality provided by the other smart pointer types we’ll discuss in the
-rest of this chapter.
+El tipo `Box<T>` es un puntero inteligente porque implementa la característica `Deref`,
+que permite que los valores `Box<T>` sean tratados como referencias. Cuando un valor `Box<T>`
+se va del alcance, los datos del montón a los que apunta el recuadro son limpiados
+debido a la implementación de la característica `Drop`. Exploremos estas dos 
+características en más detalles. Estas dos características serán inclusi más importantes
+para la funcionalidad prevista por los otros tipos de punteros inteligentes que discutiremos
+en el resto de este capítulo.
