@@ -42,13 +42,13 @@ authors = ["Tu Nombre <tu@ejemplo.com>"]
 [dependencies]
 ```
 
-Si la información del autor que Cargo leyó del entorno de nuestra máquina no es
-correcta, modifica el archivo con los cambios necesarios y guárdalo de nuevo.
+Si la información del autor que Cargo obtiene del entorno de nuestra máquina no es
+correcta, tienes que modificar el archivo con los cambios necesarios y guardarlo de nuevo.
 
 Como vimos en el capítulo 1, `cargo new` genera un programa “Hola Mundo!”.
 Abre ahora el archivo *src/main.rs*:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust
 fn main() {
@@ -80,7 +80,7 @@ encargará de verificar que los datos tengan el formato esperado. Para comenzar,
 vamos a dejar que el jugador introduzca una suposición. Escribe el código que se
 encuentra en Código 2-1 dentro de nuestro archivo *src/main*.
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,ignore
 use std::io;
@@ -139,7 +139,7 @@ println!("¡Adivina el número!");
 println!("Por favor escribe una suposición.");
 ```
 
-Este código muestra un mensaje con el propósito de juego, y pide
+Este código muestra el propósito de juego en un mensaje, y le pide
 datos al usuario.
 
 ### Almacenando Valores en Variables
@@ -150,7 +150,7 @@ Lo siguiente será crear un lugar para almacenar la entrada del usuario:
 let mut suposicion = String::new();
 ```
 
-¡Ahora nuestro programa se vuelve más interesante! Varias cosas suceden en esta
+¡Nuestro programa es más interesante ahora! Varias cosas están pasando en esta
 breve línea de código. Fíjate que usamos la sentencia `let`, la cual nos permite
 crear *variables*. Ahí va otro ejemplo:
 
@@ -190,7 +190,7 @@ funciones `new` en diferentes tipos, la razón es que `new` es el nombre que
 suele darse a las funciones que crean un valor nuevo de algún tipo.
 
 En resumen, la linea `let mut suposicion = String::new();` ha creado una
-variable mutable que se encuentra vinculada a una instancia nueva y vacía de un
+variable mutable que se encuentra vinculada a una instancia nueva - y vacía - de un
 `String`. ¡Uff!
 
 Recuerda que hemos importado la funcionalidad de entrada y salida de la
@@ -249,7 +249,7 @@ io::stdin().read_line(&mut suposicion).expect("Error al leer la línea");
 Sin embargo, una sola línea larga es difícil de leer, es mejor dividirla. Ahora
 veamos en detalle que hace esta línea.
 
-### Manejando posibles errores con el tipo `Result`
+### Manejando Posibles Errores con el Tipo `Result`
 
 Como mencionamos antes, `read_line` pone recibe los datos del usuario y los coloca
 en el *string* que le pasamos, pero también devuelve un valor, en este caso, un
@@ -272,17 +272,17 @@ Las variantes de `Result` son `Ok` y `Err`. `Ok` indica que la operación tuvo
 indica que la operación falló y contiene información del cómo y por qué de este
 error.
 
-El propósito de estos tipos `Result` es codificar información para tratar erorres
-Los valores de tipo `Resultado`, como cualquier otro tipo, tienen métodos
+El propósito de estos tipos `Result` es codificar información para tratar erorres.
+Los valores de tipo `Result`, como cualquier otro tipo, tienen métodos
 definidos. Una instacia de `io::Result` tiene un
-[método `expect`][expect]<!-- ignore --> que podemos llamar. Si esta instancia
+método [`expect`][expect]<!-- ignore --> que podemos llamar. Si esta instancia
 de `io::Result` es un valor de tipo `Err`, `expect` hará que nuestro programa
 falle y muestre el mensaje que le pasamos como argumento. Si el método
 `read_line` devuelve `Err`, casi con total seguridad será por un error proveniente
-del sistema operativo. Si esta instancia de `io::Result` es un valor `Ok`,
-`expect` tomará el valor que se encuentra dentro del `Ok` y lo devolverá para
+del sistema operativo. Si esta instancia de `io::Result` tiene un valor `Ok`,
+`expect` tomará el valor que se encuentra dentro de `Ok` y lo devolverá para
 que podamos usarlo. En este caso, este valor es el número de bytes que el
-usuario introdujo en la entrada estándar.
+usuario ha introducido en la entrada estándar.
 
 [expect]: ../../std/result/enum.Result.html#method.expect
 
@@ -299,16 +299,17 @@ warning: unused `std::result::Result` which must be used
    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
    |
    = note: #[warn(unused_must_use)] on by default
+   Finished dev [unoptimized + debuginfo] target(s) in 0.89 secs
 ```
 
 Rust nos advierte que no hemos utilizado el valor de tipo `Result` que obtuvimos
 de `read_line`, indicando que el programa no ha manejado un posible error. La
-forma correcta de eliminar este error es escribir código para tratar con él,
-pero de momento queremos que nuestro programa falle cuando haya un problema,
+forma correcta de eliminar este error es escribir el código necesario para tratar
+con él, pero de momento queremos que nuestro programa falle cuando haya un problema,
 asi que podemos usar `expect`. Aprenderemos como recuperarnos de errores en el
 capítulo 9.
 
-### Imprimiendo Valores con marcadores de posición `println!`
+### Imprimiendo Valores con Marcadores de Posición `println!`
 
 Quitando la llave del final, sólo hay una línea mas por aclarar en nuestro
 código, que es la siguiente:
@@ -317,10 +318,10 @@ código, que es la siguiente:
 println!("You guessed: {}", guess);
 ```
 
-Esta línea imprime el string en el que hemos guardado los datos del usuario. El
-grupo de `{}` es un marcador de posición que muestra un valor en un sitio determinado.
-Se puede usar más de un valor con `{}`: el primer grupo de `{}` mostrara el primer
-valor que aparezca después del string, el segundo grupo mostrará el segundo valor,
+Esta línea imprime el string en el que hemos guardado los datos del usuario. `{}` es
+un marcador de posición que muestra un valor en un sitio determinado.
+Se puede usar más de un valor con `{}`: el primer `{}` mostrará el primer
+valor que aparezca después del string, el segundo `{}` mostrará el segundo valor,
 y así sucesivamente. Para imprimir varios valores en una llamada a `println!` se
 haría de la siguiente manera:
 
@@ -328,10 +329,10 @@ haría de la siguiente manera:
 let x = 5;
 let y = 10;
 
-println!("x = {} e y = {}", x, y);
+println!("x = {}, y = {}", x, y);
 ```
 
-El resultado de este código será `x = 5 e y = 10`.
+El resultado de este código será `x = 5, y = 10`.
 
 ### Probando la primera parte
 
@@ -352,31 +353,31 @@ Tu suposición fue:  6
 En este momento, podemos dar la primera parte del juego por terminada: estamos
 leyendo datos del usuario y mostrándolos por pantalla.
 
-## Generando un Número Secreto
+## Generar un Número Secreto
 
-A continuación, hay que generar un número secreto que el usuario deberá tratar
-de adivinar. El número secreto debería ser diferente en cada nuevo juego, de
-otra manera no sería muy divertido jugar más de una vez. Vamos a usar un número
-aleatorio entre 1 y 100 para que el juego no sea muy difícil. De momento, Rust
+A continuación, hay que generar un número secreto que el usuario tiene que
+adivinar. El número secreto debería ser diferente en cada partida, de
+otra manera sería muy aburrido jugar más de una vez. Vamos a usar un número
+aleatorio entre 1 y 100 para que el juego no sea demasiado difícil. De momento, Rust
 no incluye funcionalidad para generar números aleatorios en la libería estándar.
-Sin embargo, el equipo de Rust provee un [crate `rand`][randcrate]
+Sin embargo, el equipo de Rust provee un [crate `rand`][randcrate].
 
 [randcrate]: https://crates.io/crates/rand
 
-### Usar un Crate para conseguir nuevas Funcionalidades
+### Usar un Crate para obtener Nuevas Funcionalidades
 
 Recuerda que un *crate* no es más que un paquete de código en Rust. El proyecto
-que estamos creando es un *crate binario*, el cual es ejecutable. El crate
-`rand` es un *crate librería*, que continene código a reutilizar en otros
-programas
+que estamos creando es un *crate binario*, que puede ejecutarse. El crate
+`rand` es un *crate librería*, contiene código que puede reutilizarse en otros
+programas.
 
 Cargo es especialmente útil a la hora de utilizar crates externos. Antes de
 escribir código que utilice `rand`, hay que modificar el archivo *Cargo.toml*,
-donde vamos a incluid el crate `rand` como dependencia. Abre este archivo y
+donde vamos a incluir el crate `rand` como dependencia. Abre este archivo y
 añade la siguiente línea justo debajo de la sección `[dependencies]`, que
-Cargo ya include por defecto:
+Cargo incluye por defecto:
 
-<span class="filename">Filename: Cargo.toml</span>
+<span class="filename">Nombre del archivo: Cargo.toml</span>
 
 ```toml
 [dependencies]
@@ -384,19 +385,19 @@ Cargo ya include por defecto:
 rand = "0.3.14"
 ```
 
-En el archivo , todo lo que viene después de una cabecera de sección, forma parte
-de dicha sección hasta que otra nueva comience. La sección `[dependencies]` se
+En este archivo, todo lo que viene después de una cabecera de sección forma parte
+de dicha sección hasta que otra cabecera nueva comience. La sección `[dependencies]` se
 usa para indicar a Cargo qué crates externos - y qué versión específica de éstos -
 necesita tu proyecto. En este ejemplo, vamos a añadir el crate `rand` en su
 versión `0.3.14`. Cargo utiliza [Versionado Semántico][semver]<!-- ignore -->
 (que a veces se llama *SemVer*), un estándar para escribir números de versión.
 El número `0.3.14` es una abreviatura de `^0.3.14`, que quiere decir "cualquier
-versión con API pública compatible con la version 0.3.14".
+versión con API pública compatible con la versión 0.3.14".
 
 [semver]: http://semver.org
 
-Ahora, sin tocar el código, vamos a compilar el proyecto, tal y como muestra en el
-Código 2-2:
+Ahora, sin tocar el código, vamos a compilar el proyecto, tal y como se muestra en
+el Código 2-2:
 
 
 ```text
@@ -424,7 +425,7 @@ de software libre, para que otros desarrollares los reutilicen.
 
 [cratesio]: https://crates.io
 
-Tras actualizar el registro, Cargo comprueba la sección de `[dependencias]` y
+Tras actualizar el registro, Cargo comprueba la sección de `[dependencies]` y
 descarga las que no estan aún en el proyecto. En este caso, aunque sólo hemos
 puesto `rand` como dependencia, Cargo también descarga una copia de `libc`, ya
 que `rand` necesita la librería `libc` para funcionar. Tras la descarga, Rust
@@ -446,39 +447,39 @@ $ cargo build
     Finished dev [unoptimized + debuginfo] target(s) in 2.53 secs
 ```
 
-Estas líneas muestra que Cargo sólamente realiza una compilación tras tu ligero
+Estas líneas muestra que Cargo sólamente realiza una compilación tras el leve
 cambio en el archivo *src/main.rs*. Las dependencias no han cambiado, así que
 que Cargo puede reutilizar lo que ya ha descargado y compilado previamente.
 Simplemente vuelve a compilar tus cambios en el código.
 
 
-#### El archivo *Cargo.lock* asegura compilaciones reproducibles
+#### El Archivo *Cargo.lock* asegura Compilaciones Reproducibles
 
 Cargo tiene un mecanismo que permite asegurarte de que puedes crear de nuevo el
 mismo artefacto, cada vez que tú o alguien más compila tu código: Cargo solo va
 a utilizar las dependencias especificadas, a menos que indiques lo contrario.
 Por ejemplo, ¿Qué pasa si sale una nueva versión de `rand` con número `v0.3.15`,
-que continene un bug fix importante, pero que al mismo tiempo continene una
+que contiene un bug fix importante pero que al mismo tiempo contiene una
 regresión que va a provocar errores en tu código?
 
 La respuesta a este problema es el fichero *Cargo.lock*, que se crea al mismo
 tiempo que utilizas `cargo build` por primera vez, y que se encuentra en el
 directorio *guessing_game*. Cuando compilas un proyecto por primera vez, Cargo
 busca automáticamente la versión más indicada de las dependencias de tu proyecto,
-y las guarda en el fichero *Cargo.lock*. En posteriores compilaciones, Cargo
-buscará primero si existe este fichero *Cargo.lock*, y usará las versiones de
+y las guarda en el fichero *Cargo.lock*. En un futuro, al compilar, Cargo
+va a buscar primero si existe este fichero *Cargo.lock*, para usar las versiones de
 las dependencias que estén ahí escritas, en lugar de buscar de nuevo cuál es
 la versión más adecuada. Esto nos permite hacer un build reproducible de
 manera automática. Dicho de otro modo, tu proyecto continuará con la versión
 `0.3.14` de `rand` a menos que actualices a mano, gracias al fichero *Cargo.lock*.
 
-#### Actualizar un Crate para obtener una versión nueva
+#### Actualizar un Crate para obtener una Versión Nueva
 
 Cuando *quieres* actualizar un crate, Cargo usa un comando diferente, `update`,
 que hace lo siguiente:
 
-1. Ignorar el fichero *Cargo.lock*, ya que va a buscar de nueva las últimas
-versiones que encajas con nuestras especificaciones en *Cargo.toml*.
+1. Ignorar el fichero *Cargo.lock*, ya que va a buscar de nuevo las últimas
+versiones que encajan con nuestras especificaciones en *Cargo.toml*.
 2. Si no hay problemas, Cargo escribe las nuevas versiones en el fichero
 *Cargo.lock*.
 
@@ -504,25 +505,25 @@ Si quieres usar la versión `0.4.0` de `rand`, o cualquier versión de la serie
 rand = "0.4.0"
 ```
 
-La siguiente vez que ejecutes `cargo build`, Cargo actalizará el registro de
+La siguiente vez que ejecutes `cargo build`, Cargo actualizará el registro de
 crates disponibles, y eveluará de nuevo los requisitos para `rand` de acuerdo
 a la versión nueva que hayas especificado.
 
 Hay mucho más por descubrir sobre [Cargo][doccargo]<!-- ignore --> y [su
 ecosistema][doccratesio]<!-- ignore --> que veremos en más profundidad
 llegado el Capítulo 14. De momento, con lo que sabes hasta ahora es más que
-suficiente. Reutilizar librerías es muy facil con Cargo, lo que permite a los
-Rusteros usar diferentes paquetes para sus proyectos.
+suficiente. Reutilizar librerías con Cargo es muy fácil, lo que permite a los
+Rustáceos usar diferentes paquetes para sus proyectos.
 
 [doccargo]: http://doc.crates.io
 [doccratesio]: http://doc.crates.io/crates-io.html
 
-### Generating a Random Number
+### Generando un Número Aleatorio
 
-Let’s start *using* `rand`. The next step is to update *src/main.rs*, as shown
-in Listing 2-3:
+Vamos a empezar *usando* `rand`. Lo siguiente es actualizar *src/main.rs*, como
+se muestra en el Listado 2-3:
 
-<span class="filename">Filename: src/main.rs</span>
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,ignore
 extern crate rand;
