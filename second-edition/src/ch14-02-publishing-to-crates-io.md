@@ -1,30 +1,32 @@
-## Publishing a Crate to Crates.io
+## Publicando un Crate en Crates.io
 
-We’ve used packages from [crates.io](https://crates.io)<!-- ignore --> as
-dependencies of our project, but you can also share your code for other people
-to use by publishing your own packages. The crate registry at
-[crates.io](https://crates.io)<!-- ignore --> distributes the source code of
-your packages, so it primarily hosts code that is open source.
+Ya hemos usado crates de [crates.io](https://crates.io)<!-- ignorar --> como
+dependencias de nuestros proyectos, pero usted también puede compartir su código
+para que otra gente lo use publicando sus propios paquetes. El registro de crates
+en [crates.io](https://crates.io)<!-- ignorar --> distribuye el código fuente de
+sus paquetes, eso significa que almacena códigos de fuente pública principalmente.
 
-Rust and Cargo have features that help make your published package easier for
-people to use and to find in the first place. We’ll talk about some of these
-features next, and then explain how to publish a package.
+Rust y Cargo tienen funcionalidades que le ayudan a usted hacer sus paquetes
+publicados más accesibles y fáciles de usar para otras personas. Hablaremos sobre
+algunas de estas funcionalidades luego, y explicaremos cómo publicar un paquete.
 
-### Making Useful Documentation Comments
+### Haciendo Comentarios Útiles de Documentación
 
-Accurately documenting your packages will help other users know how and when to
-use them, so it’s worth spending time writing documentation. In Chapter 3, we
-discussed how to comment Rust code using `//`. Rust also has a particular kind
-of comment for documentation, which is known conveniently as *documentation
-comments*, that will generate HTML documentation. The HTML displays the
-contents of documentation comments for public API items intended for
-programmers interested in knowing how to *use* your crate as opposed to how
-your crate is *implemented*.
+Documentar sus paquetes de forma precisa le ayudará a otros usuarios saber cómo
+y cuando usarlos, entonces sí vale la pena usar su tiempo para escribir la
+documentación. En el Capítulo 3, discutimos cómo comentar códigos en Rust usando
+`//`. Rust también tiene un tipo de comentario particular para la documentación,
+el cual se conoce convenientemente como *comentario de documentación*, que generará
+documentación en formato HTML. El formato HTML muestra el contenido de los
+comentarios de documentación para objetos de API públicos creados para programadores
+que estén interesados en saber cómo *usar* su crate, a diferencia de saber cómo
+su crate fue *implementado*.
 
-Documentation comments use `///` instead of `//` and support Markdown notation
-for formatting the text if you want to use it. You place documentation comments
-just before the item they’re documenting. Listing 14-1 shows documentation
-comments for an `add_one` function in a crate named `my_crate`:
+Los comentarios de documentación usan `///` en vez de `//` y soportan la notación
+Markdown (notación reducida) para formatear el texto si usted quiere usarlo. Usted
+coloca comentarios de documentación justo antes del objeto que esté documentando.
+El Listado 14-1 muestra comentarios de documentación para una función `add_one`
+en un crate llamado `my_crate`:
 
 <span class="filename">Filename: src/lib.rs</span>
 
@@ -46,55 +48,58 @@ pub fn add_one(x: i32) -> i32 {
 <span class="caption">Listing 14-1: A documentation comment for a
 function</span>
 
-Here, we give a description of what the `add_one` function does, start a
-section with the heading `Examples`, and then provide code that demonstrates
-how to use the `add_one` function. We can generate the HTML documentation from
-this documentation comment by running `cargo doc`. This command runs the
-`rustdoc` tool distributed with Rust and puts the generated HTML documentation
-in the *target/doc* directory.
+Justo aquí, estamos dando una descripción de qué es lo que hace la función
+`add_one`, comenzamos una sección con la cabecera `Examples`, y luego ofrecemos
+código que demuestra cómo se usa la función `add_one`. Podemos generar la
+documentación HTML desde este comentario de documentación si ejecutamos
+`cargo doc`. Este comando ejecuta la herramienta distribuída con Rust `rustdoc`
+e introduce la documentación HTML generada en el directorio *target/doc*.
 
-For convenience, running `cargo doc --open` will build the HTML for your
-current crate’s documentation (as well as the documentation for all of your
-crate’s dependencies) and open the result in a web browser. Navigate to the
-`add_one` function and you’ll see how the text in the documentation comments is
-rendered, as shown in Figure 14-1:
+Por conveniencia, ejecutar `cargo doc --open` construirá el HTML para su
+documentación del crate actual (así como también construirá la documentación
+para todas las dependencias de su crate) y abrirá el resultado en un buscador web.
+Navegue a la función `add_one` y usted verá cómo se muestra el texto en los 
+comentarios de documentación, como en la Figura 14-1:
 
 <img alt="Rendered HTML documentation for the `add_one` function of `my_crate`" src="img/trpl14-01.png" class="center" />
 
 <span class="caption">Figure 14-1: HTML documentation for the `add_one`
 function</span>
 
-#### Commonly Used Sections
+#### Secciones Comúnmente Usadas
 
-We used the `# Examples` Markdown heading in Listing 14-1 to create a section
-in the HTML with the title “Examples.” Some other sections that crate authors
-commonly use in their documentation include:
+Nosotros usamos la cabecera Markdown `# Examples` en el Listado 14-1 para crear
+una sección con el título "Examples" en el HTML. Algunas otras secciones que
+los autores de crates suelen usar en sus documentaciones incluyen:
 
-* **Panics**: The scenarios in which the function being documented could
-  `panic!`. Callers of the function who don’t want their programs to panic
-  should make sure they don’t call the function in these situations.
-* **Errors**: If the function returns a `Result`, describing the kinds of
-  errors that might occur and what conditions might cause those errors to be
-  returned can be helpful to callers so they can write code to handle the
-  different kinds of errors in different ways.
-* **Safety**: If the function is `unsafe` to call (we discuss unsafety in
-  Chapter 19), there should be a section explaining why the function is unsafe
-  and covering the invariants that the function expects callers to uphold.
+* **Pánicos**: Los escenarios en los que la función que está siendo documentada
+  podría `panic!` (entrar en pánico). Los llamadores de la función que no quieran
+  que sus programas entren en pánico deberán asegurarse de no llamar la función
+  en estas situaciones.
+* **Errores**: Si la función retorna un `Result` (resultado), describir los
+  tipos de errores que podrían ocurrir y qué condiciones son las que podrían
+  causar que estos errores sean retornados puede ser útil para los llamadores,
+  para ellos así ser capaces de escribir código que maneje los diferentes tipos
+  de errores de diferentes formas.
+* **Seguridad**: Si llamar a la función es `unsafe` (inseguro) (discutiremos la
+  inseguridad en el capítulo 19), entonces tendría que haber una sección explicando
+  el porqué la función no es segura y cubrir las invariantes que la función espera
+  que los llamadores tengan.
 
-Most documentation comment sections don’t need all of these sections, but it’s
-a good list to check to remind you of the aspects of your code that people
-calling your code will be interested in knowing about.
+La mayoría de las secciones de comentarios de documentación no necesitan todas
+estas secciones, pero es una buena lista para recordarle los aspectos de su código
+que otras personas querrán saber a la hora de llamarlo.
 
-#### Documentation Comments as Tests
+#### Comentarios de Documentación como Exámenes
 
-Adding examples in code blocks in your documentation comments can clearly
-demonstrate how to use your library, and doing so has an additional bonus:
-running `cargo test` will run the code examples in your documentation as
-tests! Nothing is better than documentation with examples. But nothing is worse
-than examples that don’t work because the code has changed since the
-documentation was written. Run `cargo test` with the documentation for the
-`add_one` function from Listing 14-1; you should see a section in the test
-results like this:
+Añadir ejemplos en bloques de códigos en sus comentarios de documentación puede
+demostrar precisamente cómo usar su librería, y hacer esto tiene un bono adicional:
+ejecutar `cargo test` ejecutará los ejemplos de códigos en su documentación,
+¡Examinándolos! Nada es mejor que la documentación ejemplificada. Pero nada es peor
+que los ejemplos que no funcionan porque el código ha cambiado desde que la
+documentación se escribió. Ejecute `cargo text` con la documentación para la función
+`add_one` desde el Listado 14-1; usted debería de ver una sección en los resultados
+del exámen que se verá así:
 
 ```text
    Doc-tests my_crate
@@ -105,22 +110,22 @@ test src/lib.rs - add_one (line 5) ... ok
 test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
 ```
 
-Now change either the function or the example so the `assert_eq!` in the
-example panics. Run `cargo test` again; you’ll see that the doc tests catch
-that the example and the code are out of sync from one another!
+Ahora cambie, ya sea la función o el ejemplo, para que el `asser_eq!` en el
+ejemplo entre en pánico. Ejecute `cargo test` otra vez; ¡Usted verá que los exámenes
+de la documentación del ejemplo y del código no están sincronizados entre ellos!
 
-#### Commenting Contained Items
+#### Comentando Objetos Contenidos
 
-Another style of doc comment, `//!`, adds documentation to the item that
-contains the comments rather than adding documentation to the items following
-the comments. We typically use these doc comments inside the crate root file
-(*src/lib.rs* by convention) or inside a module to document the crate or the
-module as a whole.
+Otro tipo de comentario de documento, `//!`, añade documentación al objeto que
+contiene los comentarios en vez de añadir documentación a los objetos siguientes
+al comentario. Nosotros generalmente usamos estos comentarios de documento dentro
+del archivo raíz crate (*src/lib.rs* por convención) o dentro de un módulo que
+usamos para comentar el crate, o el módulo completo.
 
-For example, if we want to add documentation that describes the purpose of the
-`my_crate` crate that contains the `add_one` function, we can add documentation
-comments that start with `//!` to the beginning of the *src/lib.rs* file, as
-shown in Listing 14-2:
+Por ejemplo, si queremos añadir documentación que describa el uso del crate
+`my_crate` que contiene la función `add_one`, podemos añadir comentarios de
+documentación  que comiencen con `//!` al principio del archivo *src/lib.rs*,
+como es mostrado en el Listado 14-2:
 
 <span class="filename">Filename: src/lib.rs</span>
 
@@ -137,36 +142,38 @@ shown in Listing 14-2:
 <span class="caption">Listing 14-2: Documentation for the `my_crate` crate as a
 whole</span>
 
-Notice there isn’t any code after the last line that begins with `//!`. Because
-we started the comments with `//!` instead of `///`, we’re documenting the item
-that contains this comment rather than an item that follows this comment. In
-this case, the item that contains this comment is the *src/lib.rs* file, which
-is the crate root. These comments describe the entire crate.
+Note que no hay ningún código luego de la última línea que comienza con `//!`.
+Ya que comenzamos con el comentario con `//!` en vez de `///`, estamos documentando
+el objeto que contiene este comentario en lugar de un objeto que le sigue al
+comentario. En este caso, el objeto que contiene este comentario es el archivo
+*src/lib.rs*, el cual es la raíz del crate. Estos comentarios describen todo el
+crate.
 
-When we run `cargo doc --open`, these comments will display on the front
-page of the documentation for `my_crate` above the list of public items in the
-crate, as shown in Figure 14-2:
+Cuando ejecutamos `cargo doc --open`, estos comentarios se mostrarán en la portada
+de la documentación para `my_crate` sobre la lista de objetos públicos en el crate,
+como es mostrado en la Figura 14-2:
 
 <img alt="Rendered HTML documentation with a comment for the crate as a whole" src="img/trpl14-02.png" class="center" />
 
 <span class="caption">Figure 14-2: Rendered documentation for `my_crate`
 including the comment describing the crate as a whole</span>
 
-Documentation comments within items are useful for describing crates and
-modules especially. Use them to explain the purpose of the container overall to
-help your crate users understand your organization.
+Los comentarios de documentación que estén dentro de objetos son útiles para
+describir crates y módulos especialmente. Úselos para explicar el motivo general
+del contenedor, para ayudar a los usuarios de su crate a entender su organización.
 
-### Exporting a Convenient Public API with `pub use`
+### Exportando un API Público Conveniente con `pub use`
 
-In Chapter 7, we covered how to organize our code into modules using the `mod`
-keyword, how to make items public using the `pub` keyword, and how to bring
-items into a scope with the `use` keyword. However, the structure that makes
-sense to you while you’re developing a crate might not be very convenient for
-your users. You might want to organize your structs in a hierarchy containing
-multiple levels, but people who want to use a type you’ve defined deep in the
-hierarchy might have trouble finding out that those types exist. They might
-also be annoyed at having to enter `use`
-`my_crate::some_module::another_module::UsefulType;` rather than `use`
+En el Capítulo 7, nosotros cubrimos cómo organizar nuestro código dentro de
+módulos usando la palabra reservada `mod`, cómo hacer objetos públicos usando
+la palabra reservada `pub`, y cómo traer objetos al ambiente usando la palabra
+reservada `use`. Sin embargo, la estructura a la que usted le consigue el sentido
+mientras desarrolla un crate podría no ser muy conveniente para sus usuarios.
+Usted podría querer organizar sus registros en una jerarquía conteniendo múltiples
+niveles, pero las personas que quieran usar un tipo que usted haya definido en lo
+profundo de la jerarquía podrían tener problemas encontrando que esos tipos existen.
+También podría molestarles tener que usar `use`
+`my_crate::some_module::another_module::UsefulType;` en vez de `use`
 `my_crate::UsefulType;`.
 
 The structure of your public API is a major consideration when publishing a
