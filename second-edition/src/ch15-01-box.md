@@ -1,39 +1,40 @@
-## `Box<T>` Points to Data on the Heap and Has a Known Size
+## `Box<T>` apunta a los datos en la zona libre y tiene un tamaño conocido
 
-The most straightforward smart pointer is a *box*, whose type is written
-`Box<T>`. Boxes allow you to store data on the heap rather than the stack. What
-remains on the stack is the pointer to the heap data. Refer to Chapter 4 to
-review the difference between the stack and the heap.
+El puntero inteligente más sencillo es un *recuadro*, cuyo tipo está escrito
+`Box<T>`. Los recuadros te permiten almacenar datos en la zona libre en vez de en la
+pila. Lo que queda en la pila es el puntero en la zona libre de datos. Consulta el
+capítulo 4 para ver la diferencia entre la pila y la zona libre.
 
-Boxes don’t have performance overhead, other than storing their data on the
-heap instead of on the stack. But they don’t have many extra capabilities
-either. You’ll use them most often in these situations:
+Los cuadros no tienen sobrecarga, además de almacenar sus datos en la zona libre
+en vez de en la pila. Pero no tienen muchas capacidades extras tampoco.
+Los usarás más a menudo en estas situaciones:
 
-* When you have a type whose size can’t be known at compile time, and you want
-  to use a value of that type in a context that needs to know an exact size
-* When you have a large amount of data and you want to transfer ownership but
-  ensure the data won’t be copied when you do so
-* When you want to own a value and only care that it’s a type that implements a
-  particular trait rather than knowing the concrete type
+* Cuando tienes un tipo cuyo tamaño no se puede saber en tiempo de compilación, y quieres
+  usar un valor de ese tipo en un contexto que necesita saber un tamaño exacto
+* Cuando tienes una gran cantidad de datos y quieres transferir la propiedad pero
+  asegúrate que los datos no se copiarán cuando lo hagas
+* Cuando quieres tener un valor y solo importa que sea un tipo que implemente una
+  característica partícular en vez de conocer el tipo concreto
 
-We’ll demonstrate the first situation in this section. But before we do so,
-we’ll elaborate on the other two situations a bit more: in the second case,
-transferring ownership of a large amount of data can take a long time because
-the data is copied around on the stack. To improve performance in this
-situation, we can store the large amount of data on the heap in a box. Then,
-only the small amount of pointer data is copied around on the stack, and the
-data stays in one place on the heap. The third case is known as a *trait
-object*, and Chapter 17 devotes an entire section just to that topic. So what
-you learn here you’ll apply again in Chapter 17!
+Vamos a demostrar la primera situación en esta sección. Pero antes de hacer eso,
+elaboraremos un poco más las otras dos situaciones: en el segundo caso,
+transferir la propiedad de una gran cantidad de datos puede tomar mucho tiempo porque
+los datos se copian cerca de la pila. Para mejorar el rendimiento en esta 
+situación, podemos almacenar la gran cantidad de datos en la zona libre en un recuadro. Entonces,
+solo la cantidad pequeña de datos del puntero son copiadas en la pila, y los 
+datos permanecen en un lugar en la zona libre. El tercer caso es conocido como un *trait
+object*, y el capítulo 17 le dedica una sección completa a ese tema. Asique, lo que
+aprendas aquí lo aplicarás de nuevo en el capítulo 17!
 
-### Using a `Box<T>` to Store Data on the Heap
 
-Before we discuss this use case for `Box<T>`, we’ll cover the syntax and how to
-interact with values stored within a `Box<T>`.
+### Uso de `Box<T>` para almacenar datos en la zona libre
 
-Listing 15-1 shows how to use a box to store an `i32` value on the heap:
+Antes de discutir este caso de uso para `Box<T>`, cubriremos la sintaxis y como
+interactuar con valores almacenados dentro de un `Box<T>`.
 
-<span class="filename">Filename: src/main.rs</span>
+El listado 15-1 muestra como usar un recuadro para almacenar un valor `i32` en la zona libre:
+
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust
 fn main() {
@@ -41,70 +42,73 @@ fn main() {
     println!("b = {}", b);
 }
 ```
+<span class="caption">Listado 15-1: Almacenando un valor `i32` en la zona libre usando
+un recuadro</span>
 
-<span class="caption">Listing 15-1: Storing an `i32` value on the heap using a
-box</span>
+Definimos la variable `b` para tener el valor de un `Box` que apunta al valor
+ `5`, que es asignado en la zona libre. Este programa imprimirá `b = 5`; en
+este caso, podemos ingresar los datos en un recuadro en una forma similar como
+lo hariamos si los datos estuvieran en la pila. Al igual que cualquier valor propio,
+cuando un recuadro sale del alcance como `b` se hace al final de `main`, será desasignado. La
+designación ocurre para el recuadro (almacenada en la pila) y los datos que apuntan a
+(almacenado en la zona libre).
 
-We define the variable `b` to have the value of a `Box` that points to the
-value `5`, which is allocated on the heap. This program will print `b = 5`; in
-this case, we can access the data in the box in a similar way as we would if
-this data was on the stack. Just like any owned value, when a box goes out of
-scope like `b` does at the end of `main`, it will be deallocated. The
-deallocation happens for the box (stored on the stack) and the data it points
-to (stored on the heap).
 
-Putting a single value on the heap isn’t very useful, so you won’t use boxes by
-themselves in this way very often. Having values like a single `i32` on the
-stack, where they’re stored by default, is more appropriate in the majority of
-situations. Let’s look at a case where boxes allow us to define types that we
-wouldn’t be allowed to if we didn’t have boxes.
+Poner un solo valor en la zona libre no es muy útil, por lo que no usarás recuadros
+por si mismos de esta manera muy seguido. Teniendo valores como un solo `i32` en
+la pila, donde son almacenadas por defecto, es más apropiado en la mayoría de las
+situaciones. Veamos un caso donde los recuadros nos permiten definir tipos que 
+no estarían permitidos si no tuvieramos recuadros.
 
-### Boxes Enable Recursive Types
+### Recuadros Habilitar Tipos Recursivos
 
-At compile time, Rust needs to know how much space a type takes up. One type
-whose size can’t be known at compile time is a *recursive type*, where a value
-can have as part of itself another value of the same type. Because this nesting
-of values could theoretically continue infinitely, Rust doesn’t know how much
-space a value of a recursive type needs. However, boxes have a known size, so
-by inserting a box in a recursive type definition, we can have recursive types.
 
-Let’s explore the *cons list*, which is a data type common in functional
-programming languages, as an example of a recursive type. The cons list type
-we’ll define is straightforward except for the recursion; therefore, the
-concepts in the example we’ll work with will be useful any time you get into
-more complex situations involving recursive types.
+A la hora de compilar, Rust necesita saber cuanto espacio ocupa un tipo. Un tipo
+cuyo tamaño no se puede saber al momento d ela compilación es un *tipo recursivo*,
+donde un valor puede tener como parte de si mismo otro valor del mismo tipo. Porque este
+anidamiento de valores teóricamente podría continuar infinitamente, Rust no necesita saber
+cuanto espacio necesita un valor de un tipo recursivo. Sin embargo, los recuadros tienen
+un tamaño conocido, por lo que al insertar un recuadro en una definición de tipo recursivo,
+podemos tener tipos recursivos.
 
-#### More Information About the Cons List
+Exploremos la *lista de constructores*, que es un tipo de dato común en lenguajes
+de programación de tipo funcional, como un ejemplo de tipo recursivo. La lista de tipos
+constantes la definiremos sencillamente excepto por la recursión; por lo tanto, el
+concepto en el ejemplo con el que trabajaremos será util cada vez que situaciones más
+complejas que involucran tipos recursivos.
 
-A *cons list* is a data structure that comes from the Lisp programming language
-and its dialects. In Lisp, the `cons` function (short for “construct function”)
-constructs a new pair from its two arguments, which usually are a single value
-and another pair. These pairs containing pairs form a list.
+#### Más información sobre la lista de constantes
 
-The cons function concept has made its way into more general functional
-programming jargon: “to cons x onto y” informally means to construct a new
-container instance by putting the element x at the start of this new container,
-followed by the container y.
+Una *lista de constructores* es una estructura de datos que proviene del lenguaje de
+programación Lisp y sus dialectos. En Lisp, la función `cons`(abreviatura de “función de
+construcción”) construye un nuevo par desde sus dos argumentos, que generalmente son un
+valor único y otro par. Estos pares que contienen pares forman una lista.
 
-Each item in a cons list contains two elements: the value of the current item
-and the next item. The last item in the list contains only a value called `Nil`
-without a next item. A cons list is produced by recursively calling the `cons`
-function. The canonical name to denote the base case of the recursion is `Nil`.
-Note that this is not the same as the “null” or “nil” concept in Chapter 6,
-which is an invalid or absent value.
+El concepto de función de construcción ha llegado más a la jerga de programación
+funcional general: “para construir x en y” informalmente significa construir una nueva
+instancia de contenedor poniendo el elemento x al comienzo de este nuevo contenedor,
+seguido por el contenedor y.
 
-Although functional programming languages use cons lists frequently, it isn’t a
-commonly used data structure in Rust. Most of the time when you have a list of
-items in Rust, `Vec<T>` is a better choice to use. Other, more complex
-recursive data types *are* useful in various situations, but by starting with
-the cons list, we can explore how boxes let us define a recursive data type
-without much distraction.
+Cada elemento en una lista de constructores contiene dos elementos: el valor del elemento
+actual y del elemento siguiente. El último elementi en la lista contiene solo un valor
+llamado `Nil` sin un elemento siguiente. Una lista de constructores es producida  recursivamente
+llamando a la función `cons`. El nombre canónico para denotar el caso base de la recursión es `Nil`.
+Tenga en cuenta que esto no es igual al concepto “null” o “nil” del capítulo Capítulo 6,
+que es un valor inválido o ausente.
 
-Listing 15-2 contains an enum definition for a cons list. Note that this code
-won’t compile yet because the `List` type doesn’t have a known size, which
-we’ll demonstrate:
+Aunque los lenguajes de programación funcionales usan lista de constructores frecuentemente,
+no es una estructura de datos usada comunmente en Rust. La mayoría de las veces cuando tienes
+una lista de elementos en Rist, `Vec<T>` es la mejor opción para usar. Otro, tipos de datos
+recursivos más complejos *son* útiles en varias situaciones, pero empezando por la lista de
+constructores, podemos explorar como los recuadros nos permiten definir un tipo de datos
+recursivo sin mucha distracción.
 
-<span class="filename">Filename: src/main.rs</span>
+El listado 15-2 contiene una definición de enumeraciones para una lista de constructores.
+Tenga en cuenta que este código no será compilado todavía porque el tipo `List` no tiene un 
+tamaño conocido, que demostraremos:
+
+
+<span class="filename">Nombre del archivo: src/main.rs</span>
 
 ```rust,ignore
 enum List {
@@ -113,13 +117,14 @@ enum List {
 }
 ```
 
-<span class="caption">Listing 15-2: The first attempt at defining an enum to
-represent a cons list data structure of `i32` values</span>
+<span class="caption">Listado 15-2: El primer intento de definir una enumeración
+para representar una lista de constructores de estructuras de datos de los valores `i32`</span>
 
-> Note: We’re implementing a cons list that only holds `i32` values for the
-> purposes of this example. We could have implemented it using generics, as we
-> discussed in Chapter 10, to define a cons list type that could store values of
-> any type.
+> Nota: Estamos implementando una lista de constructores que solo contiene valores `i32`
+> para los propósitos de este ejemplo. Podríamos haberlas implementado usando genéricos,
+> como discutimos en el Capítulo 10, para definir un tipo de lista de constructores que
+> podría almacenar valores de cualquier tipo.
+
 
 Using the `List` type to store the list `1, 2, 3` would look like the code in
 Listing 15-3:
