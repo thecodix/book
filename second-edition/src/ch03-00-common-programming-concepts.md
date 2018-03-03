@@ -1,4 +1,4 @@
-# Conceptos comunes de programación
+# Conceptos Comunes de Programación
 
 Este capítulo cubre conceptos que aparecen en la mayoría de los lenguajes de programación
 y cómo estos funcionan en Rust. Muchos lenguajes de programación tienen muchas cosas en común en
