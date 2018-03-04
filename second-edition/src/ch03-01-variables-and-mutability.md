@@ -1,66 +1,72 @@
-Variables and Mutability
-As mentioned in Chapter 2, by default variables are immutable. This is one of many nudges in Rust that encourages you to write your code in a way that takes advantage of the safety and easy concurrency that Rust offers. However, you still have the option to make your variables mutable. Let’s explore how and why Rust encourages you to favor immutability, and why you might want to opt out.
+##Variables y Mutabilidad
 
-When a variable is immutable, that means once a value is bound to a name, you can’t change that value. To illustrate, let’s generate a new project called variables in your projects directory by using cargo new --bin variables.
+Como mencionamos en el capítulo 2, las variables por defecto son inmutables. Este es uno de las muchas motivaciones en Rust que lo alienta a escribir su codigo de una forma que aproveche la seguridad y la fácil concurrencia que Rust ofrece. Sin embargo, sigues teniendo la opción de hacer que tus variables sean mutables. Exploremos como y 
+porque Rust lo alienta a favorecer la inmutabilidad, y por qué podría elegir no participar.
 
-Then, in your new variables directory, open src/main.rs and replace its code with the following:
+Cuando una variable es inmutable, eso significa que una vez que un valor está ligado a un nomre, no puedes cambiar ese valor. Para ilustrarlo, generemos un nuevo proyecto llamado variables en su directorio de proyectos mediante el uso de las nuevas variables cargo --bin.
 
-Filename: src/main.rs
+Luego, en su nuevo directorio de variables, abra src/main.rs y reemplace su código con el siguiente:
+
+Nombre del archivo: src/main.rs
 
 fn main() {
     let x = 5;
-    println!("The value of x is: {}", x);
+    println!("El valor de x es: {}", x);
     x = 6;
-    println!("The value of x is: {}", x);
+    println!("El valor de x es: {}", x);
 }
-Save and run the program using cargo run. You should receive an error message, as shown in this output:
+Guarde y ejecute el programa usando el ejecutor cargo. Debería recibir un mensaje de error, como se muestra en esta salida:
 
-error[E0384]: cannot assign twice to immutable variable `x`
+error[E0384]: no se puede asignar dos veces la variable inmutable `x`
  --> src/main.rs:4:5
   |
 2 |     let x = 5;
-  |         - first assignment to `x`
-3 |     println!("The value of x is: {}", x);
+  |         - primera asignación a `x`
+3 |     println!("El valor de x es: {}", x);
 4 |     x = 6;
-  |     ^^^^^ cannot assign twice to immutable variable
-This example shows how the compiler helps you find errors in your programs. Even though compiler errors can be frustrating, they only mean your program isn’t safely doing what you want it to do yet; they do not mean that you’re not a good programmer! Experienced Rustaceans still get compiler errors.
+  |     ^^^^^ no se puede asignar dos veces a la variable inmutable
 
-The error indicates that the cause of the error is that we cannot assign twice to immutable variable x, because we tried to assign a second value to the immutable x variable.
+Este ejemplo muestra como el compilador lo ayuda a encontrar errores en sus programas. Aunque los errores del compilador pueden ser frustrantes, solo significa que su programa aún no está haciendo lo que quieres que haga de forma segura; esto no significa que no eres un buen programador! Los rustáceos experimentados todavía siguen teniendo errores de compilación.
 
-It’s important that we get compile-time errors when we attempt to change a value that we previously designated as immutable because this very situation can lead to bugs. If one part of our code operates on the assumption that a value will never change and another part of our code changes that value, it’s possible that the first part of the code won’t do what it was designed to do. This cause of bugs can be difficult to track down after the fact, especially when the second piece of code changes the value only sometimes.
+El error indica que la causa del error es que no podemos asignar dos veces a la variable inmutable x, porque
+intentamos de asignar un segundo valor a la variable inmutable x.
 
-In Rust the compiler guarantees that when we state that a value won’t change, it really won’t change. That means that when you’re reading and writing code, you don’t have to keep track of how and where a value might change, which can make code easier to reason about.
+Es importante que tengamos errores de tiempo de compilación cuando intentamos cambiar un valor que previamente designamos como inmutable porque esta situación puede causar errores. Si una parte de nuestro código opera en la suposición de que un valor nunca cambiará y otra parte de nuestro código cambia ese valor, es posible que la primera parte del código no hará lo que fué diseñado para hacer. Esta causa de errores puede ser dificil de ubicar después del hecho, especialmente cuando la segunda pieza de código cambia el valor solo algunas veces.
 
-But mutability can be very useful. Variables are immutable only by default; we can make them mutable by adding mut in front of the variable name. In addition to allowing this value to change, it conveys intent to future readers of the code by indicating that other parts of the code will be changing this variable value.
+En Rust, el compilador garantiza que cuando establecemos que un valor no cambie, realmente no cambiará. Eso significa que cuando estas leyendo y escribiendo código, no tienes que hacer un seguimiento de como y donde un valor puede cambiar, lo cual puede hacer que el código sea más facil de razonar.
 
-For example, change src/main.rs to the following:
+Pero la mutabilidad puede ser muy útil. Las variables son inmutables solo por defecto; podemos hacerlas mutables agregando mut adelante del nombre de la variable. Además de permitir que este valor cambie, transmite la intención a fuctores lectores del código indicando que otras partes del código cambiarán el valor de esta variable.
 
-Filename: src/main.rs
+Por ejemplo, cambie src/main.rs a lo siguiente:
+
+Nombre del archivo: src/main.rs
 
 fn main() {
     let mut x = 5;
-    println!("The value of x is: {}", x);
+    println!("El valor de x es: {}", x);
     x = 6;
-    println!("The value of x is: {}", x);
+    println!("El valor de x es: {}", x);
 }
-When we run this program, we get the following:
+Cuando ejecutamos este programa, obtenemos lo siguiente:
 
 $ cargo run
-   Compiling variables v0.1.0 (file:///projects/variables)
-    Finished dev [unoptimized + debuginfo] target(s) in 0.30 secs
-     Running `target/debug/variables`
-The value of x is: 5
-The value of x is: 6
-Using mut, we’re allowed to change the value that x binds to from 5 to 6. In some cases, you’ll want to make a variable mutable because it makes the code more convenient to write than an implementation that only uses immutable variables.
+   Compilando variables v0.1.0 (file:///projects/variables)
+    Finalizado dev [unoptimized + debuginfo] destino(s) en 0.30 segundos
+     Ejecutando `target/debug/variables`
+El valor de x es: 5
+El valor de x es: 6
+Usando mut, estamos permitidos a cambiar el valor que se une a x binds de 5 a 6. En algunos casos, usted querrá hacer una varaible mutable porque hace al código más conveniente de escribir que una implementación que solo usa variables inmutables.
 
-There are multiple trade-offs to consider, in addition to the prevention of bugs. For example, in cases where you’re using large data structures, mutating an instance in place may be faster than copying and returning newly allocated instances. With smaller data structures, creating new instances and writing in a more functional programming style may be easier to reason about, so the lower performance might be a worthwhile penalty for gaining that clarity.
+Hay múltiples intercambios para considerar, además de la prevención de errores. Por ejemplo, en casos donde está usando estructuras de grandes datos, mutar una instancia en su lugar puede ser más rapido que copiar y devolver instancias asignadas recientemente. Con estructuras de datos más pequeñas, escribir nuevas instancias y escribir en un estilo de programación más funcional puede ser más fácil de razonar, por lo que el rendimiento más bajo podría ser una pena que sirva para ganar esa claridad.
 
-Differences Between Variables and Constants
-Being unable to change the value of a variable might have reminded you of another programming concept that most other languages have: constants. Like immutable variables, constants are also values that are bound to a name and are not allowed to change, but there are a few differences between constants and variables.
+Diferencias Entre Variables y Constantes
+No poder cambiar el valor de una variable podría haberle hecho acordar de otro concepto de programación que la mayoría de los otros lenguajes tiene: las constantes. Como las variables inmutables, las constantes también son valores que se unen a un nombre y no se pueden cambiar, pero hay algunas diferencias entre constantes y variables.
 
-First, we aren’t allowed to use mut with constants: constants aren’t only immutable by default, they’re always immutable.
+Primero, no podemos usar mut con constantes: las constantes no son sólo immutables por defecto, son siempre immutables.
 
-We declare constants using the const keyword instead of the let keyword, and the type of the value must be annotated. We’re about to cover types and type annotations in the next section, “Data Types,” so don’t worry about the details right now, just know that we must always annotate the type.
+
+Declaramos constantes usando la palabra clave const en lugar de la palabra clave let, y el tipo del valor debe ser anotado. Estamos prontos a cubrir tipos y tipos de anotaciones en la siguiente sección, “Tipos de Datos,” por lo que no se preocupe por los detalles ahora mismo, solo sepa que siempre debemos anotar el tipo.
+
 
 Constants can be declared in any scope, including the global scope, which makes them useful for values that many parts of code need to know about.
 
