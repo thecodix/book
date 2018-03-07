@@ -1,11 +1,11 @@
 ##Variables y Mutabilidad
 
-Como mencionamos en el capítulo 2, las variables por defecto son inmutables. Este es uno de las muchas motivaciones en Rust que lo alienta a escribir su codigo de una forma que aproveche la seguridad y la fácil concurrencia que Rust ofrece. Sin embargo, sigues teniendo la opción de hacer que tus variables sean mutables. Exploremos como y 
-porque Rust lo alienta a favorecer la inmutabilidad, y por qué podría elegir no participar.
+Como mencionamos en el capítulo 2, las variables por defecto son inmutables. Esta es una de las muchas motivaciones en Rust que te alienta a escribir su codigo de una forma que aproveche la seguridad y la fácil concurrencia que Rust ofrece. Sin embargo, sigues teniendo la opción de hacer que tus variables sean mutables. Exploremos como y 
+porque Rust te alienta a favorecer la inmutabilidad, y en que casos sería mejor no usarla.
 
-Cuando una variable es inmutable, eso significa que una vez que un valor está ligado a un nomre, no puedes cambiar ese valor. Para ilustrarlo, generemos un nuevo proyecto llamado variables en su directorio de proyectos mediante el uso de las nuevas variables cargo --bin.
+Cuando una variable es inmutable, eso significa que una vez que un valor está ligado a un nombre, no puedes cambiar ese valor. Para ilustrarlo, generemos un nuevo proyecto llamado variables en su directorio de proyectos mediante el uso de las nuevas variables cargo --bin.
 
-Luego, en su nuevo directorio de variables, abra src/main.rs y reemplace su código con el siguiente:
+Luego, en tu nuevo directorio de variables, abra src/main.rs y reemplace su código con el siguiente:
 
 Nombre del archivo: src/main.rs
 
@@ -15,7 +15,7 @@ fn main() {
     x = 6;
     println!("El valor de x es: {}", x);
 }
-Guarde y ejecute el programa usando el ejecutor cargo. Debería recibir un mensaje de error, como se muestra en esta salida:
+Guarde y ejecute el programa usando el cargo run. Debería recibir un mensaje de error, como se muestra en esta salida:
 
 error[E0384]: no se puede asignar dos veces la variable inmutable `x`
  --> src/main.rs:4:5
@@ -26,7 +26,7 @@ error[E0384]: no se puede asignar dos veces la variable inmutable `x`
 4 |     x = 6;
   |     ^^^^^ no se puede asignar dos veces a la variable inmutable
 
-Este ejemplo muestra como el compilador lo ayuda a encontrar errores en sus programas. Aunque los errores del compilador pueden ser frustrantes, solo significa que su programa aún no está haciendo lo que quieres que haga de forma segura; esto no significa que no eres un buen programador! Los rustáceos experimentados todavía siguen teniendo errores de compilación.
+Este ejemplo muestra como el compilador te ayuda a encontrar errores en sus programas. Aunque los errores del compilador pueden ser frustrantes, solo significa que su programa aún no está haciendo lo que quieres que haga de forma segura; esto no significa que no eres un buen programador! Los rustáceos experimentados todavía siguen teniendo errores de compilación.
 
 El error indica que la causa del error es que no podemos asignar dos veces a la variable inmutable x, porque
 intentamos de asignar un segundo valor a la variable inmutable x.
@@ -55,9 +55,9 @@ $ cargo run
      Ejecutando `target/debug/variables`
 El valor de x es: 5
 El valor de x es: 6
-Usando mut, estamos permitidos a cambiar el valor que se une a x binds de 5 a 6. En algunos casos, usted querrá hacer una varaible mutable porque hace al código más conveniente de escribir que una implementación que solo usa variables inmutables.
+Usando mut, estamos permitidos a cambiar el valor que se une a x binds de 5 a 6. En algunos casos, usted querrá hacer una variable mutable porque hace que escribir código sea más conveniente que usar una implementación únicamente con variables inmutables.
 
-Hay múltiples intercambios para considerar, además de la prevención de errores. Por ejemplo, en casos donde está usando estructuras de grandes datos, mutar una instancia en su lugar puede ser más rapido que copiar y devolver instancias asignadas recientemente. Con estructuras de datos más pequeñas, escribir nuevas instancias y escribir en un estilo de programación más funcional puede ser más fácil de razonar, por lo que el rendimiento más bajo podría ser una pena que sirva para ganar esa claridad.
+Hay múltiples intercambios para considerar, además de la prevención de errores. Por ejemplo, en casos donde está usando estructuras de grandes datos, mutar una instancia en su lugar puede ser más rapido que copiar y devolver instancias asignadas recientemente. Con estructuras de datos más pequeñas, escribir nuevas instancias y escribir en un estilo de programación más funcional puede ser más fácil de razonar, por lo que el rendimiento más bajo podría ser un hándicap que sirva para ganar esa claridad.
 
 Diferencias Entre Variables y Constantes
 No poder cambiar el valor de una variable podría haberle hecho acordar de otro concepto de programación que la mayoría de los otros lenguajes tiene: las constantes. Como las variables inmutables, las constantes también son valores que se unen a un nombre y no se pueden cambiar, pero hay algunas diferencias entre constantes y variables.
@@ -65,7 +65,7 @@ No poder cambiar el valor de una variable podría haberle hecho acordar de otro 
 Primero, no podemos usar mut con constantes: las constantes no son sólo immutables por defecto, son siempre immutables.
 
 
-Declaramos constantes usando la palabra clave const en lugar de la palabra clave let, y el tipo del valor debe ser anotado. Estamos prontos a cubrir tipos y tipos de anotaciones en la siguiente sección, “Tipos de Datos,” por lo que no se preocupe por los detalles ahora mismo, solo sepa que siempre debemos anotar el tipo.
+Declaramos constantes usando la palabra clave const en lugar de la palabra clave let, y el tipo del valor debe ser anotado. Estamos prontos a cubrir tipos y tipos de anotaciones en la siguiente sección, “Tipos de Datos,” por lo que no te preocupes por los detalles ahora mismo, solo sepa que siempre debemos anotar el tipo.
 
 
 Constants can be declared in any scope, including the global scope, which makes them useful for values that many parts of code need to know about.
