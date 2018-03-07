@@ -17,25 +17,25 @@ fn main() {
 }
 Guarde y ejecute el programa usando el cargo run. Debería recibir un mensaje de error, como se muestra en esta salida:
 
-error[E0384]: no se puede asignar dos veces la variable inmutable `x`
+error[E0384]:  cannot assign twice to immutable variable `x`
  --> src/main.rs:4:5
   |
 2 |     let x = 5;
-  |         - primera asignación a `x`
-3 |     println!("El valor de x es: {}", x);
+  |      - first assignment to `x`
+-3 |     println!("The value of x is: {}", x);
 4 |     x = 6;
-  |     ^^^^^ no se puede asignar dos veces a la variable inmutable
+  |     ^^^^^  cannot assign twice to immutable variable `x`
 
-Este ejemplo muestra como el compilador te ayuda a encontrar errores en sus programas. Aunque los errores del compilador pueden ser frustrantes, solo significa que su programa aún no está haciendo lo que quieres que haga de forma segura; esto no significa que no eres un buen programador! Los rustáceos experimentados todavía siguen teniendo errores de compilación.
+Este ejemplo muestra como el compilador te ayuda a encontrar errores en sus programas. Aunque los errores del compilador pueden ser frustrantes, solo significa que su programa aún no está haciendo lo que quieres que haga de forma segura; ¡esto no significa que no eres un buen programador! Los rustáceos experimentados todavía siguen teniendo errores de compilación.
 
 El error indica que la causa del error es que no podemos asignar dos veces a la variable inmutable x, porque
 intentamos de asignar un segundo valor a la variable inmutable x.
 
-Es importante que tengamos errores de tiempo de compilación cuando intentamos cambiar un valor que previamente designamos como inmutable porque esta situación puede causar errores. Si una parte de nuestro código opera en la suposición de que un valor nunca cambiará y otra parte de nuestro código cambia ese valor, es posible que la primera parte del código no hará lo que fué diseñado para hacer. Esta causa de errores puede ser dificil de ubicar después del hecho, especialmente cuando la segunda pieza de código cambia el valor solo algunas veces.
+Es importante que tengamos errores de tiempo de compilación cuando intentamos cambiar un valor que previamente designamos como inmutable porque esta causa de errores puede ser díficil de ubicar después del hecho. Si una parte de nuestro código opera en la suposición de que un valor nunca cambiará y otra parte de nuestro código cambia ese valor, es posible que la primera parte del código no haga lo que fue diseñado para hacer. Esta causa de errores puede ser dificil de ubicar después del hecho, especialmente cuando la segunda pieza de código cambia el valor solo algunas veces.
 
-En Rust, el compilador garantiza que cuando establecemos que un valor no cambie, realmente no cambiará. Eso significa que cuando estas leyendo y escribiendo código, no tienes que hacer un seguimiento de como y donde un valor puede cambiar, lo cual puede hacer que el código sea más facil de razonar.
+En Rust, el compilador garantiza que cuando establecemos que un valor no cambie, realmente no cambiará. Eso significa que cuando estás leyendo y escribiendo código, no tienes que hacer un seguimiento de cómo y donde un valor puede cambiar, lo cual puede hacer que el código sea más fácil de razonar.
 
-Pero la mutabilidad puede ser muy útil. Las variables son inmutables solo por defecto; podemos hacerlas mutables agregando mut adelante del nombre de la variable. Además de permitir que este valor cambie, transmite la intención a fuctores lectores del código indicando que otras partes del código cambiarán el valor de esta variable.
+Pero la mutabilidad puede ser muy útil. Las variables son inmutables solo por defecto; podemos hacerlas mutables agregando mut adelante del nombre de la variable. Además de permitir que este valor cambie, transmite la intención a futuros lectores del código indicando que otras partes del código cambiarán el valor de esta variable.
 
 Por ejemplo, cambie src/main.rs a lo siguiente:
 
@@ -55,7 +55,7 @@ $ cargo run
      Ejecutando `target/debug/variables`
 El valor de x es: 5
 El valor de x es: 6
-Usando mut, estamos permitidos a cambiar el valor que se une a x binds de 5 a 6. En algunos casos, usted querrá hacer una variable mutable porque hace que escribir código sea más conveniente que usar una implementación únicamente con variables inmutables.
+Usando ```mut```, podemos cambiar el valor que se une a x de 5 a 6. En algunos casos, usted querrá hacer una variable mutable porque hace que escribir código sea más conveniente que usar una implementación únicamente con variables inmutables.
 
 Hay múltiples intercambios para considerar, además de la prevención de errores. Por ejemplo, en casos donde está usando estructuras de grandes datos, mutar una instancia en su lugar puede ser más rapido que copiar y devolver instancias asignadas recientemente. Con estructuras de datos más pequeñas, escribir nuevas instancias y escribir en un estilo de programación más funcional puede ser más fácil de razonar, por lo que el rendimiento más bajo podría ser un hándicap que sirva para ganar esa claridad.
 
